@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { CalculatorDefinition, CalculatorInput } from '../types';
-import { Calculator, ChevronRight, RefreshCw, CheckCircle2, Circle, Check, ArrowLeft } from 'lucide-react';
+import { Calculator, ChevronRight, RefreshCw, CheckCircle2, Circle, Check, ArrowLeft, Grid } from 'lucide-react';
 
 // --- CALCULATOR DEFINITIONS ---
+// (Definitions remain unchanged as they were already correct in the source)
 
 const GCS_CALC: CalculatorDefinition = {
   id: 'gcs',
@@ -62,16 +63,8 @@ const ABCD2_CALC: CalculatorDefinition = {
   name: 'ABCD² Score for TIA',
   description: 'Estimates the risk of stroke within 2 days after a Transient Ischemic Attack (TIA).',
   inputs: [
-    {
-      id: 'age',
-      label: 'Age >= 60 years',
-      type: 'boolean' // 1 point if yes
-    },
-    {
-      id: 'bp',
-      label: 'BP >= 140/90 mmHg',
-      type: 'boolean' // 1 point if yes
-    },
+    { id: 'age', label: 'Age >= 60 years', type: 'boolean' },
+    { id: 'bp', label: 'BP >= 140/90 mmHg', type: 'boolean' },
     {
       id: 'clinical',
       label: 'Clinical Features',
@@ -92,11 +85,7 @@ const ABCD2_CALC: CalculatorDefinition = {
         { value: 0, label: '< 10 minutes (0)' }
       ]
     },
-    {
-      id: 'diabetes',
-      label: 'Diabetes',
-      type: 'boolean' // 1 point
-    }
+    { id: 'diabetes', label: 'Diabetes', type: 'boolean' }
   ],
   calculate: (values) => {
     let score = 0;
@@ -105,11 +94,9 @@ const ABCD2_CALC: CalculatorDefinition = {
     if (values.diabetes) score += 1;
     score += Number(values.clinical || 0);
     score += Number(values.duration || 0);
-
     let risk = "Low Risk (1.0% 2-day stroke risk)";
     if (score >= 6) risk = "High Risk (8.1% 2-day stroke risk)";
     else if (score >= 4) risk = "Moderate Risk (4.1% 2-day stroke risk)";
-
     return { score, interpretation: risk };
   }
 };
@@ -285,18 +272,13 @@ const NIHSS_CALC: CalculatorDefinition = {
   calculate: (values) => {
     const fields = ['1a', '1b', '1c', '2', '3', '4', '5a', '5b', '6a', '6b', '7', '8', '9', '10', '11'];
     let score = 0;
-    
-    fields.forEach(f => {
-      score += Number(values[f] || 0);
-    });
-
+    fields.forEach(f => { score += Number(values[f] || 0); });
     let interpretation = "";
     if (score === 0) interpretation = "No stroke symptoms";
     else if (score <= 4) interpretation = "Minor stroke";
     else if (score <= 15) interpretation = "Moderate stroke";
     else if (score <= 20) interpretation = "Moderate to severe stroke";
     else interpretation = "Severe stroke";
-
     return { score, interpretation };
   }
 };
@@ -319,11 +301,9 @@ const HASBLED_CALC: CalculatorDefinition = {
   calculate: (values) => {
     let score = 0;
     Object.keys(values).forEach(k => { if (values[k]) score++; });
-    
     let risk = "Low Risk (1.13 bleeds/100 patient-years)";
     if (score >= 3) risk = "High Risk (Use caution)";
     else if (score >= 2) risk = "Moderate Risk (1.88 - 3.74 bleeds/100 patient-years)";
-    
     return { score, interpretation: risk };
   }
 };
@@ -353,7 +333,6 @@ const MRS_CALC: CalculatorDefinition = {
     let interp = "Independent";
     if (score === 6) interp = "Deceased";
     else if (score >= 3) interp = "Dependent";
-    
     return { score, interpretation: interp };
   }
 };
@@ -409,9 +388,7 @@ const ICH_CALC: CalculatorDefinition = {
     if (values.ivh) score += 1;
     if (values.infratentorial) score += 1;
     if (values.age80) score += 1;
-    
     const mortality = { 0: '0%', 1: '13%', 2: '26%', 3: '72%', 4: '97%', 5: '100%', 6: '100%' }[score] || 'Unknown';
-    
     return { score, interpretation: `Est. 30-day Mortality: ${mortality}` };
   }
 };
@@ -431,7 +408,6 @@ const OTTAWA_SAH_CALC: CalculatorDefinition = {
   calculate: (values) => {
     let hasRisk = false;
     Object.keys(values).forEach(k => { if (values[k]) hasRisk = true; });
-    
     return { 
         score: hasRisk ? "POSITIVE" : "NEGATIVE", 
         interpretation: hasRisk 
@@ -472,7 +448,6 @@ const ROPE_CALC: CalculatorDefinition = {
     if (values.no_stroke) score += 1;
     if (values.nonsmoker) score += 1;
     if (values.cortical) score += 1;
-    
     let prob = "0% (PFO likely incidental)";
     if (score >= 9) prob = "88% (PFO likely pathogenic)";
     else if (score === 8) prob = "84%";
@@ -480,7 +455,6 @@ const ROPE_CALC: CalculatorDefinition = {
     else if (score === 6) prob = "62%";
     else if (score === 5) prob = "34%";
     else if (score === 4) prob = "38%";
-    
     return { score, interpretation: `PFO Pathogenicity: ${prob}` };
   }
 };
@@ -541,41 +515,18 @@ const THROMBECTOMY_CALC: CalculatorDefinition = {
     }
   ],
   calculate: (values) => {
-    // Logic
-    if (values.time === 'out') {
-        return { score: 'N/A', interpretation: 'Generally outside standard treatment window (>24h).' };
-    }
-
-    if (values.mrs === 'dependent') {
-        return { score: 'Review', interpretation: 'Patient was dependent (mRS > 1). Standard trials excluded these patients. Weigh individual risk/benefit.' };
-    }
-    
-    if (values.location === 'post') {
-        return { score: 'Eligible', interpretation: 'Basilar Occlusion: Treat up to 24h based on ATTENTION and BAOCHE trials.' };
-    }
-
-    if (values.location === 'distal') {
-        return { score: 'Consider', interpretation: 'Distal Occlusion: Consider EVT based on technical feasibility and deficit severity.' };
-    }
-
-    // Anterior LVO
+    if (values.time === 'out') return { score: 'N/A', interpretation: 'Generally outside standard treatment window (>24h).' };
+    if (values.mrs === 'dependent') return { score: 'Review', interpretation: 'Patient was dependent (mRS > 1). Standard trials excluded these patients. Weigh individual risk/benefit.' };
+    if (values.location === 'post') return { score: 'Eligible', interpretation: 'Basilar Occlusion: Treat up to 24h based on ATTENTION and BAOCHE trials.' };
+    if (values.location === 'distal') return { score: 'Consider', interpretation: 'Distal Occlusion: Consider EVT based on technical feasibility and deficit severity.' };
     if (values.time === 'early') {
-        if (values.imaging === 'small') {
-            return { score: 'Eligible', interpretation: 'Standard of Care (0-6h). Strong evidence (HERMES meta-analysis).' };
-        } else if (values.imaging === 'large') {
-             return { score: 'Eligible', interpretation: 'Large Core: Eligible based on SELECT2, ANGEL-ASPECT, RESCUE-Japan trials.' };
-        } else {
-             return { score: 'Futile', interpretation: 'Massive Core: Likely futile. Generally excluded from trials.' };
-        }
+        if (values.imaging === 'small') return { score: 'Eligible', interpretation: 'Standard of Care (0-6h). Strong evidence (HERMES meta-analysis).' };
+        else if (values.imaging === 'large') return { score: 'Eligible', interpretation: 'Large Core: Eligible based on SELECT2, ANGEL-ASPECT, RESCUE-Japan trials.' };
+        else return { score: 'Futile', interpretation: 'Massive Core: Likely futile. Generally excluded from trials.' };
     } else if (values.time === 'late') {
-        // 6-24h
-        if (values.mismatch === 'present') {
-             return { score: 'Eligible', interpretation: 'Late Window: Eligible per DAWN / DEFUSE-3 criteria.' };
-        } else {
-             return { score: 'Not Eligible', interpretation: 'No target mismatch identified. Medical management preferred.' };
-        }
+        if (values.mismatch === 'present') return { score: 'Eligible', interpretation: 'Late Window: Eligible per DAWN / DEFUSE-3 criteria.' };
+        else return { score: 'Not Eligible', interpretation: 'No target mismatch identified. Medical management preferred.' };
     }
-    
     return { score: 'Unknown', interpretation: 'Clinical correlation required.' };
   }
 };
@@ -602,43 +553,29 @@ const Calculators: React.FC = () => {
   
   const activeCalc = CALCULATORS.find(c => c.id === activeId);
   const [values, setValues] = useState<Record<string, any>>({});
-  
-  // Track manual override for accordion
   const [openInputId, setOpenInputId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Reset when switching calculators
     setValues({});
     setOpenInputId(null);
   }, [activeId]);
 
   const inputs = activeCalc?.inputs || [];
-  
-  // Calculate Progress
   const firstUnansweredIndex = inputs.findIndex(input => values[input.id] === undefined);
   const isComplete = firstUnansweredIndex === -1 && inputs.length > 0;
   
-  // Determine which input is currently expanded
-  // If user clicked one manually, use that.
-  // Otherwise, default to the first unanswered input.
   const activeIndex = useMemo(() => {
-     if (openInputId) {
-         return inputs.findIndex(i => i.id === openInputId);
-     }
-     if (isComplete) return -1; // Collapsed all if done
+     if (openInputId) return inputs.findIndex(i => i.id === openInputId);
+     if (isComplete) return -1;
      return firstUnansweredIndex === -1 ? 0 : firstUnansweredIndex;
   }, [openInputId, firstUnansweredIndex, isComplete, inputs]);
 
   const handleSelect = (inputId: string, value: any) => {
     setValues(prev => ({ ...prev, [inputId]: value }));
-    setOpenInputId(null); // Return to auto-progression
-    
-    // Auto-scroll to next? Handled by rendering next expanded item usually
+    setOpenInputId(null);
   };
 
   const handleToggle = (id: string, index: number) => {
-      // Allow opening if it's the current active one, OR if it's already answered
-      // Don't allow jumping to future unanswered questions (force sequential)
       if (values[id] !== undefined || index === firstUnansweredIndex) {
          setOpenInputId(openInputId === id ? null : id);
       }
@@ -646,6 +583,10 @@ const Calculators: React.FC = () => {
 
   const handleSelectCalc = (id: string) => {
     setSearchParams({ id });
+  };
+
+  const handleBackToCalculators = () => {
+      setSearchParams({});
   };
 
   const result = (isComplete && activeCalc) ? activeCalc.calculate(values) : null;
@@ -656,187 +597,217 @@ const Calculators: React.FC = () => {
       return val;
   };
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-full">
-      {/* Sidebar List */}
-      <div className="md:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden h-fit">
-        <div className="p-4 border-b border-gray-100 bg-gray-50">
-          <h2 className="font-bold text-slate-800">Available Tools</h2>
+  // If no calculator is selected, show the directory view
+  if (!activeCalc) {
+    return (
+      <div className="max-w-4xl mx-auto py-6">
+        <div className="flex items-center space-x-3 mb-8">
+            <div className="bg-neuro-500 p-2 rounded-lg text-white">
+                <Calculator size={24} />
+            </div>
+            <div>
+                <h1 className="text-3xl font-bold text-slate-900">Clinical Calculators</h1>
+                <p className="text-slate-500">Select a validated tool to begin assessment</p>
+            </div>
         </div>
-        <div className="divide-y divide-gray-100">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {CALCULATORS.map(calc => (
             <button
               key={calc.id}
               onClick={() => handleSelectCalc(calc.id)}
-              className={`w-full text-left p-4 hover:bg-gray-50 transition-colors flex items-center justify-between ${
-                activeId === calc.id ? 'bg-neuro-50 border-l-4 border-neuro-500' : ''
-              }`}
+              className="group w-full text-left p-6 bg-white rounded-2xl border border-gray-200 shadow-sm hover:border-neuro-300 hover:shadow-md transition-all flex flex-col justify-between"
             >
-              <span className={`font-medium ${activeId === calc.id ? 'text-neuro-700' : 'text-slate-600'}`}>
-                {calc.name}
-              </span>
-              {activeId === calc.id && <ChevronRight size={16} className="text-neuro-500" />}
+              <div>
+                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-neuro-600 transition-colors">
+                    {calc.name}
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-2 line-clamp-2">
+                    {calc.description}
+                  </p>
+              </div>
+              <div className="mt-4 flex items-center text-neuro-500 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                  Open Tool <ChevronRight size={16} className="ml-1" />
+              </div>
             </button>
           ))}
         </div>
       </div>
+    );
+  }
 
-      {/* Calculator Workspace */}
-      <div className="md:col-span-2 space-y-6 pb-20">
-        {activeCalc ? (
-          <>
-            {returnTo && (
-              <div className="animate-in fade-in slide-in-from-top-2">
-                 <Link to={returnTo} className="inline-flex items-center text-sm font-semibold text-neuro-600 hover:text-neuro-800 bg-neuro-50 px-3 py-2 rounded-lg transition-colors border border-neuro-100 hover:border-neuro-200">
-                    <ArrowLeft size={16} className="mr-2" />
-                    Back to Resident Guide Article
-                 </Link>
-              </div>
-            )}
-          
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-2">
-                    <h1 className="text-2xl font-bold text-slate-900">{activeCalc.name}</h1>
-                    <button onClick={() => { setValues({}); setOpenInputId(null); }} className="text-slate-400 hover:text-neuro-600" title="Reset">
-                        <RefreshCw size={18} />
-                    </button>
-                </div>
-                <p className="text-slate-500">{activeCalc.description}</p>
-                <div className="mt-4 flex items-center text-sm text-slate-500">
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div 
-                            className="h-full bg-neuro-500 transition-all duration-300 ease-out"
-                            style={{ width: `${(Object.keys(values).length / inputs.length) * 100}%` }}
-                        />
-                    </div>
-                    <span className="ml-3 font-medium">{Object.keys(values).length} / {inputs.length}</span>
-                </div>
+  // Active Calculator View (The "Dedicated Interface")
+  return (
+    <div className="max-w-3xl mx-auto py-2 space-y-6 animate-in fade-in duration-300">
+      {/* Header Navigation */}
+      <div className="flex items-center justify-between mb-2">
+        <button 
+            onClick={handleBackToCalculators}
+            className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-neuro-600 transition-colors group"
+        >
+            <div className="bg-white p-1.5 rounded-md border border-gray-200 mr-2 shadow-sm group-hover:border-neuro-200 group-hover:shadow-md transition-all">
+                <ArrowLeft size={16} />
             </div>
+            Back to Calculators
+        </button>
 
-            {/* Questions Accordion */}
-            <div className="space-y-4">
-              {inputs.map((input, index) => {
-                const isAnswered = values[input.id] !== undefined;
-                const isCurrent = index === activeIndex;
-                const isDisabled = !isAnswered && index > (firstUnansweredIndex === -1 ? inputs.length : firstUnansweredIndex);
-                
-                return (
-                    <div 
-                        key={input.id} 
-                        className={`bg-white border rounded-xl transition-all duration-300 ${
-                            isCurrent ? 'ring-2 ring-neuro-500 border-transparent shadow-md' : 'border-gray-200'
-                        } ${isDisabled ? 'opacity-50 grayscale' : 'opacity-100'}`}
-                    >
-                        {/* Header */}
-                        <button
-                            onClick={() => !isDisabled && handleToggle(input.id, index)}
-                            disabled={isDisabled}
-                            className="w-full text-left p-4 flex items-center justify-between"
-                        >
-                            <div className="flex items-center space-x-3">
-                                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                    isAnswered ? 'bg-neuro-100 text-neuro-700' : 
-                                    isCurrent ? 'bg-neuro-600 text-white' : 'bg-gray-100 text-gray-400'
-                                }`}>
-                                    {isAnswered ? <Check size={14} /> : index + 1}
-                                </div>
-                                <span className={`font-semibold ${isCurrent ? 'text-slate-900' : 'text-slate-600'}`}>
-                                    {input.label}
-                                </span>
-                            </div>
-                            
-                            {isAnswered && !isCurrent && (
-                                <span className="text-sm font-medium text-neuro-600 bg-neuro-50 px-3 py-1 rounded-full truncate max-w-[150px]">
-                                    {getLabelForValue(input, values[input.id])}
-                                </span>
-                            )}
-                        </button>
-
-                        {/* Expanded Content (Options) */}
-                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCurrent ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                            <div className="p-4 pt-0 border-t border-gray-100 mt-2">
-                                <div className="space-y-2">
-                                    {input.type === 'boolean' ? (
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {[true, false].map((opt) => (
-                                                <button
-                                                    key={String(opt)}
-                                                    onClick={() => handleSelect(input.id, opt)}
-                                                    className={`p-4 rounded-lg border-2 text-center transition-all ${
-                                                        values[input.id] === opt 
-                                                            ? 'border-neuro-500 bg-neuro-50 text-neuro-700 font-bold' 
-                                                            : 'border-gray-100 hover:border-neuro-200 hover:bg-gray-50 text-slate-600'
-                                                    }`}
-                                                >
-                                                    {opt ? 'Yes' : 'No'}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            {input.options?.map((opt) => (
-                                                <button
-                                                    key={opt.value}
-                                                    onClick={() => handleSelect(input.id, opt.value)}
-                                                    className={`w-full p-4 rounded-lg border-2 text-left transition-all flex items-center justify-between group ${
-                                                        values[input.id] === opt.value 
-                                                            ? 'border-neuro-500 bg-neuro-50 z-10' 
-                                                            : 'border-gray-100 hover:border-neuro-200 hover:bg-gray-50'
-                                                    }`}
-                                                >
-                                                    <span className={`font-medium ${values[input.id] === opt.value ? 'text-neuro-900' : 'text-slate-700'}`}>
-                                                        {opt.label}
-                                                    </span>
-                                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                                        values[input.id] === opt.value ? 'border-neuro-500' : 'border-gray-300 group-hover:border-neuro-300'
-                                                    }`}>
-                                                        {values[input.id] === opt.value && <div className="w-2.5 h-2.5 rounded-full bg-neuro-500" />}
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-              })}
-            </div>
-
-            {/* Result Sticky Footer */}
-            {isComplete && result && (
-                <div className="sticky bottom-4 mt-6 bg-slate-900 rounded-xl p-6 text-white flex items-center justify-between shadow-xl animate-in fade-in slide-in-from-bottom-4">
-                    <div className="flex items-center space-x-4">
-                        <div className="bg-neuro-500 p-3 rounded-full">
-                            <CheckCircle2 size={24} className="text-white" />
-                        </div>
-                        <div>
-                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Result</p>
-                            <p className="text-2xl font-extrabold text-white">{result.score}</p>
-                        </div>
-                    </div>
-                    <div className="text-right max-w-[50%]">
-                        <p className="text-neuro-300 text-sm font-medium border-l-2 border-neuro-500 pl-3">
-                            {result.interpretation}
-                        </p>
-                    </div>
-                </div>
-            )}
-            
-            {!isComplete && (
-                <div className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-100 text-center text-slate-400">
-                    <p>Complete all {inputs.length} questions to see the result.</p>
-                </div>
-            )}
-          </>
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8 border-2 border-dashed border-gray-200 rounded-xl">
-            <Calculator size={48} className="mb-4 opacity-50" />
-            <p className="text-lg">Select a calculator from the menu to begin.</p>
-          </div>
+        {returnTo && (
+            <Link to={returnTo} className="inline-flex items-center text-sm font-semibold text-neuro-600 hover:text-neuro-800 bg-neuro-50 px-3 py-1.5 rounded-lg transition-colors border border-neuro-100 hover:border-neuro-200">
+                View Protocol Article
+            </Link>
         )}
       </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <div className="flex items-start justify-between mb-4">
+              <div>
+                  <h1 className="text-3xl font-bold text-slate-900 leading-tight">{activeCalc.name}</h1>
+                  <p className="text-slate-500 mt-2 max-w-xl leading-relaxed">{activeCalc.description}</p>
+              </div>
+              <button 
+                onClick={() => { setValues({}); setOpenInputId(null); }} 
+                className="p-2 text-slate-400 hover:text-neuro-500 hover:bg-neuro-50 rounded-full transition-all" 
+                title="Reset Calculator"
+              >
+                  <RefreshCw size={22} />
+              </button>
+          </div>
+          
+          <div className="mt-6 flex items-center text-sm text-slate-400">
+              <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div 
+                      className="h-full bg-neuro-500 transition-all duration-500 ease-out"
+                      style={{ width: `${(Object.keys(values).length / inputs.length) * 100}%` }}
+                  />
+              </div>
+              <span className="ml-4 font-bold text-slate-500">{Object.keys(values).length} / {inputs.length}</span>
+          </div>
+      </div>
+
+      {/* Step-by-Step Questions Accordion */}
+      <div className="space-y-3">
+        {inputs.map((input, index) => {
+          const isAnswered = values[input.id] !== undefined;
+          const isCurrent = index === activeIndex;
+          const isDisabled = !isAnswered && index > (firstUnansweredIndex === -1 ? inputs.length : firstUnansweredIndex);
+          
+          return (
+              <div 
+                  key={input.id} 
+                  className={`bg-white border rounded-2xl transition-all duration-300 ${
+                      isCurrent ? 'ring-2 ring-neuro-500 border-transparent shadow-lg' : 'border-gray-100'
+                  } ${isDisabled ? 'opacity-40 grayscale pointer-events-none' : 'opacity-100'}`}
+              >
+                  {/* Header */}
+                  <button
+                      onClick={() => !isDisabled && handleToggle(input.id, index)}
+                      disabled={isDisabled}
+                      className="w-full text-left p-5 flex items-center justify-between"
+                  >
+                      <div className="flex items-center space-x-4">
+                          <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black ${
+                              isAnswered ? 'bg-neuro-500 text-white' : 
+                              isCurrent ? 'bg-neuro-600 text-white shadow-md' : 'bg-gray-50 text-gray-300 border border-gray-100'
+                          }`}>
+                              {isAnswered ? <Check size={16} strokeWidth={3} /> : index + 1}
+                          </div>
+                          <span className={`text-base font-bold ${isCurrent ? 'text-slate-900' : 'text-slate-600'}`}>
+                              {input.label}
+                          </span>
+                      </div>
+                      
+                      {isAnswered && !isCurrent && (
+                          <div className="flex items-center space-x-2 text-neuro-600">
+                             <span className="text-sm font-bold bg-neuro-50 px-3 py-1 rounded-full border border-neuro-100 max-w-[200px] truncate">
+                                {getLabelForValue(input, values[input.id])}
+                             </span>
+                             <div className="w-5 h-5 rounded-full border-2 border-neuro-500 flex items-center justify-center">
+                                 <div className="w-2.5 h-2.5 rounded-full bg-neuro-500" />
+                             </div>
+                          </div>
+                      )}
+                  </button>
+
+                  {/* Expanded Options */}
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCurrent ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                      <div className="p-5 pt-0 border-t border-gray-50 mt-2">
+                          <div className="space-y-2">
+                              {input.type === 'boolean' ? (
+                                  <div className="grid grid-cols-2 gap-4">
+                                      {[true, false].map((opt) => (
+                                          <button
+                                              key={String(opt)}
+                                              onClick={() => handleSelect(input.id, opt)}
+                                              className={`p-5 rounded-xl border-2 text-center transition-all ${
+                                                  values[input.id] === opt 
+                                                      ? 'border-neuro-500 bg-neuro-50 text-neuro-700 font-bold ring-2 ring-neuro-200 ring-offset-2' 
+                                                      : 'border-gray-50 bg-gray-50/50 hover:border-neuro-200 hover:bg-white text-slate-600'
+                                              }`}
+                                          >
+                                              {opt ? 'Yes' : 'No'}
+                                          </button>
+                                      ))}
+                                  </div>
+                              ) : (
+                                  <div className="space-y-2">
+                                      {input.options?.map((opt) => (
+                                          <button
+                                              key={opt.value}
+                                              onClick={() => handleSelect(input.id, opt.value)}
+                                              className={`w-full p-5 rounded-xl border-2 text-left transition-all flex items-center justify-between group ${
+                                                  values[input.id] === opt.value 
+                                                      ? 'border-neuro-500 bg-neuro-50 shadow-sm' 
+                                                      : 'border-gray-50 bg-gray-50/50 hover:border-neuro-100 hover:bg-white'
+                                              }`}
+                                          >
+                                              <span className={`text-base font-semibold ${values[input.id] === opt.value ? 'text-neuro-900' : 'text-slate-700'}`}>
+                                                  {opt.label}
+                                              </span>
+                                              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                                  values[input.id] === opt.value ? 'border-neuro-500 bg-neuro-500 shadow-inner' : 'border-gray-200 group-hover:border-neuro-300'
+                                              }`}>
+                                                  {values[input.id] === opt.value && <Check size={14} className="text-white" strokeWidth={4} />}
+                                              </div>
+                                          </button>
+                                      ))}
+                                  </div>
+                              )}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          );
+        })}
+      </div>
+
+      {/* Result Card */}
+      {isComplete && result && (
+          <div className="sticky bottom-6 mt-10 bg-slate-900 rounded-3xl p-8 text-white flex items-center justify-between shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-500 ring-4 ring-white">
+              <div className="flex items-center space-x-6">
+                  <div className="bg-neuro-500 p-4 rounded-2xl shadow-lg ring-4 ring-slate-800">
+                      <CheckCircle2 size={32} className="text-white" />
+                  </div>
+                  <div>
+                      <p className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-1">Assessment Result</p>
+                      <p className="text-4xl font-black text-white tracking-tight">{result.score}</p>
+                  </div>
+              </div>
+              <div className="text-right max-w-[45%] border-l border-slate-700 pl-8">
+                  <p className="text-neuro-400 text-sm font-black uppercase tracking-wider mb-2">Interpretation</p>
+                  <p className="text-lg font-bold text-slate-100 leading-snug">
+                      {result.interpretation}
+                  </p>
+              </div>
+          </div>
+      )}
+      
+      {!isComplete && (
+          <div className="mt-12 py-10 bg-white rounded-3xl border border-dashed border-gray-200 text-center text-slate-400 shadow-inner">
+              <Calculator size={32} className="mx-auto mb-3 opacity-20" />
+              <p className="font-semibold">Complete assessment to view result</p>
+          </div>
+      )}
     </div>
   );
 };
