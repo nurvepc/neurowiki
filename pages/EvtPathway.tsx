@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Check, RotateCcw, Copy, Info, AlertCircle, ChevronRight, Brain, Clock, XCircle, Zap, Activity } from 'lucide-react';
+import { ArrowLeft, Check, RotateCcw, Copy, Info, AlertCircle, ChevronRight, Activity, Zap, XCircle } from 'lucide-react';
 
 // --- Types ---
 type Tri = "yes" | "no" | "unknown";
@@ -277,7 +277,7 @@ const EvtPathway: React.FC = () => {
     // Triage Hard Stops
     if (step === 1) {
         if (inputs.lvo === 'no' || inputs.mrs === 'no' || inputs.age === 'under_18') {
-             // Let user proceed to see the 'Not Eligible' screen result, so do nothing here, just go next
+             // Let user proceed to see the 'Not Eligible' screen result
         }
     }
     if (step < 4) setStep(step + 1);
@@ -344,7 +344,7 @@ ${result.details}
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Thrombectomy Pathway</h1>
         </div>
-        <p className="text-slate-500 font-medium">Eligibility screening for Early (0-6h) and Late (6-24h) Window EVT.</p>
+        <p className="text-slate-500 font-medium">Eligibility screening for Early (0-6h) and Late (6-24h) EVT.</p>
       </div>
 
       {/* Progress */}
@@ -368,7 +368,7 @@ ${result.details}
         {/* STEP 1: TRIAGE */}
         {step === 1 && (
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                <div ref={el => fieldRefs.current['lvo'] = el}>
+                <div ref={el => { fieldRefs.current['lvo'] = el; }}>
                     <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Vessel Status</h3>
                     <div className="grid grid-cols-1 gap-3">
                          <SelectionCard 
@@ -387,7 +387,7 @@ ${result.details}
                 </div>
 
                 {inputs.lvo === 'yes' && (
-                    <div ref={el => fieldRefs.current['mrs'] = el} className="animate-in fade-in slide-in-from-top-2">
+                    <div ref={el => { fieldRefs.current['mrs'] = el; }} className="animate-in fade-in slide-in-from-top-2">
                         <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide mt-6">Functional Baseline</h3>
                         <div className="grid grid-cols-1 gap-3">
                             <SelectionCard 
@@ -407,7 +407,7 @@ ${result.details}
                 )}
 
                 {inputs.mrs === 'yes' && (
-                     <div ref={el => fieldRefs.current['age'] = el} className="animate-in fade-in slide-in-from-top-2">
+                     <div ref={el => { fieldRefs.current['age'] = el; }} className="animate-in fade-in slide-in-from-top-2">
                         <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide mt-6">Age Group</h3>
                         <div className="grid grid-cols-3 gap-3">
                             <button onClick={() => updateInput('age', 'under_18')} className={`p-4 rounded-xl border-2 font-bold transition-all ${inputs.age === 'under_18' ? 'border-neuro-500 bg-neuro-50 text-neuro-900' : 'bg-white border-gray-100'}`}>&lt; 18</button>
@@ -432,7 +432,7 @@ ${result.details}
         {/* STEP 2: CLINICAL */}
         {step === 2 && (
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                <div ref={el => fieldRefs.current['time'] = el}>
+                <div ref={el => { fieldRefs.current['time'] = el; }}>
                     <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Time from Last Known Well</h3>
                     <div className="grid grid-cols-1 gap-3">
                         <SelectionCard 
@@ -450,7 +450,7 @@ ${result.details}
                     </div>
                 </div>
                 
-                <div ref={el => fieldRefs.current['nihss'] = el} className="pt-4">
+                <div ref={el => { fieldRefs.current['nihss'] = el; }} className="pt-4">
                     <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">NIH Stroke Scale</h3>
                     <div className="grid grid-cols-2 gap-3">
                         <SelectionCard title="0 - 5" description="Mild" selected={inputs.nihss === '0_5'} onClick={() => updateInput('nihss', '0_5')} />
@@ -467,7 +467,7 @@ ${result.details}
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
                 
                 {inputs.time === '0_6' && (
-                    <div ref={el => fieldRefs.current['aspects'] = el}>
+                    <div ref={el => { fieldRefs.current['aspects'] = el; }}>
                         <div className="bg-blue-50 p-4 rounded-xl text-blue-900 text-sm mb-6 border border-blue-100">
                             <h4 className="font-bold flex items-center mb-2"><Info size={16} className="mr-2"/> Early Window Imaging</h4>
                             <p>Enter ASPECTS score from non-contrast CT.</p>
@@ -491,7 +491,7 @@ ${result.details}
                         </div>
 
                         <div className="space-y-4">
-                            <div ref={el => fieldRefs.current['core'] = el}>
+                            <div ref={el => { fieldRefs.current['core'] = el; }}>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Ischemic Core Volume (ml)</label>
                                 <input 
                                     type="number"
@@ -502,7 +502,7 @@ ${result.details}
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div ref={el => fieldRefs.current['mismatchVol'] = el}>
+                                <div ref={el => { fieldRefs.current['mismatchVol'] = el; }}>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Volume (ml)</label>
                                     <input 
                                         type="number"
@@ -512,7 +512,7 @@ ${result.details}
                                         onChange={(e) => updateInput('mismatchVol', e.target.value)}
                                     />
                                 </div>
-                                <div ref={el => fieldRefs.current['mismatchRatio'] = el}>
+                                <div ref={el => { fieldRefs.current['mismatchRatio'] = el; }}>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Ratio</label>
                                     <input 
                                         type="number" step="0.1"
@@ -579,10 +579,16 @@ ${result.details}
                             </li>
                         )}
                         {inputs.time === '6_24' && (
-                             <li className="flex justify-between">
-                                <span>Perfusion Profile</span>
-                                <span className="font-bold">Core {inputs.core || '--'}ml / Ratio {inputs.mismatchRatio || '--'}</span>
-                            </li>
+                            <>
+                                <li className="flex justify-between border-b border-gray-50 pb-2">
+                                    <span>Core Volume</span>
+                                    <span className="font-bold">{inputs.core || '--'} ml</span>
+                                </li>
+                                <li className="flex justify-between">
+                                    <span>Mismatch Ratio</span>
+                                    <span className="font-bold">{inputs.mismatchRatio || '--'}</span>
+                                </li>
+                            </>
                         )}
                      </ul>
                 </div>
@@ -591,7 +597,7 @@ ${result.details}
                     <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
                     <div>
                         <strong>Decision Support Only.</strong>
-                        <p className="mt-1">Based on AHA/ASA Guidelines (2019), DAWN, DEFUSE-3, and SELECT2 trials. Always consult Neurointerventionist.</p>
+                        <p className="mt-1">Based on AHA/ASA Guidelines and major trials (DAWN, DEFUSE-3, SELECT2). Always verify clinical details.</p>
                     </div>
                 </div>
              </div>
@@ -640,6 +646,23 @@ ${result.details}
             </div>
          )}
       </div>
+
+      {/* References */}
+      {step === 4 && (
+          <div className="mt-12 border-t border-gray-100 pt-8 pb-8">
+              <h3 className="text-sm font-bold text-slate-900 mb-4">References</h3>
+              <ul className="space-y-3 text-xs text-slate-500">
+                  <li className="flex items-start">
+                      <span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded mr-2 font-mono">1</span>
+                      DAWN & DEFUSE 3 Trials (2018): Extended window thrombectomy.
+                  </li>
+                  <li className="flex items-start">
+                      <span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded mr-2 font-mono">2</span>
+                      SELECT2 & ANGEL-ASPECT (2023): Large core thrombectomy.
+                  </li>
+              </ul>
+          </div>
+      )}
     </div>
   );
 };

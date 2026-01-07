@@ -274,7 +274,7 @@ Early versus Later Anticoagulation for Stroke with Atrial Fibrillation (ELAN Tri
         {/* STEP 1: ELIGIBILITY */}
         {step === 1 && (
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                <div ref={el => fieldRefs.current['isIschemicAfib'] = el}>
+                <div ref={el => { fieldRefs.current['isIschemicAfib'] = el; }}>
                     <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Inclusion</h3>
                     <div className="grid grid-cols-1 gap-3">
                          <SelectionCard 
@@ -292,7 +292,7 @@ Early versus Later Anticoagulation for Stroke with Atrial Fibrillation (ELAN Tri
                 </div>
 
                 {inputs.isIschemicAfib === 'yes' && (
-                    <div ref={el => fieldRefs.current['hasBleed'] = el} className="animate-in fade-in slide-in-from-top-2">
+                    <div ref={el => { fieldRefs.current['hasBleed'] = el; }} className="animate-in fade-in slide-in-from-top-2">
                         <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide mt-6">Exclusion</h3>
                         <div className="grid grid-cols-1 gap-3">
                             <SelectionCard 
@@ -337,7 +337,7 @@ Early versus Later Anticoagulation for Stroke with Atrial Fibrillation (ELAN Tri
                 </div>
                 
                 <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Select Stroke Classification</h3>
-                <div className="grid gap-3" ref={el => fieldRefs.current['size'] = el}>
+                <div className="grid gap-3" ref={el => { fieldRefs.current['size'] = el; }}>
                     <SelectionCard 
                         title="Minor"
                         description="≤ 1.5 cm anterior or posterior circulation"
@@ -364,7 +364,7 @@ Early versus Later Anticoagulation for Stroke with Atrial Fibrillation (ELAN Tri
         {step === 3 && (
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
                 <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Stroke Onset</h3>
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm" ref={el => fieldRefs.current['onset'] = el}>
+                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm" ref={el => { fieldRefs.current['onset'] = el; }}>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Date of Onset</label>
                     <input 
                         type="date" 

@@ -10,6 +10,7 @@ import TrialsPage from './pages/TrialsPage';
 import GCAPathway from './pages/GCAPathway';
 import ElanPathway from './pages/ElanPathway';
 import EvtPathway from './pages/EvtPathway';
+import StatusEpilepticusPathway from './pages/StatusEpilepticusPathway';
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           <Route path="/calculators/gca-pathway" element={<GCAPathway />} />
           <Route path="/calculators/elan-pathway" element={<ElanPathway />} />
           <Route path="/calculators/evt-pathway" element={<EvtPathway />} />
+          <Route path="/calculators/se-pathway" element={<StatusEpilepticusPathway />} />
           <Route path="/guide" element={<ResidentGuide context="guide" />} />
           <Route path="/guide/:topicId" element={<ResidentGuide context="guide" />} />
           <Route path="/trials" element={<TrialsPage />} />

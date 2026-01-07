@@ -528,7 +528,7 @@ Early initiation of DOAC treatment was non-inferior and appeared safe compared t
     category: 'Vascular Neurology',
     content: `
 ## Indications
-Use the **[Thrombectomy Calculator](/calculators?id=evt&returnTo=/guide/thrombectomy)** to stratify patients by trial criteria.
+Use the **[Thrombectomy Calculator](/calculators/evt-pathway)** to stratify patients by trial criteria.
 
 *   **Occlusion:** Proximal Large Vessel Occlusion (LVO) in Anterior Circulation (ICA, M1).
 *   **Pre-stroke Function:** mRS 0-1 (Independent).

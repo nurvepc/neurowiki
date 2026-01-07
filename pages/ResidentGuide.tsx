@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical, AlertCircle } from 'lucide-react';
+import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical, AlertCircle, Zap } from 'lucide-react';
 import { GUIDE_CONTENT } from '../data/guideContent';
 
 const generateSlug = (text: string) => {
@@ -294,7 +294,15 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                          <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase border mb-4 inline-block ${isTrialMode ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-neuro-50 text-neuro-700 border-neuro-100'}`}>
                             {currentTopic.category}
                          </span>
-                         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">{currentTopic.title}</h1>
+                         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">{currentTopic.title}</h1>
+                         
+                         {currentTopic.id === 'thrombectomy' && (
+                             <Link to="/calculators/evt-pathway" className="inline-flex items-center px-6 py-3 bg-neuro-600 text-white font-bold rounded-xl shadow-lg shadow-neuro-200 hover:bg-neuro-700 transition-all active:scale-95 group">
+                                <Zap size={18} className="mr-2 fill-white" />
+                                Launch Thrombectomy Pathway
+                                <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
+                             </Link>
+                         )}
                       </div>
 
                       {/* Content Sections (Accordion on Mobile, Full on Desktop) */}

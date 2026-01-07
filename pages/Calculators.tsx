@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { CalculatorDefinition } from '../types';
-import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Activity, Brain, Zap } from 'lucide-react';
+import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Activity, Brain, Zap, Timer } from 'lucide-react';
 
 // --- CALCULATOR DEFINITIONS ---
 
@@ -390,7 +390,6 @@ const ROPE_CALC: CalculatorDefinition = {
   }
 };
 
-// Removed EVT_CALC from here as it's now a standalone pathway
 const CALCULATORS = [
   NIHSS_CALC, 
   ABCD2_CALC, 
@@ -582,6 +581,24 @@ const Calculators: React.FC = () => {
 
           <div className="space-y-4">
               {/* Specialized Pathways (Routes) */}
+              <Link
+                  to="/calculators/se-pathway"
+                  className="group flex items-center justify-between bg-gradient-to-br from-red-900 to-red-800 p-5 rounded-2xl shadow-lg border border-red-700 hover:shadow-xl hover:scale-[1.01] transition-all"
+              >
+                  <div className="flex items-center space-x-5">
+                      <div className="p-3 bg-white/10 rounded-xl text-white group-hover:bg-white group-hover:text-red-900 transition-all shadow-inner flex-shrink-0">
+                          <Timer size={24} className="fill-white group-hover:fill-red-900 transition-colors" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-1">Status Epilepticus Pathway</h3>
+                        <p className="text-red-200 text-sm font-medium leading-snug">Comorbidity-aware decision support for Stage 1-3 SE.</p>
+                      </div>
+                  </div>
+                  <div className="pl-4 text-red-300 group-hover:text-white transition-colors">
+                    <ChevronRight size={20} />
+                  </div>
+              </Link>
+
               <Link
                   to="/calculators/evt-pathway"
                   className="group flex items-center justify-between bg-gradient-to-br from-neuro-900 to-neuro-800 p-5 rounded-2xl shadow-lg border border-neuro-700 hover:shadow-xl hover:scale-[1.01] transition-all"
