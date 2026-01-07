@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical } from 'lucide-react';
+import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical, AlertCircle } from 'lucide-react';
 import { GUIDE_CONTENT } from '../data/guideContent';
 
 const generateSlug = (text: string) => {
@@ -333,6 +333,14 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                                </div>
                              );
                           })}
+                      </div>
+
+                      {/* Disclaimer Footer */}
+                      <div className="mt-12 pt-8 border-t border-gray-100 text-center">
+                        <div className="inline-flex items-center space-x-2 bg-slate-50 px-4 py-2 rounded-full border border-gray-100/50">
+                           <AlertCircle size={12} className="text-slate-400" />
+                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Decision Support Only • Not Medical Advice</span>
+                        </div>
                       </div>
                   </div>
                 </div>

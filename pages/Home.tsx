@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, ChevronRight, Calculator, User, Zap, FlaskConical, Activity } from 'lucide-react';
+import { Brain, ChevronRight, Calculator, User, Zap, Activity } from 'lucide-react';
 
 const categories = [
   { 
@@ -103,56 +103,65 @@ const categories = [
 ];
 
 const featuredCalculators = [
-  { id: 'gcs', name: 'Glasgow Coma Scale', desc: 'Assess level of consciousness after TBI' },
-  { id: 'abcd2', name: 'ABCD² Score', desc: 'Estimate stroke risk after TIA' },
-  { id: 'evt', name: 'Thrombectomy Tool', desc: 'EVT eligibility & trial stratification' },
+  { id: 'gcs', name: 'Glasgow Coma Scale', desc: 'Assess level of consciousness' },
+  { id: 'abcd2', name: 'ABCD² Score', desc: 'TIA stroke risk' },
+  { id: 'evt', name: 'Thrombectomy Tool', desc: 'Eligibility & trials' },
 ];
 
 const Home: React.FC = () => {
   return (
-    <div className="space-y-10">
-      {/* Hero Section */}
-      <section className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-neuro-50 rounded-full opacity-30 blur-3xl"></div>
-        <div className="max-w-2xl space-y-6 relative z-10">
-          <h1 className="text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-            The Digital <span className="text-neuro-600">Neurology</span> Companion
-          </h1>
-          <p className="text-xl text-slate-600 leading-relaxed">
-            Welcome to NeuroWiki. Access comprehensive neurological protocols, clinical calculators, and hospital guidelines instantly.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link to="/wiki/Stroke" className="px-5 py-2.5 bg-gray-50 text-slate-700 rounded-full text-sm font-semibold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-200">Search: Stroke</Link>
-            <Link to="/wiki/Sclerosis" className="px-5 py-2.5 bg-gray-50 text-slate-700 rounded-full text-sm font-semibold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-200">Search: Sclerosis</Link>
-            <Link to="/wiki/Meningitis" className="px-5 py-2.5 bg-gray-50 text-slate-700 rounded-full text-sm font-semibold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-200">Search: Meningitis</Link>
-          </div>
-        </div>
-        <div className="hidden lg:block relative z-10">
-            <div className="w-56 h-56 bg-white rounded-full flex items-center justify-center shadow-xl border border-neuro-50">
-                <Brain size={100} className="text-neuro-500 animate-pulse" />
+    <div className="space-y-6 md:space-y-10">
+      {/* Hero Section - Optimized for Mobile */}
+      <section className="bg-white rounded-2xl md:p-10 p-6 shadow-sm border border-gray-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-32 md:w-64 h-32 md:h-64 bg-neuro-50 rounded-full opacity-30 blur-2xl md:blur-3xl"></div>
+        <div className="flex flex-col md:flex-row items-center justify-between relative z-10">
+          <div className="max-w-2xl space-y-4 md:space-y-6 text-center md:text-left">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+              The Digital <span className="text-neuro-600">Neurology</span> Companion
+            </h1>
+            <p className="text-base md:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto md:mx-0">
+              Protocols, calculators, and guidelines for Neurologists.
+            </p>
+            
+            {/* Quick Search Chips - Organized & Compact */}
+            <div className="pt-2">
+              <span className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 md:mb-3">Quick Search</span>
+              <div className="flex flex-wrap justify-center md:justify-start gap-2">
+                <Link to="/wiki/Stroke" className="px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-100">Stroke</Link>
+                <Link to="/wiki/Sclerosis" className="px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-100">MS</Link>
+                <Link to="/wiki/Epilepsy" className="px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-100">Epilepsy</Link>
+                <Link to="/wiki/Meningitis" className="px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-100">Meningitis</Link>
+              </div>
             </div>
+          </div>
+          
+          <div className="hidden lg:block">
+              <div className="w-48 h-48 bg-white rounded-full flex items-center justify-center shadow-xl border border-neuro-50">
+                  <Brain size={80} className="text-neuro-500 animate-pulse" />
+              </div>
+          </div>
         </div>
       </section>
 
       {/* Categories Grid */}
       <section>
-        <div className="flex items-center justify-between mb-8 px-2">
-            <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Browse by Subspecialty</h2>
+        <div className="flex items-center justify-between mb-6 px-2">
+            <h2 className="text-lg md:text-2xl font-black text-slate-900 uppercase tracking-tight">Subspecialties</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {categories.map((cat) => (
             <Link 
               key={cat.name} 
               to={`/wiki/${cat.name}`} 
-              className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-neuro-200 hover:-translate-y-1 transition-all group"
+              className="bg-white p-5 md:p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-neuro-200 hover:-translate-y-1 transition-all group"
             >
-              <div className="flex items-center space-x-5">
-                <div className="p-4 bg-gray-50 rounded-2xl group-hover:bg-neuro-50 transition-colors flex items-center justify-center w-16 h-16 shadow-inner">
+              <div className="flex items-center space-x-4 md:space-x-5">
+                <div className="p-3 md:p-4 bg-gray-50 rounded-2xl group-hover:bg-neuro-50 transition-colors flex items-center justify-center w-12 h-12 md:w-16 md:h-16 shadow-inner">
                   {cat.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-neuro-600 transition-colors">{cat.name}</h3>
-                  <p className="text-sm text-slate-500 mt-1 font-medium">{cat.desc}</p>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 group-hover:text-neuro-600 transition-colors leading-tight">{cat.name}</h3>
+                  <p className="text-xs md:text-sm text-slate-500 mt-0.5 font-medium">{cat.desc}</p>
                 </div>
               </div>
             </Link>
@@ -162,22 +171,22 @@ const Home: React.FC = () => {
 
       {/* Calculators Quick Access */}
       <section className="pb-10">
-        <div className="flex items-center justify-between mb-8 px-2">
-            <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Clinical Calculators</h2>
-            <Link to="/calculators" className="text-neuro-600 text-sm font-bold hover:text-neuro-800 flex items-center bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 transition-all">
-                View all <ChevronRight size={18} className="ml-1" />
+        <div className="flex items-center justify-between mb-6 px-2">
+            <h2 className="text-lg md:text-2xl font-black text-slate-900 uppercase tracking-tight">Calculators</h2>
+            <Link to="/calculators" className="text-neuro-600 text-[10px] md:text-sm font-bold hover:text-neuro-800 flex items-center bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl shadow-sm border border-gray-100 transition-all uppercase tracking-wider">
+                All <ChevronRight size={14} className="ml-1" />
             </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {featuredCalculators.map(calc => (
-                <Link key={calc.id} to={`/calculators?id=${calc.id}`} className="block bg-white rounded-2xl border border-gray-100 p-7 shadow-sm hover:shadow-lg hover:border-neuro-200 transition-all group">
-                    <div className="flex items-center space-x-3 mb-4">
-                        <div className="p-2 bg-neuro-50 rounded-lg text-neuro-500 group-hover:bg-neuro-500 group-hover:text-white transition-all">
-                            <Calculator size={22} />
+                <Link key={calc.id} to={`/calculators?id=${calc.id}`} className="block bg-white rounded-2xl border border-gray-100 p-5 md:p-7 shadow-sm hover:shadow-lg hover:border-neuro-200 transition-all group">
+                    <div className="flex items-center space-x-3 mb-3">
+                        <div className="p-2 bg-neuro-50 rounded-lg text-neuro-500 group-hover:bg-neuro-600 group-hover:text-white transition-all">
+                            <Calculator size={18} />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-800 group-hover:text-neuro-600 transition-colors">{calc.name}</h3>
+                        <h3 className="text-base md:text-lg font-bold text-slate-800 group-hover:text-neuro-600 transition-colors">{calc.name}</h3>
                     </div>
-                    <p className="text-sm text-slate-500 font-medium leading-relaxed">{calc.desc}</p>
+                    <p className="text-xs md:text-sm text-slate-500 font-medium leading-relaxed">{calc.desc}</p>
                 </Link>
             ))}
         </div>

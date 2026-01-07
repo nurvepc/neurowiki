@@ -2,102 +2,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { CalculatorDefinition } from '../types';
-import { Calculator, ChevronRight, RefreshCw, ArrowLeft } from 'lucide-react';
+import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Activity, Brain } from 'lucide-react';
 
 // --- CALCULATOR DEFINITIONS ---
-const GCS_CALC: CalculatorDefinition = {
-  id: 'gcs',
-  name: 'Glasgow Coma Scale (GCS)',
-  description: 'Assess level of consciousness',
-  inputs: [
-    {
-      id: 'eye',
-      label: 'Eye Opening Response',
-      type: 'select',
-      options: [
-        { value: 4, label: 'Spontaneously (4)' },
-        { value: 3, label: 'To speech (3)' },
-        { value: 2, label: 'To pain (2)' },
-        { value: 1, label: 'No response (1)' }
-      ]
-    },
-    {
-      id: 'verbal',
-      label: 'Verbal Response',
-      type: 'select',
-      options: [
-        { value: 5, label: 'Oriented to time, place, and person (5)' },
-        { value: 4, label: 'Confused (4)' },
-        { value: 3, label: 'Inappropriate words (3)' },
-        { value: 2, label: 'Incomprehensible sounds (2)' },
-        { value: 1, label: 'No response (1)' }
-      ]
-    },
-    {
-      id: 'motor',
-      label: 'Motor Response',
-      type: 'select',
-      options: [
-        { value: 6, label: 'Obeys commands (6)' },
-        { value: 5, label: 'Moves to localized pain (5)' },
-        { value: 4, label: 'Flexion withdrawal from pain (4)' },
-        { value: 3, label: 'Abnormal flexion (decorticate) (3)' },
-        { value: 2, label: 'Abnormal extension (decerebrate) (2)' },
-        { value: 1, label: 'No response (1)' }
-      ]
-    }
-  ],
-  calculate: (values) => {
-    const score = (Number(values.eye) || 0) + (Number(values.verbal) || 0) + (Number(values.motor) || 0);
-    let interp = "Severe Brain Injury (Coma)";
-    if (score >= 13) interp = "Minor Brain Injury";
-    else if (score >= 9) interp = "Moderate Brain Injury";
-    return { score, interpretation: interp };
-  }
-};
-
-const ABCD2_CALC: CalculatorDefinition = {
-  id: 'abcd2',
-  name: 'ABCD² Score for TIA',
-  description: 'Estimates the risk of stroke within 2 days after a Transient Ischemic Attack (TIA).',
-  inputs: [
-    { id: 'age', label: 'Age >= 60 years', type: 'boolean' },
-    { id: 'bp', label: 'BP >= 140/90 mmHg', type: 'boolean' },
-    {
-      id: 'clinical',
-      label: 'Clinical Features',
-      type: 'select',
-      options: [
-        { value: 2, label: 'Unilateral weakness (2)' },
-        { value: 1, label: 'Speech impairment without weakness (1)' },
-        { value: 0, label: 'Other symptoms (0)' }
-      ]
-    },
-    {
-      id: 'duration',
-      label: 'Duration of Symptoms',
-      type: 'select',
-      options: [
-        { value: 2, label: '>= 60 minutes (2)' },
-        { value: 1, label: '10-59 minutes (1)' },
-        { value: 0, label: '< 10 minutes (0)' }
-      ]
-    },
-    { id: 'diabetes', label: 'Diabetes', type: 'boolean' }
-  ],
-  calculate: (values) => {
-    let score = 0;
-    if (values.age) score += 1;
-    if (values.bp) score += 1;
-    if (values.diabetes) score += 1;
-    score += Number(values.clinical || 0);
-    score += Number(values.duration || 0);
-    let risk = "Low Risk (1.0% 2-day stroke risk)";
-    if (score >= 6) risk = "High Risk (8.1% 2-day stroke risk)";
-    else if (score >= 4) risk = "Moderate Risk (4.1% 2-day stroke risk)";
-    return { score, interpretation: risk };
-  }
-};
 
 const NIHSS_CALC: CalculatorDefinition = {
   id: 'nihss',
@@ -269,60 +176,23 @@ const NIHSS_CALC: CalculatorDefinition = {
   ],
   calculate: (values) => {
     let score = 0;
-    // Sum all keys
     Object.keys(values).forEach(key => {
         score += Number(values[key] || 0);
     });
-    
     let interpretation = "";
     if (score === 0) interpretation = "No stroke symptoms";
     else if (score <= 4) interpretation = "Minor stroke";
     else if (score <= 15) interpretation = "Moderate stroke";
     else if (score <= 20) interpretation = "Moderate to severe stroke";
     else interpretation = "Severe stroke";
-
     return { score, interpretation };
-  }
-};
-
-const ICH_CALC: CalculatorDefinition = {
-  id: 'ich',
-  name: 'ICH Score',
-  description: 'Predicts 30-day mortality for intracerebral hemorrhage.',
-  inputs: [
-    {
-      id: 'gcs',
-      label: 'GCS Score',
-      type: 'select',
-      options: [
-        { value: 2, label: '3 - 4 (2 points)' },
-        { value: 1, label: '5 - 12 (1 point)' },
-        { value: 0, label: '13 - 15 (0 points)' }
-      ]
-    },
-    { id: 'volume', label: 'ICH Volume ≥ 30 cm³', type: 'boolean' },
-    { id: 'ivh', label: 'Intraventricular Hemorrhage (IVH)', type: 'boolean' },
-    { id: 'infra', label: 'Infratentorial Origin', type: 'boolean' },
-    { id: 'age', label: 'Age ≥ 80 years', type: 'boolean' }
-  ],
-  calculate: (values) => {
-    let score = (Number(values.gcs) || 0);
-    if (values.volume) score += 1;
-    if (values.ivh) score += 1;
-    if (values.infra) score += 1;
-    if (values.age) score += 1;
-    
-    const mortality = [0, 13, 26, 72, 97, 100, 100]; // approx %
-    const est = mortality[score] || 100;
-    
-    return { score, interpretation: `Approx. 30-day mortality: ${est}%` };
   }
 };
 
 const EVT_CALC: CalculatorDefinition = {
   id: 'evt',
   name: 'Thrombectomy Eligibility',
-  description: 'Screening tool for Endovascular Thrombectomy (EVT) including Late Window (DAWN/DEFUSE-3) perfusion criteria.',
+  description: 'Screening tool for Endovascular Thrombectomy (EVT) including Late Window (DAWN/DEFUSE-3) and Large Core LVO perfusion criteria.',
   inputs: [
     {
       id: 'age',
@@ -362,9 +232,9 @@ const EVT_CALC: CalculatorDefinition = {
     { id: 'ratio', label: 'CTP Mismatch Ratio (6-24h)', type: 'number', min: 0 }
   ],
   calculate: (values) => {
-    const ageCat = Number(values.age); // 0: <18, 1: 18-79, 2: >=80
-    const nihssCat = Number(values.nihss); // 0: <6, 1: 6-9, 2: 10-19, 3: >=20
-    const time = Number(values.time); // 0: 0-6h, 1: 6-24h
+    const ageCat = Number(values.age);
+    const nihssCat = Number(values.nihss);
+    const time = Number(values.time);
     const lvo = values.lvo;
     const mrs = values.mrs;
     
@@ -372,13 +242,10 @@ const EVT_CALC: CalculatorDefinition = {
     if (!mrs) return { score: 'Excluded', interpretation: 'Pre-stroke disability (mRS > 1).' };
     if (ageCat === 0) return { score: 'Excluded', interpretation: 'Age < 18.' };
     
-    // 0-6h
     if (time === 0) {
         const aspects = values.aspects !== undefined && values.aspects !== "" ? Number(values.aspects) : null;
         if (aspects === null) return { score: 'Pending', interpretation: 'Enter ASPECTS score.' };
-        
         if (nihssCat === 0) return { score: 'Clinical Judgment', interpretation: 'NIHSS < 6. Standard criteria require ≥ 6, but may treat if deficit is disabling.' };
-        
         if (aspects >= 6) return { score: 'Eligible (Class I)', interpretation: 'Meets standard Early Window criteria (ASPECTS ≥ 6).' };
         if (aspects >= 3) return { 
             score: 'Eligible (Large Core)', 
@@ -391,22 +258,14 @@ const EVT_CALC: CalculatorDefinition = {
         return { score: 'Consult', interpretation: 'Very Large Core (ASPECTS < 3). Benefit uncertain.' };
     }
     
-    // 6-24h
     if (time === 1) {
         const core = values.core !== undefined && values.core !== "" ? Number(values.core) : null;
         if (core === null) return { score: 'Pending', interpretation: 'Enter CTP Core Volume.' };
-        
         if (nihssCat === 0) return { score: 'Not Eligible', interpretation: 'NIHSS < 6. Does not meet DAWN (≥10) or DEFUSE-3 (≥6) inclusion.' };
         
-        // DAWN (6-24h)
         let dawn = false;
-        // Group A: Age >= 80 (cat 2), NIHSS >= 10 (cat 2,3), Core < 21
         if (ageCat === 2 && nihssCat >= 2 && core < 21) dawn = true;
-        
-        // Group B: Age < 80 (cat 1), NIHSS >= 10 (cat 2,3), Core < 31
         else if (ageCat === 1 && nihssCat >= 2 && core < 31) dawn = true;
-        
-        // Group C: Age < 80 (cat 1), NIHSS >= 20 (cat 3), Core < 51
         else if (ageCat === 1 && nihssCat === 3 && core < 51) dawn = true;
         
         if (dawn) return { 
@@ -418,7 +277,6 @@ const EVT_CALC: CalculatorDefinition = {
             )
         };
 
-        // DEFUSE 3 (6-16h) - apply generally
         const mismatch = values.mismatch !== undefined && values.mismatch !== "" ? Number(values.mismatch) : 0;
         const ratio = values.ratio !== undefined && values.ratio !== "" ? Number(values.ratio) : 0;
         
@@ -432,11 +290,84 @@ const EVT_CALC: CalculatorDefinition = {
                 )
             };
         }
-        
         return { score: 'Not Eligible', interpretation: 'Does not meet DAWN or DEFUSE-3 perfusion criteria.' };
     }
-    
     return { score: 'Incomplete', interpretation: 'Select a time window.' };
+  }
+};
+
+const ABCD2_CALC: CalculatorDefinition = {
+  id: 'abcd2',
+  name: 'ABCD² Score for TIA',
+  description: 'Estimates the risk of stroke within 2 days after a Transient Ischemic Attack (TIA).',
+  inputs: [
+    { id: 'age', label: 'Age >= 60 years', type: 'boolean' },
+    { id: 'bp', label: 'BP >= 140/90 mmHg', type: 'boolean' },
+    {
+      id: 'clinical',
+      label: 'Clinical Features',
+      type: 'select',
+      options: [
+        { value: 2, label: 'Unilateral weakness (2)' },
+        { value: 1, label: 'Speech impairment without weakness (1)' },
+        { value: 0, label: 'Other symptoms (0)' }
+      ]
+    },
+    {
+      id: 'duration',
+      label: 'Duration of Symptoms',
+      type: 'select',
+      options: [
+        { value: 2, label: '>= 60 minutes (2)' },
+        { value: 1, label: '10-59 minutes (1)' },
+        { value: 0, label: '< 10 minutes (0)' }
+      ]
+    },
+    { id: 'diabetes', label: 'Diabetes', type: 'boolean' }
+  ],
+  calculate: (values) => {
+    let score = 0;
+    if (values.age) score += 1;
+    if (values.bp) score += 1;
+    if (values.diabetes) score += 1;
+    score += Number(values.clinical || 0);
+    score += Number(values.duration || 0);
+    let risk = "Low Risk (1.0% 2-day stroke risk)";
+    if (score >= 6) risk = "High Risk (8.1% 2-day stroke risk)";
+    else if (score >= 4) risk = "Moderate Risk (4.1% 2-day stroke risk)";
+    return { score, interpretation: risk };
+  }
+};
+
+const ICH_CALC: CalculatorDefinition = {
+  id: 'ich',
+  name: 'ICH Score',
+  description: 'Predicts 30-day mortality for intracerebral hemorrhage.',
+  inputs: [
+    {
+      id: 'gcs',
+      label: 'GCS Score',
+      type: 'select',
+      options: [
+        { value: 2, label: '3 - 4 (2 points)' },
+        { value: 1, label: '5 - 12 (1 point)' },
+        { value: 0, label: '13 - 15 (0 points)' }
+      ]
+    },
+    { id: 'volume', label: 'ICH Volume ≥ 30 cm³', type: 'boolean' },
+    { id: 'ivh', label: 'Intraventricular Hemorrhage (IVH)', type: 'boolean' },
+    { id: 'infra', label: 'Infratentorial Origin', type: 'boolean' },
+    { id: 'age', label: 'Age ≥ 80 years', type: 'boolean' }
+  ],
+  calculate: (values) => {
+    let score = (Number(values.gcs) || 0);
+    if (values.volume) score += 1;
+    if (values.ivh) score += 1;
+    if (values.infra) score += 1;
+    if (values.age) score += 1;
+    const mortality = [0, 13, 26, 72, 97, 100, 100];
+    const est = mortality[score] || 100;
+    return { score, interpretation: `Approx. 30-day mortality: ${est}%` };
   }
 };
 
@@ -466,11 +397,60 @@ const HAS_BLED_CALC: CalculatorDefinition = {
     if (values.elderly) score++;
     if (values.drugs) score++;
     if (values.alcohol) score++;
-
     let risk = "Low Risk (approx 1% risk/year)";
     if (score >= 3) risk = "High Risk (Consider alternatives or closer monitoring)";
-    
     return { score, interpretation: risk };
+  }
+};
+
+const GCS_CALC: CalculatorDefinition = {
+  id: 'gcs',
+  name: 'Glasgow Coma Scale (GCS)',
+  description: 'Assess level of consciousness',
+  inputs: [
+    {
+      id: 'eye',
+      label: 'Eye Opening Response',
+      type: 'select',
+      options: [
+        { value: 4, label: 'Spontaneously (4)' },
+        { value: 3, label: 'To speech (3)' },
+        { value: 2, label: 'To pain (2)' },
+        { value: 1, label: 'No response (1)' }
+      ]
+    },
+    {
+      id: 'verbal',
+      label: 'Verbal Response',
+      type: 'select',
+      options: [
+        { value: 5, label: 'Oriented to time, place, and person (5)' },
+        { value: 4, label: 'Confused (4)' },
+        { value: 3, label: 'Inappropriate words (3)' },
+        { value: 2, label: 'Incomprehensible sounds (2)' },
+        { value: 1, label: 'No response (1)' }
+      ]
+    },
+    {
+      id: 'motor',
+      label: 'Motor Response',
+      type: 'select',
+      options: [
+        { value: 6, label: 'Obeys commands (6)' },
+        { value: 5, label: 'Moves to localized pain (5)' },
+        { value: 4, label: 'Flexion withdrawal from pain (4)' },
+        { value: 3, label: 'Abnormal flexion (decorticate) (3)' },
+        { value: 2, label: 'Abnormal extension (decerebrate) (2)' },
+        { value: 1, label: 'No response (1)' }
+      ]
+    }
+  ],
+  calculate: (values) => {
+    const score = (Number(values.eye) || 0) + (Number(values.verbal) || 0) + (Number(values.motor) || 0);
+    let interp = "Severe Brain Injury (Coma)";
+    if (score >= 13) interp = "Minor Brain Injury";
+    else if (score >= 9) interp = "Moderate Brain Injury";
+    return { score, interpretation: interp };
   }
 };
 
@@ -506,7 +486,6 @@ const ROPE_CALC: CalculatorDefinition = {
     if (values.smoker) score++;
     if (values.cortical) score++;
     score += Number(values.age || 0);
-
     let interp = "0% PFO Attributable Fraction (Incidental PFO)";
     if (score === 4) interp = "38% PFO Attributable Fraction";
     else if (score === 5) interp = "34% PFO Attributable Fraction";
@@ -514,79 +493,20 @@ const ROPE_CALC: CalculatorDefinition = {
     else if (score === 7) interp = "72% PFO Attributable Fraction (Likely Pathogenic)";
     else if (score === 8) interp = "84% PFO Attributable Fraction (Likely Pathogenic)";
     else if (score >= 9) interp = "88% PFO Attributable Fraction (Likely Pathogenic)";
-
     return { score, interpretation: interp };
   }
 };
 
-const ELAN_CALC: CalculatorDefinition = {
-  id: 'elan',
-  name: 'ELAN Protocol (DOAC Timing)',
-  description: 'Timing of anticoagulation in acute ischemic stroke with Atrial Fibrillation based on imaging-based stroke size classification (ELAN Trial).',
-  inputs: [
-    {
-      id: 'classification',
-      label: 'Stroke Size Classification (Imaging Based)',
-      type: 'select',
-      options: [
-        { 
-            value: 0, 
-            label: 'Minor: Lesion ≤ 1.5 cm (Ant/Post) or TIA. (Includes multiple tiny embolic spots)' 
-        },
-        { 
-            value: 1, 
-            label: 'Moderate: Cortical superficial branch (ACA/MCA/PCA), MCA deep branch, or Internal border zone. (2 minor = Moderate)' 
-        },
-        { 
-            value: 2, 
-            label: 'Major: Whole territory (ACA/MCA/PCA), ≥2 MCA cortical, MCA cort+deep, or Brainstem/Cerebellum ≥ 1.5 cm. (2 moderate = Major)' 
-        }
-      ]
-    },
-    { id: 'hemorrhage', label: 'Significant Hemorrhagic Transformation on Imaging?', type: 'boolean' }
-  ],
-  calculate: (values) => {
-    if (values.hemorrhage) {
-      return {
-        score: 'Contraindicated',
-        interpretation: 'Significant hemorrhagic transformation was an exclusion criteria. Delay anticoagulation and repeat imaging.'
-      };
-    }
-
-    const type = Number(values.classification);
-    let early = "";
-    let late = "";
-
-    if (type === 0) {
-      early = "< 48 hours";
-      late = "Day 3-4";
-    } else if (type === 1) {
-      early = "Day 2";
-      late = "Day 6-7";
-    } else if (type === 2) {
-      early = "Day 6-7";
-      late = "Day 12-14";
-    } else {
-      return { score: '-', interpretation: 'Select stroke severity.' };
-    }
-
-    return {
-      score: 'Start Timing',
-      interpretation: (
-        <div className="text-sm">
-          <p className="mb-2"><strong className="text-neuro-200">Early Strategy (Recommended):</strong> Start <strong>{early}</strong>.</p>
-          <p className="mb-2 text-slate-400">Late Strategy (Control): Start {late}.</p>
-          <p className="italic text-xs text-slate-400 mt-3 border-t border-white/10 pt-2">
-            The <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2303048" target="_blank" rel="noreferrer" className="underline hover:text-white">ELAN Trial</a> found early initiation was safe and non-inferior to late initiation.
-            Classification is based on imaging (CT/MRI) size and location.
-          </p>
-        </div>
-      )
-    };
-  }
-};
-
-const CALCULATORS = [GCS_CALC, NIHSS_CALC, ABCD2_CALC, ICH_CALC, EVT_CALC, HAS_BLED_CALC, ROPE_CALC, ELAN_CALC];
+// Reordered list (Removed ELAN_CALC)
+const CALCULATORS = [
+  NIHSS_CALC, 
+  EVT_CALC, 
+  ABCD2_CALC, 
+  ICH_CALC, 
+  HAS_BLED_CALC, 
+  GCS_CALC, 
+  ROPE_CALC
+];
 
 const Calculators: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -596,16 +516,13 @@ const Calculators: React.FC = () => {
   const [values, setValues] = useState<Record<string, any>>({});
   const [result, setResult] = useState<{ score: number | string; interpretation: any } | null>(null);
 
-  // References for scrolling
   const inputRefs = useRef<(HTMLDivElement | null)[]>([]);
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setValues({});
     setResult(null);
-    inputRefs.current = []; // Reset refs on calc change
-    
-    // Scroll to top
+    inputRefs.current = [];
     const mainScroller = document.querySelector('main');
     if (mainScroller) {
         mainScroller.scrollTo({ top: 0, behavior: 'instant' });
@@ -626,19 +543,15 @@ const Calculators: React.FC = () => {
 
   const handleInputChange = (id: string, value: any, index: number, autoScroll: boolean = false) => {
     setValues(prev => ({ ...prev, [id]: value }));
-
     if (autoScroll) {
-        // Use a small timeout to allow visual feedback (like ripple/active state) before scrolling
         setTimeout(() => {
             const nextIndex = index + 1;
-            // Check if there is a next question
             if (activeCalc && nextIndex < activeCalc.inputs.length) {
                 const nextEl = inputRefs.current[nextIndex];
                 if (nextEl) {
                     nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             } else {
-                // If it's the last question, scroll to the result
                 if (resultRef.current) {
                     resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
@@ -755,6 +668,11 @@ const Calculators: React.FC = () => {
                             <div className="text-lg font-medium text-neuro-200 border-t border-white/10 pt-4 mt-2">
                                 {result?.interpretation || 'Complete all fields to see interpretation'}
                             </div>
+                            <div className="mt-6 pt-4 border-t border-white/10 text-center">
+                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center justify-center">
+                                    <AlertCircle size={10} className="mr-1.5" /> Decision Support Only • Not Medical Advice
+                                </span>
+                            </div>
                           </div>
                       </div>
                   </div>
@@ -771,6 +689,44 @@ const Calculators: React.FC = () => {
           </div>
 
           <div className="space-y-4">
+              {/* Specialized Pathways (Routes) */}
+              <Link
+                  to="/calculators/gca-pathway"
+                  className="group flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 p-5 rounded-2xl shadow-lg border border-slate-700 hover:shadow-xl hover:scale-[1.01] transition-all"
+              >
+                  <div className="flex items-center space-x-5">
+                      <div className="p-3 bg-white/10 rounded-xl text-white group-hover:bg-white group-hover:text-slate-900 transition-all shadow-inner flex-shrink-0">
+                          <Activity size={24} />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-1">Giant Cell Arteritis / PMR Pathway</h3>
+                        <p className="text-slate-400 text-sm font-medium leading-snug">Guided decision aid for suspected GCA/PMR.</p>
+                      </div>
+                  </div>
+                  <div className="pl-4 text-slate-500 group-hover:text-white transition-colors">
+                    <ChevronRight size={20} />
+                  </div>
+              </Link>
+
+              <Link
+                  to="/calculators/elan-pathway"
+                  className="group flex items-center justify-between bg-gradient-to-br from-purple-900 to-purple-800 p-5 rounded-2xl shadow-lg border border-purple-700 hover:shadow-xl hover:scale-[1.01] transition-all"
+              >
+                  <div className="flex items-center space-x-5">
+                      <div className="p-3 bg-white/10 rounded-xl text-white group-hover:bg-white group-hover:text-purple-900 transition-all shadow-inner flex-shrink-0">
+                          <Brain size={24} />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-1">ELAN Protocol Pathway</h3>
+                        <p className="text-purple-200 text-sm font-medium leading-snug">Timing of DOAC initiation after ischemic stroke with AF.</p>
+                      </div>
+                  </div>
+                  <div className="pl-4 text-purple-300 group-hover:text-white transition-colors">
+                    <ChevronRight size={20} />
+                  </div>
+              </Link>
+
+              {/* Standard Calculators */}
               {CALCULATORS.map(calc => (
                   <Link
                       key={calc.id}
