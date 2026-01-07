@@ -332,7 +332,7 @@ Early versus Later Anticoagulation for Stroke with Atrial Fibrillation (ELAN Tri
                     <ul className="space-y-2 list-disc list-inside opacity-90">
                         <li><strong>Minor:</strong> Infarct size ≤ 1.5 cm.</li>
                         <li><strong>Moderate:</strong> Cortical superficial branch of MCA/ACA/PCA, deep branch MCA, or internal border-zone.</li>
-                        <li><strong>Major:</strong> Large territory (entire MCA/ACA/PCA), ≥2 MCA cortical branches, or Brainstem/Cerebellum > 1.5 cm.</li>
+                        <li><strong>Major:</strong> Large territory (entire MCA/ACA/PCA), ≥2 MCA cortical branches, or Brainstem/Cerebellum &gt; 1.5 cm.</li>
                     </ul>
                 </div>
                 
@@ -487,7 +487,7 @@ Early versus Later Anticoagulation for Stroke with Atrial Fibrillation (ELAN Tri
                   </li>
                   <li className="flex items-start">
                       <span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded mr-2 font-mono">2</span>
-                      Classification: Minor (≤1.5cm), Moderate (Cortical superficial/Deep MCA), Major (Large territory/Brainstem >1.5cm).
+                      Classification: Minor (≤1.5cm), Moderate (Cortical superficial/Deep MCA), Major (Large territory/Brainstem &gt;1.5cm).
                   </li>
               </ul>
           </div>
