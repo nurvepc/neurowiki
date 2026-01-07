@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { CalculatorDefinition } from '../types';
-import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Activity, Brain } from 'lucide-react';
+import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Activity, Brain, Zap } from 'lucide-react';
 
 // --- CALCULATOR DEFINITIONS ---
 
@@ -186,113 +186,6 @@ const NIHSS_CALC: CalculatorDefinition = {
     else if (score <= 20) interpretation = "Moderate to severe stroke";
     else interpretation = "Severe stroke";
     return { score, interpretation };
-  }
-};
-
-const EVT_CALC: CalculatorDefinition = {
-  id: 'evt',
-  name: 'Thrombectomy Eligibility',
-  description: 'Screening tool for Endovascular Thrombectomy (EVT) including Late Window (DAWN/DEFUSE-3) and Large Core LVO perfusion criteria.',
-  inputs: [
-    {
-      id: 'age',
-      label: 'Age Group',
-      type: 'select',
-      options: [
-        { value: 0, label: '< 18 years' },
-        { value: 1, label: '18 - 79 years' },
-        { value: 2, label: '≥ 80 years' }
-      ]
-    },
-    {
-      id: 'nihss',
-      label: 'NIHSS Score Range',
-      type: 'select',
-      options: [
-        { value: 0, label: '0 - 5 (Minor)' },
-        { value: 1, label: '6 - 9 (Moderate)' },
-        { value: 2, label: '10 - 19 (Moderate-Severe)' },
-        { value: 3, label: '≥ 20 (Severe)' }
-      ]
-    },
-    { id: 'lvo', label: 'LVO Confirmed (ICA or M1)', type: 'boolean' },
-    { id: 'mrs', label: 'Pre-stroke mRS 0-1 (Independent)', type: 'boolean' },
-    {
-        id: 'time',
-        label: 'Time from Last Known Well',
-        type: 'select',
-        options: [
-            { value: 0, label: '0 - 6 Hours' },
-            { value: 1, label: '6 - 24 Hours' }
-        ]
-    },
-    { id: 'aspects', label: 'ASPECTS Score (0-6h)', type: 'number', min: 0, max: 10 },
-    { id: 'core', label: 'CTP Core Volume (ml) (6-24h)', type: 'number', min: 0 },
-    { id: 'mismatch', label: 'CTP Mismatch Volume (ml) (6-24h)', type: 'number', min: 0 },
-    { id: 'ratio', label: 'CTP Mismatch Ratio (6-24h)', type: 'number', min: 0 }
-  ],
-  calculate: (values) => {
-    const ageCat = Number(values.age);
-    const nihssCat = Number(values.nihss);
-    const time = Number(values.time);
-    const lvo = values.lvo;
-    const mrs = values.mrs;
-    
-    if (!lvo) return { score: 'Excluded', interpretation: 'No Large Vessel Occlusion (LVO) identified.' };
-    if (!mrs) return { score: 'Excluded', interpretation: 'Pre-stroke disability (mRS > 1).' };
-    if (ageCat === 0) return { score: 'Excluded', interpretation: 'Age < 18.' };
-    
-    if (time === 0) {
-        const aspects = values.aspects !== undefined && values.aspects !== "" ? Number(values.aspects) : null;
-        if (aspects === null) return { score: 'Pending', interpretation: 'Enter ASPECTS score.' };
-        if (nihssCat === 0) return { score: 'Clinical Judgment', interpretation: 'NIHSS < 6. Standard criteria require ≥ 6, but may treat if deficit is disabling.' };
-        if (aspects >= 6) return { score: 'Eligible (Class I)', interpretation: 'Meets standard Early Window criteria (ASPECTS ≥ 6).' };
-        if (aspects >= 3) return { 
-            score: 'Eligible (Large Core)', 
-            interpretation: (
-                <span>
-                    Large Core (ASPECTS 3-5). Supported by <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2214403" target="_blank" rel="noreferrer" className="underline hover:text-white font-bold">SELECT2</a> and <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2213379" target="_blank" rel="noreferrer" className="underline hover:text-white font-bold">ANGEL-ASPECT</a>.
-                </span>
-            )
-        };
-        return { score: 'Consult', interpretation: 'Very Large Core (ASPECTS < 3). Benefit uncertain.' };
-    }
-    
-    if (time === 1) {
-        const core = values.core !== undefined && values.core !== "" ? Number(values.core) : null;
-        if (core === null) return { score: 'Pending', interpretation: 'Enter CTP Core Volume.' };
-        if (nihssCat === 0) return { score: 'Not Eligible', interpretation: 'NIHSS < 6. Does not meet DAWN (≥10) or DEFUSE-3 (≥6) inclusion.' };
-        
-        let dawn = false;
-        if (ageCat === 2 && nihssCat >= 2 && core < 21) dawn = true;
-        else if (ageCat === 1 && nihssCat >= 2 && core < 31) dawn = true;
-        else if (ageCat === 1 && nihssCat === 3 && core < 51) dawn = true;
-        
-        if (dawn) return { 
-            score: 'Eligible (DAWN)', 
-            interpretation: (
-                <span>
-                    Meets <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1713973" target="_blank" rel="noreferrer" className="underline hover:text-white font-bold">DAWN</a> criteria (Clinical-Core Mismatch).
-                </span>
-            )
-        };
-
-        const mismatch = values.mismatch !== undefined && values.mismatch !== "" ? Number(values.mismatch) : 0;
-        const ratio = values.ratio !== undefined && values.ratio !== "" ? Number(values.ratio) : 0;
-        
-        if (core < 70 && mismatch >= 15 && ratio >= 1.8) {
-            return { 
-                score: 'Eligible (DEFUSE-3)', 
-                interpretation: (
-                    <span>
-                        Meets <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1706442" target="_blank" rel="noreferrer" className="underline hover:text-white font-bold">DEFUSE-3</a> criteria (Core &lt; 70ml, Mismatch &ge; 15ml, Ratio &ge; 1.8).
-                    </span>
-                )
-            };
-        }
-        return { score: 'Not Eligible', interpretation: 'Does not meet DAWN or DEFUSE-3 perfusion criteria.' };
-    }
-    return { score: 'Incomplete', interpretation: 'Select a time window.' };
   }
 };
 
@@ -497,10 +390,9 @@ const ROPE_CALC: CalculatorDefinition = {
   }
 };
 
-// Reordered list (Removed ELAN_CALC)
+// Removed EVT_CALC from here as it's now a standalone pathway
 const CALCULATORS = [
   NIHSS_CALC, 
-  EVT_CALC, 
   ABCD2_CALC, 
   ICH_CALC, 
   HAS_BLED_CALC, 
@@ -691,19 +583,19 @@ const Calculators: React.FC = () => {
           <div className="space-y-4">
               {/* Specialized Pathways (Routes) */}
               <Link
-                  to="/calculators/gca-pathway"
-                  className="group flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 p-5 rounded-2xl shadow-lg border border-slate-700 hover:shadow-xl hover:scale-[1.01] transition-all"
+                  to="/calculators/evt-pathway"
+                  className="group flex items-center justify-between bg-gradient-to-br from-neuro-900 to-neuro-800 p-5 rounded-2xl shadow-lg border border-neuro-700 hover:shadow-xl hover:scale-[1.01] transition-all"
               >
                   <div className="flex items-center space-x-5">
-                      <div className="p-3 bg-white/10 rounded-xl text-white group-hover:bg-white group-hover:text-slate-900 transition-all shadow-inner flex-shrink-0">
-                          <Activity size={24} />
+                      <div className="p-3 bg-white/10 rounded-xl text-white group-hover:bg-white group-hover:text-neuro-900 transition-all shadow-inner flex-shrink-0">
+                          <Zap size={24} className="fill-white group-hover:fill-neuro-900 transition-colors" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white mb-1">Giant Cell Arteritis / PMR Pathway</h3>
-                        <p className="text-slate-400 text-sm font-medium leading-snug">Guided decision aid for suspected GCA/PMR.</p>
+                        <h3 className="text-lg font-bold text-white mb-1">Thrombectomy Pathway</h3>
+                        <p className="text-neuro-200 text-sm font-medium leading-snug">Eligibility for Early (0-6h) and Late (6-24h) Window EVT.</p>
                       </div>
                   </div>
-                  <div className="pl-4 text-slate-500 group-hover:text-white transition-colors">
+                  <div className="pl-4 text-neuro-300 group-hover:text-white transition-colors">
                     <ChevronRight size={20} />
                   </div>
               </Link>
@@ -722,6 +614,24 @@ const Calculators: React.FC = () => {
                       </div>
                   </div>
                   <div className="pl-4 text-purple-300 group-hover:text-white transition-colors">
+                    <ChevronRight size={20} />
+                  </div>
+              </Link>
+
+              <Link
+                  to="/calculators/gca-pathway"
+                  className="group flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 p-5 rounded-2xl shadow-lg border border-slate-700 hover:shadow-xl hover:scale-[1.01] transition-all"
+              >
+                  <div className="flex items-center space-x-5">
+                      <div className="p-3 bg-white/10 rounded-xl text-white group-hover:bg-white group-hover:text-slate-900 transition-all shadow-inner flex-shrink-0">
+                          <Activity size={24} />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-1">Giant Cell Arteritis / PMR Pathway</h3>
+                        <p className="text-slate-400 text-sm font-medium leading-snug">Guided decision aid for suspected GCA/PMR.</p>
+                      </div>
+                  </div>
+                  <div className="pl-4 text-slate-500 group-hover:text-white transition-colors">
                     <ChevronRight size={20} />
                   </div>
               </Link>

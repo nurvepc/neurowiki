@@ -89,7 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="mt-8 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
             Quick Tools
           </div>
-          <Link to="/calculators?id=evt" className="flex items-center px-4 py-2 mt-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+          <Link to="/calculators/evt-pathway" className="flex items-center px-4 py-2 mt-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
             <span className="w-1.5 h-1.5 rounded-full bg-neuro-500 mr-2"></span>
             Thrombectomy
           </Link>
