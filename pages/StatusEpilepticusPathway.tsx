@@ -402,7 +402,7 @@ const StatusEpilepticusPathway: React.FC = () => {
 
                         {/* Manual Override Dropdown (Optional/Hidden for simplicity unless requested, but here providing the selected agent view is enough) */}
                         <div className="text-xs text-slate-400 text-center cursor-pointer hover:text-slate-600" onClick={() => { /* Could implement manual expansion */ }}>
-                            Algorithm preference: Levetiracetam > Fosphenytoin > Valproate > Lacosamide
+                            Algorithm preference: Levetiracetam &gt; Fosphenytoin &gt; Valproate &gt; Lacosamide
                         </div>
                     </div>
 
@@ -547,7 +547,7 @@ const StatusEpilepticusPathway: React.FC = () => {
 
                     {step === 4 && (
                          <div className="animate-in fade-in slide-in-from-bottom-2">
-                            <div className="text-xs text-red-400 font-bold uppercase mb-1">Stage 3 (>30m)</div>
+                            <div className="text-xs text-red-400 font-bold uppercase mb-1">Stage 3 (&gt;30m)</div>
                             <div className="font-bold">Refractory SE Protocol</div>
                          </div>
                     )}
