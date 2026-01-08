@@ -405,7 +405,7 @@ const MigrainePathway: React.FC = () => {
                          <div>
                              <label className="block text-xs font-bold text-slate-500 mb-1.5">Renal Function</label>
                              <select value={safety.renal} onChange={(e) => setSafety({...safety, renal: e.target.value as RenalStatus})} className="w-full p-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-800">
-                                 <option value="normal">Normal (>50)</option>
+                                 <option value="normal">Normal (&gt;50)</option>
                                  <option value="30-50">eGFR 30–50</option>
                                  <option value="below30">eGFR &lt; 30</option>
                                  <option value="dialysis">Dialysis</option>
