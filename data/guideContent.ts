@@ -14,7 +14,7 @@ export const GUIDE_CONTENT: Record<string, GuideTopic> = {
     category: 'Neuro Trials',
     content: `
 ## Clinical Context
-Historically, mechanical thrombectomy was limited to 6 hours from symptom onset. The DEFUSE 3 trial aimed to determine if patients with salvageable tissue on perfusion imaging (penumbra) would benefit from treatment in the extended 6–16 hour window.
+Historically, mechanical thrombectomy was limited to 6 hours from symptom onset. The DEFUSE 3 trial aimed to determine if patients with salvageable tissue on perfusion imaging (penumbra) would benefit from treatment in the extended 6–16 hour window. Use the **[Thrombectomy Pathway](/calculators/evt-pathway)** to assess eligibility.
 
 ## Trial Summary
 *   **Design:** Multicenter, randomized, open-label, blinded-endpoint trial.
@@ -47,7 +47,7 @@ Thrombectomy for ischemic stroke 6 to 16 hours after onset plus standard medical
     category: 'Neuro Trials',
     content: `
 ## Clinical Context
-The DAWN trial investigated whether thrombectomy is effective in patients with a "Wake-Up" stroke or late presentation (6 to 24 hours) who demonstrate a clinical-core mismatch (severe deficit but small infarct core).
+The DAWN trial investigated whether thrombectomy is effective in patients with a "Wake-Up" stroke or late presentation (6 to 24 hours) who demonstrate a clinical-core mismatch (severe deficit but small infarct core). Use the **[Thrombectomy Pathway](/calculators/evt-pathway)** to assess eligibility.
 
 ## Trial Summary
 *   **Design:** Multicenter, prospective, randomized, open-label, adaptive trial.
@@ -78,7 +78,7 @@ Among patients with acute stroke and mismatched clinical deficit and infarct vol
     category: 'Neuro Trials',
     content: `
 ## Clinical Context
-Patients with large ischemic cores (ASPECTS < 6 or Core Volume > 50ml) were historically excluded from thrombectomy trials due to fears of futile reperfusion and hemorrhagic transformation. SELECT2 challenged this dogma.
+Patients with large ischemic cores (ASPECTS < 6 or Core Volume > 50ml) were historically excluded from thrombectomy trials due to fears of futile reperfusion and hemorrhagic transformation. SELECT2 challenged this dogma. Use the **[Thrombectomy Pathway](/calculators/evt-pathway)** to check large core eligibility.
 
 ## Trial Summary
 *   **Design:** Randomized, open-label, international trial.
@@ -109,7 +109,7 @@ Endovascular thrombectomy improves functional outcomes in patients with large is
     category: 'Neuro Trials',
     content: `
 ## Clinical Context
-Conducted in China, ANGEL-ASPECT complemented SELECT2 by investigating thrombectomy in patients with large infarct cores, including those with cores up to 100ml.
+Conducted in China, ANGEL-ASPECT complemented SELECT2 by investigating thrombectomy in patients with large infarct cores, including those with cores up to 100ml. Use the **[Thrombectomy Pathway](/calculators/evt-pathway)** to check large core eligibility.
 
 ## Trial Summary
 *   **Design:** Multicenter, randomized, open-label trial in China.
@@ -406,7 +406,7 @@ In patients with recent stroke or TIA and without known coronary heart disease, 
     category: 'Neuro Trials',
     content: `
 ## Clinical Context
-For patients with ischemic stroke and Atrial Fibrillation, the optimal timing to start Direct Oral Anticoagulants (DOACs) has been debated. Early initiation risks hemorrhagic transformation, while late initiation risks recurrent embolism. The "1-3-6-12 day" rule was common but lacked robust evidence.
+For patients with ischemic stroke and Atrial Fibrillation, the optimal timing to start Direct Oral Anticoagulants (DOACs) has been debated. Early initiation risks hemorrhagic transformation, while late initiation risks recurrent embolism. Use the **[ELAN Protocol Pathway](/calculators/elan-pathway)** to determine the specific start day based on stroke size.
 
 ## Trial Summary
 *   **Design:** Open-label, randomized controlled trial.

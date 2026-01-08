@@ -93,6 +93,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <span className="w-1.5 h-1.5 rounded-full bg-neuro-500 mr-2"></span>
             Thrombectomy
           </Link>
+          <Link to="/calculators/migraine-pathway" className="flex items-center px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-2"></span>
+            Migraine Pathway
+          </Link>
           <Link to="/calculators?id=nihss" className="flex items-center px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
             NIH Stroke Scale
@@ -104,8 +108,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </nav>
 
         <div className="p-6 border-t border-slate-800 text-slate-500 text-xs font-medium">
-          <p>© 2024 NeuroWiki AI</p>
-          <p className="mt-1 opacity-60">Clinical Decision Support</p>
+          <p>© 2026 NeuroWiki AI</p>
+          <p className="mt-1 opacity-60">Reference and Decision Support</p>
+          <p className="opacity-60">Not Medical Advice</p>
         </div>
       </aside>
 

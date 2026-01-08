@@ -105,7 +105,7 @@ const categories = [
 const featuredCalculators = [
   { id: 'gcs', name: 'Glasgow Coma Scale', desc: 'Assess level of consciousness' },
   { id: 'abcd2', name: 'ABCD² Score', desc: 'TIA stroke risk' },
-  { id: 'evt', name: 'Thrombectomy Tool', desc: 'Eligibility & trials' },
+  { id: 'ich', name: 'ICH Score', desc: 'Intracerebral hemorrhage mortality' },
 ];
 
 const Home: React.FC = () => {
@@ -134,6 +134,14 @@ const Home: React.FC = () => {
                      <Link to="/calculators/elan-pathway" className="group flex items-center space-x-2 text-xs font-bold text-purple-700 bg-white border border-purple-100 px-3 py-1.5 rounded-lg hover:border-purple-300 hover:shadow-sm transition-all">
                         <span className="w-1.5 h-1.5 bg-purple-500 rounded-full group-hover:scale-125 transition-transform"></span>
                         <span>ELAN Protocol</span>
+                     </Link>
+                     <Link to="/calculators/se-pathway" className="group flex items-center space-x-2 text-xs font-bold text-red-700 bg-white border border-red-100 px-3 py-1.5 rounded-lg hover:border-red-300 hover:shadow-sm transition-all">
+                        <span className="w-1.5 h-1.5 bg-red-500 rounded-full group-hover:scale-125 transition-transform"></span>
+                        <span>Status Epilepticus</span>
+                     </Link>
+                     <Link to="/calculators/migraine-pathway" className="group flex items-center space-x-2 text-xs font-bold text-indigo-700 bg-white border border-indigo-100 px-3 py-1.5 rounded-lg hover:border-indigo-300 hover:shadow-sm transition-all">
+                        <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full group-hover:scale-125 transition-transform"></span>
+                        <span>Migraine</span>
                      </Link>
                      <Link to="/calculators/gca-pathway" className="group flex items-center space-x-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:border-slate-300 hover:shadow-sm transition-all">
                         <span className="w-1.5 h-1.5 bg-slate-500 rounded-full group-hover:scale-125 transition-transform"></span>

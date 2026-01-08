@@ -11,10 +11,13 @@ import GCAPathway from './pages/GCAPathway';
 import ElanPathway from './pages/ElanPathway';
 import EvtPathway from './pages/EvtPathway';
 import StatusEpilepticusPathway from './pages/StatusEpilepticusPathway';
+import MigrainePathway from './pages/MigrainePathway';
+import DisclaimerModal from './components/DisclaimerModal';
 
 const App: React.FC = () => {
   return (
     <Router>
+      <DisclaimerModal />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -24,6 +27,7 @@ const App: React.FC = () => {
           <Route path="/calculators/elan-pathway" element={<ElanPathway />} />
           <Route path="/calculators/evt-pathway" element={<EvtPathway />} />
           <Route path="/calculators/se-pathway" element={<StatusEpilepticusPathway />} />
+          <Route path="/calculators/migraine-pathway" element={<MigrainePathway />} />
           <Route path="/guide" element={<ResidentGuide context="guide" />} />
           <Route path="/guide/:topicId" element={<ResidentGuide context="guide" />} />
           <Route path="/trials" element={<TrialsPage />} />

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { CalculatorDefinition } from '../types';
-import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Activity, Brain, Zap, Timer } from 'lucide-react';
+import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Activity, Brain, Zap, Timer, Skull } from 'lucide-react';
 
 // --- CALCULATOR DEFINITIONS ---
 
@@ -582,6 +582,24 @@ const Calculators: React.FC = () => {
           <div className="space-y-4">
               {/* Specialized Pathways (Routes) */}
               <Link
+                  to="/calculators/migraine-pathway"
+                  className="group flex items-center justify-between bg-gradient-to-br from-indigo-900 to-indigo-800 p-5 rounded-2xl shadow-lg border border-indigo-700 hover:shadow-xl hover:scale-[1.01] transition-all"
+              >
+                  <div className="flex items-center space-x-5">
+                      <div className="p-3 bg-white/10 rounded-xl text-white group-hover:bg-white group-hover:text-indigo-900 transition-all shadow-inner flex-shrink-0">
+                          <Skull size={24} className="fill-white group-hover:fill-indigo-900 transition-colors" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-1">Migraine & Headache Pathway</h3>
+                        <p className="text-indigo-200 text-sm font-medium leading-snug">Evidence-based ED & Inpatient management.</p>
+                      </div>
+                  </div>
+                  <div className="pl-4 text-indigo-300 group-hover:text-white transition-colors">
+                    <ChevronRight size={20} />
+                  </div>
+              </Link>
+
+              <Link
                   to="/calculators/se-pathway"
                   className="group flex items-center justify-between bg-gradient-to-br from-red-900 to-red-800 p-5 rounded-2xl shadow-lg border border-red-700 hover:shadow-xl hover:scale-[1.01] transition-all"
               >
@@ -609,7 +627,7 @@ const Calculators: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-white mb-1">Thrombectomy Pathway</h3>
-                        <p className="text-neuro-200 text-sm font-medium leading-snug">Eligibility for Early (0-6h) and Late (6-24h) Window EVT.</p>
+                        <p className="text-neuro-200 text-sm font-medium leading-snug">Eligibility for Early (0-6h) and Late (6-24h) EVT.</p>
                       </div>
                   </div>
                   <div className="pl-4 text-neuro-300 group-hover:text-white transition-colors">

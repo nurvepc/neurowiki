@@ -2,8 +2,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical, AlertCircle, Zap } from 'lucide-react';
+import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical, AlertCircle, Zap, Activity, Link as LinkIcon, Calculator } from 'lucide-react';
 import { GUIDE_CONTENT } from '../data/guideContent';
+import { processNodesForLinking } from '../internalLinks/autoLink';
+import { getBacklinks } from '../internalLinks/backlinks';
 
 const generateSlug = (text: string) => {
   if (!text) return '';
@@ -22,6 +24,22 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
   const isTrialMode = context === 'trials';
   
   const currentTopic = topicId ? GUIDE_CONTENT[topicId] : null;
+
+  // --- Backlinks ---
+  const backlinks = useMemo(() => {
+      if (!currentTopic) return [];
+      const links = getBacklinks(currentTopic.id);
+      
+      // Filter out tools that are manually rendered with custom styling to avoid duplicates
+      if (currentTopic.id === 'status-epilepticus') {
+          return links.filter(l => l.id !== 'se-pathway');
+      }
+      if (currentTopic.id === 'thrombectomy') {
+          return links.filter(l => l.id !== 'evt-pathway');
+      }
+      
+      return links;
+  }, [currentTopic]);
 
   // --- Sidebar Logic ---
   const sidebarContent = useMemo(() => {
@@ -67,14 +85,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
       if (activeCat) {
         setOpenCategories(prev => ({ ...prev, [activeCat.name]: true }));
       }
-    } else {
-      setOpenCategories(prev => {
-           if (Object.keys(prev).length === 0) {
-               return { [sidebarContent[0].name]: true };
-           }
-           return prev;
-       });
-    }
+    } 
   }, [topicId, sidebarContent]);
 
   // Scroll to top when topic changes
@@ -136,23 +147,15 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
   // Initialize article sections expansion
   useEffect(() => {
     if (sections.length > 0) {
-        // Default: Open the first section on load for better mobile UX
-        const initialState: Record<string, boolean> = {};
-        sections.forEach((s, idx) => {
-             // Open first section by default
-             initialState[s.id] = idx === 0;
-        });
-        setExpandedSections(initialState);
+        setExpandedSections({});
     }
   }, [sections, topicId]);
 
   const toggleSection = (id: string) => {
     setExpandedSections(prev => {
-      // If clicking the one that is already open, close it (return empty).
       if (prev[id]) {
         return {};
       }
-      // Otherwise, open this one and implicitely close all others by returning a new object with only this key.
       return { [id]: true };
     });
   };
@@ -177,12 +180,8 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
   };
 
   const scrollToSection = (id: string) => {
-    // If on mobile (accordion), ensure it's expanded
     if (window.innerWidth < 768) {
-        // Force open this section and close others
         setExpandedSections({ [id]: true });
-        
-        // Small timeout to allow expansion animation before scroll
         setTimeout(() => {
             const element = document.getElementById(id);
             if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -198,21 +197,21 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
   const activeBg = isTrialMode ? 'bg-emerald-50 text-emerald-700 ring-emerald-100' : 'bg-neuro-50 text-neuro-700 ring-neuro-100';
 
   const markdownComponents = {
-    // H2 is handled by the section rendering logic now
     h3: ({children}: any) => (
         <h3 className="text-lg font-bold text-slate-800 mt-8 mb-4 flex items-center">
              <span className={`w-1.5 h-1.5 ${isTrialMode ? 'bg-emerald-300' : 'bg-neuro-300'} rounded-full mr-3`}></span>
              {children}
         </h3>
     ),
-    p: ({children}: any) => <p className="text-slate-600 leading-8 mb-6 font-normal text-base">{children}</p>,
+    // Apply Auto-Linking to Paragraphs and List Items
+    p: ({children}: any) => <p className="text-slate-600 leading-8 mb-6 font-normal text-base">{processNodesForLinking(children)}</p>,
     ul: ({children}: any) => <ul className="space-y-4 mb-8">{children}</ul>,
     li: ({children}: any) => (
         <li className="flex items-start text-slate-600 leading-7">
              <div className="mt-2.5 mr-3 flex-shrink-0">
                   <div className={`w-1.5 h-1.5 rounded-full ${isTrialMode ? 'bg-emerald-400' : 'bg-neuro-400'}`}></div>
              </div>
-             <div className="flex-1">{children}</div>
+             <div className="flex-1">{processNodesForLinking(children)}</div>
         </li>
     ),
     blockquote: ({children}: any) => (
@@ -296,13 +295,41 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                          </span>
                          <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">{currentTopic.title}</h1>
                          
-                         {currentTopic.id === 'thrombectomy' && (
-                             <Link to="/calculators/evt-pathway" className="inline-flex items-center px-6 py-3 bg-neuro-600 text-white font-bold rounded-xl shadow-lg shadow-neuro-200 hover:bg-neuro-700 transition-all active:scale-95 group">
-                                <Zap size={18} className="mr-2 fill-white" />
-                                Launch Thrombectomy Pathway
-                                <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
-                             </Link>
-                         )}
+                         <div className="flex flex-wrap gap-3 mt-6">
+                            {/* Hardcoded Primary Tools */}
+                            {currentTopic.id === 'thrombectomy' && (
+                                <Link to="/calculators/evt-pathway" className="inline-flex items-center px-6 py-3 bg-neuro-600 text-white font-bold rounded-xl shadow-lg shadow-neuro-200 hover:bg-neuro-700 transition-all active:scale-95 group">
+                                    <Zap size={18} className="mr-2 fill-white" />
+                                    Launch Thrombectomy Pathway
+                                    <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            )}
+
+                            {currentTopic.id === 'status-epilepticus' && (
+                                <Link to="/calculators/se-pathway" className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-all active:scale-95 group">
+                                    <Activity size={18} className="mr-2" />
+                                    Launch Status Epilepticus Pathway
+                                    <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            )}
+
+                            {/* Dynamic Referenced Tools */}
+                            {backlinks.map(link => (
+                                <Link 
+                                    key={link.id} 
+                                    to={link.url}
+                                    className={`inline-flex items-center px-6 py-3 font-bold rounded-xl shadow-lg transition-all active:scale-95 group ${
+                                        isTrialMode 
+                                        ? 'bg-emerald-600 text-white shadow-emerald-200 hover:bg-emerald-700' 
+                                        : 'bg-neuro-600 text-white shadow-neuro-200 hover:bg-neuro-700'
+                                    }`}
+                                >
+                                    <Calculator size={18} className="mr-2 opacity-90" />
+                                    Launch {link.title}
+                                    <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            ))}
+                         </div>
                       </div>
 
                       {/* Content Sections (Accordion on Mobile, Full on Desktop) */}
