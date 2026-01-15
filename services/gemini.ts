@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { WikiEntry, Reference } from "../types";
 
@@ -71,5 +72,21 @@ export const suggestTopics = async (query: string): Promise<string[]> => {
     return Array.isArray(json) ? json : [];
   } catch (e) {
     return [];
+  }
+}
+
+export const askQuickAnswer = async (query: string): Promise<string> => {
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: `Provide a concise, clinical summary answering the query: "${query}". Focus on diagnostic criteria, key management steps, or evidence-based pearls appropriate for a neurologist. Keep it under 300 words.`,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION,
+      }
+    });
+    return response.text || "No response generated.";
+  } catch (e) {
+    console.error("AI Quick Answer Error:", e);
+    return "Unable to generate AI response.";
   }
 }
