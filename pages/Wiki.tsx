@@ -1,10 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { GUIDE_CONTENT } from '../data/guideContent';
-import { ArrowLeft, BookOpen, Search, ChevronRight, Sparkles, Loader2, AlertCircle } from 'lucide-react';
-import { askQuickAnswer } from '../services/gemini';
-import MarkdownRenderer from '../components/MarkdownRenderer';
+import { ArrowLeft, BookOpen, Search, ChevronRight } from 'lucide-react';
 
 const Wiki: React.FC = () => {
   const { topic } = useParams<{ topic: string }>();
@@ -15,31 +13,6 @@ const Wiki: React.FC = () => {
     item.content.toLowerCase().includes(query) ||
     item.category.toLowerCase().includes(query)
   );
-
-  const [aiAnswer, setAiAnswer] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  // Reset AI state when topic changes
-  useEffect(() => {
-    setAiAnswer(null);
-    setLoading(false);
-    setError(false);
-  }, [topic]);
-
-  const handleAskAI = async () => {
-    if (!topic) return;
-    setLoading(true);
-    setError(false);
-    try {
-      const answer = await askQuickAnswer(topic);
-      setAiAnswer(answer);
-    } catch (e) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Helper to generate a clean, text-only summary of the clinical content
   const getCleanSummary = (content: string) => {
@@ -71,53 +44,6 @@ const Wiki: React.FC = () => {
         <p className="text-slate-500 mt-4 font-medium text-base md:text-lg">
           Found <span className="text-slate-900 font-bold">{results.length}</span> matching articles in the catalogue.
         </p>
-      </div>
-
-      {/* AI Search Card */}
-      <div className="mb-10 px-2">
-        {!aiAnswer && !loading && (
-          <div className="bg-gradient-to-br from-indigo-50 to-white border border-indigo-100 p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-             <div className="flex items-center space-x-4">
-                <div className="bg-indigo-100 p-3 rounded-xl text-indigo-600">
-                   <Sparkles size={24} />
-                </div>
-                <div>
-                   <h3 className="text-lg font-bold text-slate-900">Ask NeuroWiki AI</h3>
-                   <p className="text-sm text-slate-600">Generate a clinical summary for "{topic}" using Gemini 2.0.</p>
-                </div>
-             </div>
-             <button 
-               onClick={handleAskAI}
-               className="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center justify-center active:scale-95"
-             >
-                <Sparkles size={16} className="mr-2" /> Generate Answer
-             </button>
-          </div>
-        )}
-
-        {loading && (
-           <div className="bg-white border border-gray-100 p-8 rounded-2xl shadow-sm flex flex-col items-center justify-center text-center">
-              <Loader2 size={32} className="text-indigo-600 animate-spin mb-3" />
-              <p className="text-sm font-bold text-slate-500 animate-pulse">Generating clinical summary...</p>
-           </div>
-        )}
-
-        {aiAnswer && (
-           <div className="bg-white border border-indigo-100 p-8 rounded-2xl shadow-lg relative overflow-hidden animate-in fade-in slide-in-from-top-4">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
-              <div className="flex items-center space-x-2 mb-6 text-indigo-700">
-                 <Sparkles size={18} />
-                 <span className="text-xs font-black uppercase tracking-widest">AI Generated Response</span>
-              </div>
-              <div className="prose prose-indigo prose-sm max-w-none">
-                 <MarkdownRenderer content={aiAnswer} />
-              </div>
-              <div className="mt-6 pt-6 border-t border-gray-50 flex items-center text-[10px] text-slate-400 font-medium">
-                 <AlertCircle size={12} className="mr-1.5" />
-                 AI content can be inaccurate. Always verify with clinical guidelines.
-              </div>
-           </div>
-        )}
       </div>
 
       {results.length > 0 ? (
@@ -174,7 +100,7 @@ const Wiki: React.FC = () => {
           </div>
           <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">No articles found</h3>
           <p className="text-slate-500 mt-4 font-medium text-lg max-w-md mx-auto">
-            We couldn't find a direct match for "{topic}". Try the AI Answer above or explore our clinical guides.
+            We couldn't find a direct match for "{topic}". Try adjusting your search or explore our clinical guides.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
