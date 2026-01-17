@@ -7,7 +7,6 @@ export const SITEMAP_ROUTES = [
   '/calculators/ich',
   '/calculators/gcs',
   '/calculators/rope',
-  '/calculators/aspects',
   '/calculators/evt-pathway',
   '/calculators/elan-pathway',
   '/calculators/se-pathway',

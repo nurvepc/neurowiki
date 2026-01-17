@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link, useParams } from 'react-router-dom';
 import { CalculatorDefinition } from '../types';
-import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Scan, Skull, Timer, Zap, Brain, Activity, Star, ChevronLeft, Settings2, UserCog, AlertTriangle, Copy, Check, ChevronDown } from 'lucide-react';
+import { Calculator, ChevronRight, RefreshCw, ArrowLeft, AlertCircle, Skull, Timer, Zap, Brain, Activity, Star, ChevronLeft, Settings2, UserCog, AlertTriangle, Copy, Check, ChevronDown } from 'lucide-react';
 import { useFavorites } from '../hooks/useFavorites';
 import { NIHSS_ITEMS, calculateTotal, getItemWarning } from '../utils/nihssShortcuts';
 import NihssItemRow from '../components/NihssItemRow';
@@ -351,7 +351,6 @@ const Calculators: React.FC = () => {
 
   // --- Specialized Pathways & Tools List ---
   const SPECIAL_TOOLS = [
-    { id: 'aspects', name: 'ASPECTS Calculator', path: '/calculators/aspects', icon: Scan, desc: 'Interactive brain map for scoring early ischemic changes.', color: 'rose' },
     { id: 'migraine-pathway', name: 'Migraine & Headache', path: '/calculators/migraine-pathway', icon: Skull, desc: 'Evidence-based ED & Inpatient management.', color: 'indigo' },
     { id: 'se-pathway', name: 'Status Epilepticus', path: '/calculators/se-pathway', icon: Timer, desc: 'Comorbidity-aware decision support for Stage 1-3 SE.', color: 'red' },
     { id: 'evt-pathway', name: 'Thrombectomy Pathway', path: '/calculators/evt-pathway', icon: Zap, desc: 'Eligibility for Early (0-6h) and Late (6-24h) EVT.', color: 'neuro' },

@@ -50,10 +50,6 @@ const ROUTE_REGISTRY: Record<string, MetaData> = {
   '/calculators/gca-pathway': {
     title: 'GCA Diagnostic Pathway',
     description: 'Risk stratification and management aid for Giant Cell Arteritis.'
-  },
-  '/calculators/aspects': {
-    title: 'ASPECTS Score Calculator',
-    description: 'Interactive brain map for scoring early ischemic changes on CT.'
   }
 };
 
