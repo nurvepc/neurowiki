@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Undo2, Info, Brain, Check, X, AlertTriangle, Star } from 'lucide-react';
 import AspectsBrainMap from '../components/AspectsBrainMap';
 import { useFavorites } from '../hooks/useFavorites';
+import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
 
 type Side = 'left' | 'right';
 
@@ -12,6 +13,9 @@ const AspectsCalculator: React.FC = () => {
   const [selectedRegions, setSelectedRegions] = useState<Set<string>>(new Set());
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]); 
+
+  // Analytics
+  const { trackResult } = useCalculatorAnalytics('aspects');
 
   // Favorites
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -31,6 +35,13 @@ const AspectsCalculator: React.FC = () => {
   }, [selectedRegions, side]);
 
   const score = 10 - currentSideSelections.length;
+
+  // Track score when it changes (after user makes selections)
+  useEffect(() => {
+    if (selectedRegions.size > 0) {
+      trackResult(score);
+    }
+  }, [score, selectedRegions.size, trackResult]);
 
   // Handlers
   const handleToggle = (id: string) => {

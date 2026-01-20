@@ -42,3 +42,42 @@ export const trackUserRole = (role: string) => {
     });
   }
 };
+
+// Track calculator usage
+export const trackCalculatorUsed = (
+  calculatorName: string,
+  resultValue?: string | number
+) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'calculator_used', {
+      event_category: 'calculators',
+      calculator_name: calculatorName,
+      result_value: resultValue,
+    });
+    console.log(`[Analytics] Calculator used: ${calculatorName}`, resultValue);
+  }
+};
+
+// Track search queries
+export const trackSearch = (
+  searchTerm: string,
+  resultsCount?: number
+) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'search', {
+      event_category: 'engagement',
+      search_term: searchTerm,
+      results_count: resultsCount,
+    });
+  }
+};
+
+// Track quick tool clicks
+export const trackQuickToolClick = (toolName: string) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'quick_tool_click', {
+      event_category: 'navigation',
+      tool_name: toolName,
+    });
+  }
+};

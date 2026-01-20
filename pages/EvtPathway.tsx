@@ -6,6 +6,7 @@ import { EVT_CONTENT } from '../data/toolContent';
 import { autoLinkReactNodes } from '../internalLinks/autoLink';
 import LearningPearl from '../components/LearningPearl';
 import { useFavorites } from '../hooks/useFavorites';
+import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
 
 type Tri = "yes" | "no" | "unknown";
 type AgeGroup = "under_18" | "18_79" | "80_plus" | "unknown";
@@ -254,6 +255,9 @@ const EvtPathway: React.FC = () => {
   const stepContainerRef = useRef<HTMLDivElement>(null);
   const fieldRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // Analytics
+  const { trackResult } = useCalculatorAnalytics('evt_pathway');
+
   // Favorites
   const { isFavorite, toggleFavorite } = useFavorites();
   const [showFavToast, setShowFavToast] = useState(false);
@@ -267,13 +271,21 @@ const EvtPathway: React.FC = () => {
 
   useEffect(() => { 
       if (inputs.occlusionType === 'lvo') {
-          setResult(calculateLvoProtocol(inputs)); 
+          const newResult = calculateLvoProtocol(inputs);
+          setResult(newResult);
+          if (newResult && inputs.occlusionType !== 'unknown') {
+            trackResult(newResult.status);
+          }
       } else if (inputs.occlusionType === 'mevo') {
-          setResult(calculateMevoProtocol(inputs));
+          const newResult = calculateMevoProtocol(inputs);
+          setResult(newResult);
+          if (newResult && inputs.occlusionType !== 'unknown') {
+            trackResult(newResult.status);
+          }
       } else {
           setResult(null);
       }
-  }, [inputs]);
+  }, [inputs, trackResult]);
 
   useEffect(() => { const mainElement = document.querySelector('main'); if (mainElement) mainElement.scrollTo({ top: 0, behavior: 'instant' }); else window.scrollTo(0,0); }, [step]);
 

@@ -5,6 +5,7 @@ import { ArrowLeft, AlertTriangle, Check, RotateCcw, Copy, Info, AlertCircle, Ch
 import { ELAN_CONTENT } from '../data/toolContent';
 import { autoLinkReactNodes } from '../internalLinks/autoLink';
 import { useFavorites } from '../hooks/useFavorites';
+import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
 
 // ... (KEEP ALL TYPES, INTERFACES, STEPS, LOGIC, COMPONENTS SAME UNTIL RENDER) ...
 type Tri = "yes" | "no" | "unknown";
@@ -118,7 +119,16 @@ const ElanPathway: React.FC = () => {
       setTimeout(() => setShowFavToast(false), 2000);
   };
 
-  useEffect(() => { setResult(calculateElanProtocol(inputs)); }, [inputs]);
+  // Analytics
+  const { trackResult } = useCalculatorAnalytics('elan_protocol');
+
+  useEffect(() => { 
+    const newResult = calculateElanProtocol(inputs);
+    setResult(newResult);
+    if (newResult && newResult.eligible && inputs.size !== 'unknown') {
+      trackResult(newResult.size);
+    }
+  }, [inputs, trackResult]);
   useEffect(() => { const mainElement = document.querySelector('main'); if (mainElement) mainElement.scrollTo({ top: 0, behavior: 'instant' }); else window.scrollTo(0,0); }, [step]);
 
   const updateInput = useCallback((field: keyof Inputs, value: any) => {

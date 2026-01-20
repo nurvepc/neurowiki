@@ -25,6 +25,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      // Track search in Google Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'search', {
+          event_category: 'engagement',
+          search_term: searchQuery.trim(),
+        });
+      }
+      
       navigate(`/wiki/${encodeURIComponent(searchQuery)}`);
       setSearchQuery('');
       setIsMobileSearchOpen(false);

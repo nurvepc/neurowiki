@@ -5,6 +5,7 @@ import { ArrowLeft, Check, RotateCcw, Copy, Activity, AlertTriangle, ShieldCheck
 import { SE_CONTENT } from '../data/toolContent';
 import { autoLinkReactNodes } from '../internalLinks/autoLink';
 import { useFavorites } from '../hooks/useFavorites';
+import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
 
 // --- Types & Logic ---
 type Agent = "levetiracetam" | "fosphenytoin" | "valproate" | "lacosamide" | "phenobarbital";
@@ -52,6 +53,9 @@ const StatusEpilepticusPathway: React.FC = () => {
   const stage2DoseRef = useRef<HTMLDivElement>(null);
   const stage3DoseRef = useRef<HTMLDivElement>(null);
 
+  // Analytics
+  const { trackResult } = useCalculatorAnalytics('status_epilepticus');
+
   // Favorites
   const { isFavorite, toggleFavorite } = useFavorites();
   const [showFavToast, setShowFavToast] = useState(false);
@@ -62,6 +66,13 @@ const StatusEpilepticusPathway: React.FC = () => {
       setShowFavToast(true);
       setTimeout(() => setShowFavToast(false), 2000);
   };
+
+  // Track when user reaches stage 3 (refractory management)
+  useEffect(() => {
+    if (step === 3 && stage3Agent) {
+      trackResult(stage3Agent);
+    }
+  }, [step, stage3Agent, trackResult]);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
   useEffect(() => { if (step > 1 && topRef.current) setTimeout(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }, [step]);

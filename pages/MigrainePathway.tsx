@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Check, RotateCcw, Copy, AlertTriangle, ChevronRight, Skull, ShieldAlert, AlertCircle, ClipboardCheck, Star } from 'lucide-react';
 import { useFavorites } from '../hooks/useFavorites';
+import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
 
 // --- Types ---
 interface RedFlags {
@@ -60,6 +61,13 @@ const STEPS = [
 
 const MigrainePathway: React.FC = () => {
   const [step, setStep] = useState(1);
+
+  // Track when user reaches final step
+  useEffect(() => {
+    if (step === 5) {
+      trackResult('completed');
+    }
+  }, [step, trackResult]);
   const topRef = useRef<HTMLDivElement>(null);
   
   // Section refs for auto-scroll
@@ -68,6 +76,9 @@ const MigrainePathway: React.FC = () => {
   const ketorolacRef = useRef<HTMLDivElement>(null);
   const dexRef = useRef<HTMLDivElement>(null);
   const addonsRef = useRef<HTMLDivElement>(null);
+
+  // Analytics
+  const { trackResult } = useCalculatorAnalytics('migraine_pathway');
 
   // Favorites
   const { isFavorite, toggleFavorite } = useFavorites();

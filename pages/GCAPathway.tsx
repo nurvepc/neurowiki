@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, AlertTriangle, Check, RotateCcw, Copy, Info, AlertCircle, ChevronRight, Activity, Star } from 'lucide-react';
 import { useFavorites } from '../hooks/useFavorites';
+import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
 
 // --- Types ---
 type Tri = "no" | "yes" | "unknown";
@@ -205,6 +206,9 @@ const GCAPathway: React.FC = () => {
   const [result, setResult] = useState<Result | null>(null);
   const fieldRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // Analytics
+  const { trackResult } = useCalculatorAnalytics('gca_pathway');
+
   // Favorites
   const { isFavorite, toggleFavorite } = useFavorites();
   const [showFavToast, setShowFavToast] = useState(false);
@@ -217,8 +221,12 @@ const GCAPathway: React.FC = () => {
   };
 
   useEffect(() => {
-    setResult(calculateGcaDecision(inputs));
-  }, [inputs]);
+    const newResult = calculateGcaDecision(inputs);
+    setResult(newResult);
+    if (newResult && newResult.tier !== 'Low') {
+      trackResult(newResult.tier);
+    }
+  }, [inputs, trackResult]);
 
   useEffect(() => {
      const mainElement = document.querySelector('main');

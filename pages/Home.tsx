@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Brain, ChevronRight, Calculator, User, Zap, Activity } from 'lucide-react';
+import { trackQuickToolClick } from '../src/utils/analytics';
 
 const categories = [
   { 
@@ -127,23 +128,23 @@ const Home: React.FC = () => {
             <div className="pt-4 md:pt-2">
                  <span className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-4 md:mb-3 text-center md:text-left">Try Pathways & Calculators</span>
                  <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                     <Link to="/calculators/evt-pathway" className="group flex items-center space-x-2 text-sm font-bold text-neuro-700 bg-white border border-neuro-100 px-4 py-2.5 rounded-xl hover:border-neuro-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
+                     <Link to="/calculators/evt-pathway" onClick={() => trackQuickToolClick('thrombectomy')} className="group flex items-center space-x-2 text-sm font-bold text-neuro-700 bg-white border border-neuro-100 px-4 py-2.5 rounded-xl hover:border-neuro-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
                         <span className="w-2 h-2 bg-neuro-500 rounded-full group-hover:scale-125 transition-transform"></span>
                         <span>Thrombectomy</span>
                      </Link>
-                     <Link to="/calculators/elan-pathway" className="group flex items-center space-x-2 text-sm font-bold text-purple-700 bg-white border border-purple-100 px-4 py-2.5 rounded-xl hover:border-purple-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
+                     <Link to="/calculators/elan-pathway" onClick={() => trackQuickToolClick('elan_protocol')} className="group flex items-center space-x-2 text-sm font-bold text-purple-700 bg-white border border-purple-100 px-4 py-2.5 rounded-xl hover:border-purple-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
                         <span className="w-2 h-2 bg-purple-500 rounded-full group-hover:scale-125 transition-transform"></span>
                         <span>ELAN Protocol</span>
                      </Link>
-                     <Link to="/calculators/se-pathway" className="group flex items-center space-x-2 text-sm font-bold text-red-700 bg-white border border-red-100 px-4 py-2.5 rounded-xl hover:border-red-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
+                     <Link to="/calculators/se-pathway" onClick={() => trackQuickToolClick('status_epilepticus')} className="group flex items-center space-x-2 text-sm font-bold text-red-700 bg-white border border-red-100 px-4 py-2.5 rounded-xl hover:border-red-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
                         <span className="w-2 h-2 bg-red-500 rounded-full group-hover:scale-125 transition-transform"></span>
                         <span>Status Epilepticus</span>
                      </Link>
-                     <Link to="/calculators/migraine-pathway" className="group flex items-center space-x-2 text-sm font-bold text-indigo-700 bg-white border border-indigo-100 px-4 py-2.5 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
+                     <Link to="/calculators/migraine-pathway" onClick={() => trackQuickToolClick('migraine_pathway')} className="group flex items-center space-x-2 text-sm font-bold text-indigo-700 bg-white border border-indigo-100 px-4 py-2.5 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
                         <span className="w-2 h-2 bg-indigo-500 rounded-full group-hover:scale-125 transition-transform"></span>
                         <span>Migraine</span>
                      </Link>
-                     <Link to="/calculators/gca-pathway" className="group flex items-center space-x-2 text-sm font-bold text-slate-700 bg-white border border-slate-200 px-4 py-2.5 rounded-xl hover:border-slate-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
+                     <Link to="/calculators/gca-pathway" onClick={() => trackQuickToolClick('gca_pathway')} className="group flex items-center space-x-2 text-sm font-bold text-slate-700 bg-white border border-slate-200 px-4 py-2.5 rounded-xl hover:border-slate-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
                         <span className="w-2 h-2 bg-slate-500 rounded-full group-hover:scale-125 transition-transform"></span>
                         <span>GCA Helper</span>
                      </Link>
@@ -206,7 +207,7 @@ const Home: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {featuredCalculators.map(calc => (
-                <Link key={calc.id} to={`/calculators?id=${calc.id}`} className="block bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg hover:border-neuro-200 transition-all group active:scale-[0.98]">
+                <Link key={calc.id} to={`/calculators?id=${calc.id}`} onClick={() => trackQuickToolClick(calc.id)} className="block bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg hover:border-neuro-200 transition-all group active:scale-[0.98]">
                     <div className="flex items-center space-x-3 mb-3">
                         <div className="p-2 bg-neuro-50 rounded-lg text-neuro-500 group-hover:bg-neuro-600 group-hover:text-white transition-all">
                             <Calculator size={20} />
