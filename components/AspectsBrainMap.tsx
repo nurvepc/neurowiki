@@ -15,7 +15,7 @@ const AspectsBrainMap: React.FC<AspectsBrainMapProps> = ({ side, selectedRegions
   const baseFill = "#f1f5f9"; // slate-100
   const activeFill = "#fb7185"; // rose-400
   const strokeColor = "#94a3b8"; // slate-400
-  const hoverClass = "cursor-pointer hover:opacity-80 transition-all duration-200 active:scale-[0.98]";
+  const hoverClass = "cursor-pointer hover:opacity-80 transition-opacity duration-150 active:scale-[0.98] transform-gpu";
 
   // Path definitions for a Schematic Right Hemisphere (we will mirror for Left)
   // Center X is 0 for the group, we'll translate it.
@@ -92,7 +92,7 @@ const AspectsBrainMap: React.FC<AspectsBrainMapProps> = ({ side, selectedRegions
           y={ly} 
           textAnchor="middle" 
           dominantBaseline="middle" 
-          className={`text-[10px] font-bold pointer-events-none select-none ${selected ? 'fill-white' : 'fill-slate-500'}`}
+          className={`text-xs font-bold pointer-events-none select-none ${selected ? 'fill-white' : 'fill-slate-500'}`}
         >
           {label}
         </text>

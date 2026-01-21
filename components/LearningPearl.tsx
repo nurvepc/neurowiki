@@ -6,7 +6,7 @@ interface LearningPearlProps {
   title?: string;
   content: React.ReactNode;
   className?: string;
-  variant?: 'indigo' | 'amber' | 'slate' | 'blue';
+  variant?: 'indigo' | 'amber' | 'slate' | 'neuro';
 }
 
 const LearningPearl: React.FC<LearningPearlProps> = ({ title = "Clinical Pearl", content, className = "", variant = 'indigo' }) => {
@@ -25,9 +25,9 @@ const LearningPearl: React.FC<LearningPearlProps> = ({ title = "Clinical Pearl",
       btn: 'text-slate-600 hover:text-slate-800 bg-slate-50/50 hover:bg-slate-100',
       box: 'bg-slate-50 border-slate-200 text-slate-700 border-l-slate-400'
     },
-    blue: {
-      btn: 'text-blue-600 hover:text-blue-800 bg-blue-50/50 hover:bg-blue-50',
-      box: 'bg-blue-50 border-blue-100 text-blue-900 border-l-blue-400'
+    neuro: {
+      btn: 'text-neuro-600 hover:text-neuro-800 bg-neuro-50/50 hover:bg-neuro-50',
+      box: 'bg-neuro-50 border-neuro-100 text-neuro-900 border-l-neuro-400'
     }
   };
 

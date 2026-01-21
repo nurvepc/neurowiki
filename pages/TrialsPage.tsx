@@ -72,8 +72,8 @@ const TrialsPage: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row relative items-start">
       {/* Sidebar */}
-      <div className="w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 md:sticky md:top-0 md:h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar self-start">
-        <div className="p-5 border-b border-gray-100 bg-white sticky top-0 z-10 backdrop-blur-sm bg-white/95">
+      <div className="w-full md:w-80 bg-white border-r border-slate-200 flex-shrink-0 md:sticky md:top-0 md:h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar self-start">
+        <div className="p-5 border-b border-slate-100 bg-white sticky top-0 z-10 backdrop-blur-sm bg-white/95">
             <h2 className="font-bold text-slate-900 flex items-center text-lg">
               <FlaskConical className="mr-2 text-emerald-600" size={24} /> Neuro Trials
             </h2>
@@ -92,7 +92,7 @@ const TrialsPage: React.FC = () => {
                     <div key={sub.title} className="mb-2">
                         <button
                           onClick={() => toggleSubcategory(sub.title)}
-                          className={`w-full group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-200 text-left font-bold ${isOpen ? 'bg-emerald-50 text-emerald-800' : 'text-slate-700 hover:bg-slate-50'}`}
+                          className={`w-full group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors duration-200 text-left font-bold ${isOpen ? 'bg-emerald-50 text-emerald-800' : 'text-slate-700 hover:bg-slate-50'}`}
                         >
                           <span>{sub.title}</span>
                           <ChevronDown size={16} className={`text-emerald-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -130,7 +130,7 @@ const TrialsPage: React.FC = () => {
                     <Link
                       key={t.id}
                       to={`/trials/${t.id}`}
-                      className="block px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all truncate"
+                      className="block px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150 truncate"
                     >
                       {t.title}
                     </Link>
@@ -153,7 +153,7 @@ const TrialsPage: React.FC = () => {
 
           {TRIAL_STRUCTURE.map((cat) => (
             <div key={cat.title} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center space-x-3 mb-6 pb-2 border-b border-gray-100">
+              <div className="flex items-center space-x-3 mb-6 pb-2 border-b border-slate-100">
                  <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
                     <Layers size={20} />
                  </div>
@@ -180,7 +180,7 @@ const TrialsPage: React.FC = () => {
                           <Link
                             key={id}
                             to={`/trials/${id}`}
-                            className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all flex flex-col relative overflow-hidden"
+                            className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-colors duration-150 flex flex-col relative overflow-hidden"
                           >
                             <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full blur-2xl opacity-0 group-hover:opacity-50 transition-opacity -mr-8 -mt-8"></div>
                             
@@ -212,7 +212,7 @@ const TrialsPage: React.FC = () => {
           {/* Orphans */}
           {orphans.length > 0 && (
              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex items-center space-x-3 mb-6 pb-2 border-b border-gray-100">
+                <div className="flex items-center space-x-3 mb-6 pb-2 border-b border-slate-100">
                     <div className="p-2 bg-slate-100 rounded-lg text-slate-600"><Activity size={20} /></div>
                     <h2 className="text-2xl font-bold text-slate-900">Other Trials</h2>
                 </div>
@@ -221,7 +221,7 @@ const TrialsPage: React.FC = () => {
                         <Link
                             key={trial.id}
                             to={`/trials/${trial.id}`}
-                            className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all"
+                            className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-colors duration-150"
                         >
                             <h4 className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors text-lg mb-2">
                                 {trial.title}

@@ -89,7 +89,7 @@ interface SelectionCardProps {
     variant?: 'default' | 'danger';
 }
 const SelectionCard = React.memo(({ title, description, selected, onClick, variant = 'default' }: SelectionCardProps) => (
-    <button onClick={onClick} className={`w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 relative overflow-hidden active:scale-[0.99] touch-manipulation ${selected ? variant === 'danger' ? 'bg-red-50 border-red-500 text-red-900' : 'bg-neuro-50 border-neuro-500 text-neuro-900' : 'bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50 text-slate-700'}`}>
+    <button onClick={onClick} className={`w-full text-left p-5 rounded-2xl border-2 transition-colors duration-150 relative overflow-hidden active:scale-[0.99] transform-gpu touch-manipulation min-h-[44px] focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${selected ? variant === 'danger' ? 'bg-red-50 border-red-500 text-red-900' : 'bg-neuro-50 border-neuro-500 text-neuro-900' : 'bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-slate-700'}`}>
         <div className="flex items-start justify-between relative z-10">
             <div className="pr-4">
                 <span className={`block text-lg font-bold ${selected ? 'text-current' : 'text-slate-900'}`}>{title}</span>
@@ -152,7 +152,7 @@ const ElanPathway: React.FC = () => {
       {/* Header same */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-            <Link to="/calculators" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-neuro-600 mb-6 group"><div className="bg-white p-1.5 rounded-md border border-gray-200 mr-2 shadow-sm group-hover:shadow-md transition-all"><ArrowLeft size={16} /></div> Back to Calculators</Link>
+            <Link to="/calculators" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-neuro-600 mb-6 group"><div className="bg-white p-1.5 rounded-md border border-slate-200 mr-2 shadow-sm group-hover:shadow-md transition-colors duration-150"><ArrowLeft size={16} /></div> Back to Calculators</Link>
             <div className="flex items-center space-x-3 mb-2"><div className="p-2 bg-purple-100 text-purple-700 rounded-lg"><Brain size={24} /></div><h1 className="text-2xl font-black text-slate-900 tracking-tight">ELAN Protocol Pathway</h1></div>
             <p className="text-slate-500 font-medium">Timing of DOAC initiation after acute ischemic stroke with AF.</p>
         </div>
@@ -165,16 +165,16 @@ const ElanPathway: React.FC = () => {
       </div>
       
       {/* Progress same... */}
-      <div className="flex items-center space-x-2 mb-8 px-1">{STEPS.map((s, idx) => (<div key={s.id} className="flex-1 flex flex-col items-center relative"><div className={`w-full h-1 absolute top-1/2 -translate-y-1/2 -z-10 ${idx === 0 ? 'hidden' : ''} ${step >= s.id ? 'bg-purple-500' : 'bg-gray-200'}`}></div><div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors z-10 ${step === s.id ? 'bg-white border-purple-500 text-purple-600' : step > s.id ? 'bg-purple-500 border-purple-500 text-white' : 'bg-gray-100 border-gray-200 text-gray-400'}`}>{step > s.id ? <Check size={14} /> : s.id}</div><span className={`text-[10px] mt-2 font-bold uppercase tracking-wider ${step === s.id ? 'text-purple-600' : 'text-gray-300'}`}>{s.title}</span></div>))}</div>
+      <div className="flex items-center space-x-2 mb-8 px-1">{STEPS.map((s, idx) => (<div key={s.id} className="flex-1 flex flex-col items-center relative"><div className={`w-full h-1 absolute top-1/2 -translate-y-1/2 -z-10 ${idx === 0 ? 'hidden' : ''} ${step >= s.id ? 'bg-purple-500' : 'bg-slate-200'}`}></div><div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors z-10 ${step === s.id ? 'bg-white border-purple-500 text-purple-600' : step > s.id ? 'bg-purple-500 border-purple-500 text-white' : 'bg-slate-100 border-slate-200 text-slate-400'}`}>{step > s.id ? <Check size={14} /> : s.id}</div><span className={`text-xs mt-2 font-bold uppercase tracking-wider ${step === s.id ? 'text-purple-600' : 'text-slate-300'}`}>{s.title}</span></div>))}</div>
 
       <div ref={stepContainerRef} className="space-y-6 min-h-[300px]">
         {/* Step 1-3 logic identical... */}
         {step === 1 && (<div className="space-y-6 animate-in slide-in-from-right-4 duration-300"><div ref={el => { fieldRefs.current['isIschemicAfib'] = el; }}><h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Inclusion</h3><div className="grid grid-cols-1 gap-3"><SelectionCard title="Ischemic Stroke with Atrial Fibrillation?" description="Confirm imaging-proven ischemic stroke and history or new diagnosis of AF." selected={inputs.isIschemicAfib === 'yes'} onClick={() => updateInput('isIschemicAfib', 'yes')} /><SelectionCard title="No" selected={inputs.isIschemicAfib === 'no'} onClick={() => updateInput('isIschemicAfib', 'no')} /></div></div>{inputs.isIschemicAfib === 'yes' && (<div ref={el => { fieldRefs.current['hasBleed'] = el; }} className="animate-in fade-in slide-in-from-top-2"><h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide mt-6">Exclusion</h3><div className="grid grid-cols-1 gap-3"><SelectionCard title="Any significant hemorrhage?" description="Confluent parenchymal hematoma (PH type) or significant bleeding risk." selected={inputs.hasBleed === 'yes'} onClick={() => updateInput('hasBleed', 'yes')} variant="danger" /><SelectionCard title="No significant hemorrhage" description="Trace or petechial hemorrhagic transformation (HI1/HI2) is permitted." selected={inputs.hasBleed === 'no'} onClick={() => updateInput('hasBleed', 'no')} /></div></div>)}{isStep1Invalid && (<div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-start space-x-3 text-red-800 animate-in zoom-in-95"><XCircle className="flex-shrink-0 mt-0.5" size={20} /><div><p className="font-bold">Not eligible for ELAN Protocol</p><p className="text-sm mt-1">{result?.ineligibleReason}</p></div></div>)}</div>)}
-        {step === 2 && (<div className="space-y-6 animate-in slide-in-from-right-4 duration-300"><div className="bg-blue-50 p-4 rounded-xl text-blue-900 text-sm mb-6 border border-blue-100"><h4 className="font-bold flex items-center mb-2"><Info size={16} className="mr-2"/> Imaging-Based Definitions</h4><ul className="space-y-2 list-disc list-inside opacity-90"><li><strong>Minor:</strong> Infarct size ≤ 1.5 cm.</li><li><strong>Moderate:</strong> Cortical superficial branch of MCA/ACA/PCA, deep branch MCA, or internal border-zone.</li><li><strong>Major:</strong> Large territory (entire MCA/ACA/PCA), ≥2 MCA cortical branches, or Brainstem/Cerebellum &gt; 1.5 cm.</li></ul></div><h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Select Stroke Classification</h3><div className="grid gap-3" ref={el => { fieldRefs.current['size'] = el; }}><SelectionCard title="Minor" description="≤ 1.5 cm anterior or posterior circulation" selected={inputs.size === 'minor'} onClick={() => updateInput('size', 'minor')} /><SelectionCard title="Moderate" description="Cortical superficial branch, MCA deep, or internal border-zone" selected={inputs.size === 'moderate'} onClick={() => updateInput('size', 'moderate')} /><SelectionCard title="Major" description="Whole territory, large cortical, or brainstem/cerebellum > 1.5 cm" selected={inputs.size === 'major'} onClick={() => updateInput('size', 'major')} /></div></div>)}
+        {step === 2 && (<div className="space-y-6 animate-in slide-in-from-right-4 duration-300"><div className="bg-neuro-50 p-4 rounded-xl text-neuro-900 text-sm mb-6 border border-neuro-100"><h4 className="font-bold flex items-center mb-2"><Info size={16} className="mr-2"/> Imaging-Based Definitions</h4><ul className="space-y-2 list-disc list-inside opacity-90"><li><strong>Minor:</strong> Infarct size ≤ 1.5 cm.</li><li><strong>Moderate:</strong> Cortical superficial branch of MCA/ACA/PCA, deep branch MCA, or internal border-zone.</li><li><strong>Major:</strong> Large territory (entire MCA/ACA/PCA), ≥2 MCA cortical branches, or Brainstem/Cerebellum &gt; 1.5 cm.</li></ul></div><h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Select Stroke Classification</h3><div className="grid gap-3" ref={el => { fieldRefs.current['size'] = el; }}><SelectionCard title="Minor" description="≤ 1.5 cm anterior or posterior circulation" selected={inputs.size === 'minor'} onClick={() => updateInput('size', 'minor')} /><SelectionCard title="Moderate" description="Cortical superficial branch, MCA deep, or internal border-zone" selected={inputs.size === 'moderate'} onClick={() => updateInput('size', 'moderate')} /><SelectionCard title="Major" description="Whole territory, large cortical, or brainstem/cerebellum > 1.5 cm" selected={inputs.size === 'major'} onClick={() => updateInput('size', 'major')} /></div></div>)}
         {step === 3 && (
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
                 <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Stroke Onset</h3>
-                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm" ref={el => { fieldRefs.current['onset'] = el; }}>
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm" ref={el => { fieldRefs.current['onset'] = el; }}>
                     <div className="flex justify-between items-center mb-4">
                         <label className="block text-base font-bold text-slate-700">Date of Onset</label>
                         {inputs.onset && (
@@ -187,7 +187,7 @@ const ElanPathway: React.FC = () => {
                         <input 
                             type="date" 
                             max={new Date().toLocaleDateString('en-CA')}
-                            className="w-full p-4 bg-slate-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all font-medium text-lg text-slate-900 placeholder-slate-400 appearance-none min-h-[60px]" 
+                            className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-colors duration-150 font-medium text-lg text-slate-900 placeholder-slate-400 appearance-none min-h-[60px]" 
                             value={inputs.onset} 
                             onChange={(e) => updateInput('onset', e.target.value)}
                             onClick={(e) => {
@@ -227,7 +227,7 @@ const ElanPathway: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Logic applied</h4>
                      <ul className="space-y-2">
                         {result.reasons.map((r, i) => ( <li key={i} className="flex items-center text-sm font-medium text-slate-700"><div className="w-1.5 h-1.5 bg-purple-500 rounded-full mr-3"></div>{r}</li>))}
@@ -235,7 +235,7 @@ const ElanPathway: React.FC = () => {
                      </ul>
                 </div>
 
-                <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-gray-100 text-xs text-slate-500 leading-relaxed">
+                <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs text-slate-500 leading-relaxed">
                     <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
                     <div><strong>Decision Support Only.</strong><p className="mt-1">{autoLinkReactNodes("Based on the ELAN Trial (NEJM 2023). Always repeat imaging to exclude hemorrhagic transformation before starting anticoagulation. This tool does not replace clinical judgment.")}</p></div>
                 </div>
@@ -243,24 +243,24 @@ const ElanPathway: React.FC = () => {
         )}
       </div>
 
-      <div id="elan-action-bar" className="mt-8 pt-4 md:border-t border-gray-100 scroll-mt-4 fixed bottom-[4.5rem] md:static left-0 right-0 bg-white/95 backdrop-blur md:bg-transparent p-4 md:p-0 border-t md:border-0 z-30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+      <div id="elan-action-bar" className="mt-8 pt-4 md:border-t border-slate-100 scroll-mt-4 fixed bottom-[4.5rem] md:static left-0 right-0 bg-white/95 backdrop-blur md:bg-transparent p-4 md:p-0 border-t md:border-0 z-30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
          <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-             <button onClick={handleBack} disabled={step === 1} className={`px-6 py-3 border border-gray-200 rounded-xl font-bold transition-all ${step === 1 ? 'opacity-0 pointer-events-none' : 'bg-white text-slate-600 hover:bg-slate-50 hover:border-gray-300'}`}>Back</button>
-             {step === 4 && (<button onClick={handleReset} className="hidden md:flex items-center text-slate-500 hover:text-neuro-600 font-bold px-4 py-2 rounded-lg transition-colors"><RotateCcw size={16} className="mr-2" /> Start Over</button>)}
-             {step < 4 ? (<button onClick={handleNext} disabled={step === 1 && isStep1Invalid} className={`flex-1 md:flex-none px-8 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 transition-all flex items-center justify-center transform active:scale-95 ${(step === 1 && isStep1Invalid) ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>Next <ChevronRight size={16} className="ml-2" /></button>) : (<button onClick={copySummary} className="flex-1 md:flex-none px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 shadow-lg transition-all flex items-center justify-center transform active:scale-95"><Copy size={16} className="mr-2" /> Copy to EMR</button>)}
+             <button onClick={handleBack} disabled={step === 1} className={`px-6 py-3 border border-slate-200 rounded-xl font-bold transition-colors duration-150 min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${step === 1 ? 'opacity-0 pointer-events-none cursor-not-allowed' : 'bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300'}`}>Back</button>
+             {step === 4 && (<button onClick={handleReset} className="hidden md:flex items-center text-slate-500 hover:text-neuro-600 font-bold px-4 py-2 rounded-lg transition-colors duration-150 min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><RotateCcw size={16} className="mr-2" /> Start Over</button>)}
+             {step < 4 ? (<button onClick={handleNext} disabled={step === 1 && isStep1Invalid} className={`flex-1 md:flex-none px-8 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 transition-colors duration-150 flex items-center justify-center active:scale-95 transform-gpu min-h-[44px] touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${(step === 1 && isStep1Invalid) ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>Next <ChevronRight size={16} className="ml-2" /></button>) : (<button onClick={copySummary} className="flex-1 md:flex-none px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 shadow-lg transition-colors duration-150 flex items-center justify-center active:scale-95 transform-gpu min-h-[44px] touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><Copy size={16} className="mr-2" /> Copy to EMR</button>)}
          </div>
       </div>
       
       {step === 4 && (
         <div className="md:hidden mt-20 text-center pb-8">
-            <button onClick={handleReset} className="text-sm text-slate-400 font-bold flex items-center justify-center w-full p-4 hover:bg-slate-50 rounded-lg transition-colors">
+            <button onClick={handleReset} className="text-sm text-slate-400 font-bold flex items-center justify-center w-full p-4 hover:bg-slate-50 rounded-lg transition-colors duration-150 min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none">
                 <RotateCcw size={14} className="mr-2" /> Start Over
             </button>
         </div>
       )}
 
       {step === 4 && (
-          <div className="mt-12 border-t border-gray-100 pt-8 pb-8">
+          <div className="mt-12 border-t border-slate-100 pt-8 pb-8">
               <h3 className="text-sm font-bold text-slate-900 mb-4">References</h3>
               <ul className="space-y-3 text-xs text-slate-500">
                   <li className="flex items-start"><span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded mr-2 font-mono">1</span>{autoLinkReactNodes(ELAN_CONTENT.reference)}</li>

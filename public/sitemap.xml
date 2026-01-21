@@ -67,13 +67,6 @@
     <priority>0.8</priority>
   </url>
   
-  <url>
-    <loc>https://neurowiki.ai/calculators/aspects</loc>
-    <lastmod>2026-01-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
   <!-- Standard Calculators (with query params) -->
   <url>
     <loc>https://neurowiki.ai/calculators?id=nihss</loc>

@@ -371,14 +371,14 @@ const Calculators: React.FC = () => {
     const c = colorMap[tool.color];
 
     return (
-        <Link key={tool.id} to={tool.path} className={`relative group flex items-center justify-between bg-gradient-to-br ${c} p-6 rounded-2xl shadow-lg border hover:shadow-xl hover:scale-[1.01] transition-all active:scale-[0.98]`}>
+        <Link key={tool.id} to={tool.path} className={`relative group flex items-center justify-between bg-gradient-to-br ${c} p-6 rounded-2xl shadow-lg border hover:shadow-xl  transition-colors duration-150 `}>
             <div className="flex items-center space-x-5 flex-1 pr-8">
-                <div className={`p-3 bg-white/10 rounded-xl text-white group-hover:bg-white transition-all shadow-inner flex-shrink-0 ${tool.color === 'rose' ? 'group-hover:text-rose-900' : tool.color === 'indigo' ? 'group-hover:text-indigo-900' : tool.color === 'red' ? 'group-hover:text-red-900' : tool.color === 'neuro' ? 'group-hover:text-neuro-900' : tool.color === 'purple' ? 'group-hover:text-purple-900' : 'group-hover:text-slate-900'}`}>
+                <div className={`p-3 bg-white/10 rounded-xl text-white group-hover:bg-white transition-colors duration-150 shadow-inner flex-shrink-0 ${tool.color === 'rose' ? 'group-hover:text-rose-900' : tool.color === 'indigo' ? 'group-hover:text-indigo-900' : tool.color === 'red' ? 'group-hover:text-red-900' : tool.color === 'neuro' ? 'group-hover:text-neuro-900' : tool.color === 'purple' ? 'group-hover:text-purple-900' : 'group-hover:text-slate-900'}`}>
                     <tool.icon size={24} />
                 </div>
                 <div><h3 className="text-lg font-bold text-white mb-1">{tool.name}</h3><p className="text-sm font-medium leading-snug opacity-90">{tool.desc}</p></div>
             </div>
-            <button onClick={(e) => handleFavToggle(e, tool.id, tool.name)} className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 active:scale-90 transition-all z-10"><Star size={20} className={`transition-colors ${isFav ? 'text-yellow-400 fill-yellow-400' : 'text-white/30 hover:text-white'}`} /></button>
+            <button onClick={(e) => handleFavToggle(e, tool.id, tool.name)} className="absolute top-4 right-4 p-3 rounded-full hover:bg-white/10 active:scale-95 transform-gpu transition-colors duration-150 z-10 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><Star size={20} className={`transition-colors ${isFav ? 'text-yellow-400 fill-yellow-400' : 'text-white/30 hover:text-white'}`} /></button>
             <div className="text-white/50 group-hover:text-white transition-colors"><ChevronRight size={20} /></div>
         </Link>
     );
@@ -387,13 +387,13 @@ const Calculators: React.FC = () => {
   const renderStandardCalc = (calc: CalculatorDefinition) => {
       const isFav = isFavorite(calc.id);
       return (
-        <Link key={calc.id} to={`/calculators/${calc.id}`} className="relative group flex items-center justify-between bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-neuro-100 transition-all active:scale-[0.98]">
+        <Link key={calc.id} to={`/calculators/${calc.id}`} className="relative group flex items-center justify-between bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-neuro-100 transition-colors duration-150 ">
             <div className="flex items-center space-x-5 flex-1 pr-8">
-                <div className="p-3 bg-neuro-50 rounded-xl text-neuro-600 group-hover:bg-neuro-600 group-hover:text-white transition-all shadow-inner flex-shrink-0"><Calculator size={24} /></div>
+                <div className="p-3 bg-neuro-50 rounded-xl text-neuro-600 group-hover:bg-neuro-600 group-hover:text-white transition-colors duration-150 shadow-inner flex-shrink-0"><Calculator size={24} /></div>
                 <div><h3 className="text-lg font-bold text-slate-900 group-hover:text-neuro-700 transition-colors">{calc.name}</h3><p className="text-slate-500 text-sm font-medium leading-snug">{calc.description}</p></div>
             </div>
-            <button onClick={(e) => handleFavToggle(e, calc.id, calc.name)} className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-50 active:scale-90 transition-all z-10"><Star size={20} className={`transition-colors ${isFav ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300 hover:text-slate-400'}`} /></button>
-            <div className="text-gray-300 group-hover:text-neuro-500 transition-colors"><ChevronRight size={20} /></div>
+            <button onClick={(e) => handleFavToggle(e, calc.id, calc.name)} className="absolute top-4 right-4 p-3 rounded-full hover:bg-slate-50 active:scale-95 transform-gpu transition-colors duration-150 z-10 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><Star size={20} className={`transition-colors ${isFav ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300 hover:text-slate-400'}`} /></button>
+            <div className="text-slate-300 group-hover:text-neuro-500 transition-colors"><ChevronRight size={20} /></div>
         </Link>
       );
   };
@@ -406,13 +406,13 @@ const Calculators: React.FC = () => {
       <div className="max-w-xl mx-auto pb-32">
         {/* Header - Collapsible */}
         <div 
-            className={`sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-all duration-300 ease-in-out px-4 overflow-hidden ${isHeaderCompact ? 'py-2 cursor-pointer' : 'py-3'}`}
+            className={`sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-colors duration-300 ease-in-out px-4 overflow-hidden ${isHeaderCompact ? 'py-2 cursor-pointer' : 'py-3'}`}
             onClick={() => isHeaderCompact && setIsHeaderCompact(false)}
         >
           <div className="flex justify-between items-center">
             <div className="flex items-center">
                 <Link to="/calculators" onClick={(e) => e.stopPropagation()} className="p-2 -ml-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"><ArrowLeft size={20} /></Link>
-                <h1 className={`font-black text-slate-900 ml-2 transition-all ${isHeaderCompact ? 'text-lg' : 'text-xl'}`}>NIHSS</h1>
+                <h1 className={`font-black text-slate-900 ml-2 transition-colors duration-150 ${isHeaderCompact ? 'text-lg' : 'text-xl'}`}>NIHSS</h1>
             </div>
             
             {/* When compact, show score for context */}
@@ -424,7 +424,7 @@ const Calculators: React.FC = () => {
 
             {/* When expanded, show Favorite */}
             {!isHeaderCompact && (
-                <button onClick={(e) => handleFavToggle(e, 'nihss', 'NIHSS')} className="p-2 rounded-full hover:bg-slate-100 transition-colors"><Star size={20} className={isFav ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'} /></button>
+                <button onClick={(e) => handleFavToggle(e, 'nihss', 'NIHSS')} className="p-3 rounded-full hover:bg-slate-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><Star size={20} className={isFav ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'} /></button>
             )}
             
             {/* When compact, show expand indicator instead of star? Or allow star to persist? 
@@ -432,29 +432,29 @@ const Calculators: React.FC = () => {
             */}
           </div>
           
-          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isHeaderCompact ? 'max-h-0 opacity-0' : 'max-h-40 opacity-100 mt-4'}`}>
+          <div className={`transition-colors duration-300 ease-in-out overflow-hidden ${isHeaderCompact ? 'max-h-0 opacity-0' : 'max-h-40 opacity-100 mt-4'}`}>
              <div className="flex flex-col gap-3 pb-1">
                  {/* Rapid / Detailed Toggle */}
                  <div className="flex items-center bg-slate-100 rounded-lg p-1 w-full" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => setNihssMode('rapid')} className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${nihssMode === 'rapid' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>Rapid</button>
-                    <button onClick={() => setNihssMode('detailed')} className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${nihssMode === 'detailed' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>Detailed</button>
+                    <button onClick={() => setNihssMode('rapid')} className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-colors duration-150 ${nihssMode === 'rapid' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>Rapid</button>
+                    <button onClick={() => setNihssMode('detailed')} className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-colors duration-150 ${nihssMode === 'detailed' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>Detailed</button>
                  </div>
                  
                  {/* Resident/Attending Sliding Toggle */}
                  <div className="relative flex bg-slate-100 rounded-lg p-1 h-9 cursor-pointer w-full" onClick={(e) => {e.stopPropagation(); setUserMode(m => m === 'resident' ? 'attending' : 'resident')}}>
                     {/* Sliding Background */}
                     <div 
-                        className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-md bg-white shadow-sm transition-all duration-300 ease-out border border-black/5 ${userMode === 'resident' ? 'left-1' : 'left-[calc(50%+0px)]'}`}
+                        className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-md bg-white shadow-sm transition-colors duration-300 ease-out border border-black/5 ${userMode === 'resident' ? 'left-1' : 'left-[calc(50%+0px)]'}`}
                     />
                     <button 
                         onClick={(e) => {e.stopPropagation(); setUserMode('resident')}} 
-                        className={`relative z-10 flex-1 flex items-center justify-center px-2 text-[10px] font-bold transition-colors ${userMode === 'resident' ? 'text-slate-900' : 'text-slate-500'}`}
+                        className={`relative z-10 flex-1 flex items-center justify-center px-2 text-xs font-bold transition-colors min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${userMode === 'resident' ? 'text-slate-900' : 'text-slate-500'}`}
                     >
                         <UserCog size={12} className={`mr-1.5 ${userMode === 'resident' ? 'text-neuro-600' : ''}`} /> Resident
                     </button>
                     <button 
                         onClick={(e) => {e.stopPropagation(); setUserMode('attending')}} 
-                        className={`relative z-10 flex-1 flex items-center justify-center px-2 text-[10px] font-bold transition-colors ${userMode === 'attending' ? 'text-slate-900' : 'text-slate-500'}`}
+                        className={`relative z-10 flex-1 flex items-center justify-center px-2 text-xs font-bold transition-colors min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${userMode === 'attending' ? 'text-slate-900' : 'text-slate-500'}`}
                     >
                         <Zap size={12} className={`mr-1.5 ${userMode === 'attending' ? 'text-amber-500' : ''}`} /> Attending
                     </button>
@@ -483,7 +483,7 @@ const Calculators: React.FC = () => {
               if (item.id === '5a') {
                 return (
                   <React.Fragment key="motor-header">
-                    <div className="flex justify-between items-end border-b border-gray-100 pb-2 mt-8 mb-4">
+                    <div className="flex justify-between items-end border-b border-slate-100 pb-2 mt-8 mb-4">
                       <h3 className="font-black text-sm text-slate-400 uppercase tracking-widest">Motor</h3>
                       <button onClick={() => setAllMotor(0)} className="text-xs font-bold text-neuro-600 bg-neuro-50 px-2 py-1 rounded hover:bg-neuro-100">Normal Exam</button>
                     </div>
@@ -522,12 +522,12 @@ const Calculators: React.FC = () => {
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 safe-area-bottom shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-50">
            <div className="max-w-xl mx-auto flex justify-between items-center">
               <div>
-                 <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Score</div>
+                 <div className="text-xs font-black uppercase tracking-widest text-slate-400">Total Score</div>
                  <div className="text-3xl font-black text-slate-900">{calculateTotal(nihssValues)}</div>
               </div>
               <div className="flex space-x-3">
                  <button onClick={() => setNihssValues({})} className="p-3 bg-slate-100 rounded-xl text-slate-600 hover:bg-slate-200 transition-colors"><RefreshCw size={20} /></button>
-                 <button onClick={copyNihss} className="px-6 py-3 bg-neuro-600 text-white font-bold rounded-xl shadow-lg hover:bg-neuro-700 active:scale-95 flex items-center transition-all"><Copy size={18} className="mr-2" /> Copy</button>
+                 <button onClick={copyNihss} className="px-6 py-3 bg-neuro-600 text-white font-bold rounded-xl shadow-lg hover:bg-neuro-700 active:scale-95 transform-gpu flex items-center transition-colors duration-150"><Copy size={18} className="mr-2" /> Copy</button>
               </div>
            </div>
         </div>
@@ -555,8 +555,8 @@ const Calculators: React.FC = () => {
               </div>
               
               <div className="bg-slate-100 p-1 rounded-xl flex">
-                  <button onClick={() => setViewFilter('all')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewFilter === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>All Tools</button>
-                  <button onClick={() => setViewFilter('favorites')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center ${viewFilter === 'favorites' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}><Star size={14} className={`mr-1.5 ${hasFavorites ? 'fill-yellow-400 text-yellow-400' : ''}`} /> Favorites</button>
+                  <button onClick={() => setViewFilter('all')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors duration-150 ${viewFilter === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>All Tools</button>
+                  <button onClick={() => setViewFilter('favorites')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors duration-150 flex items-center ${viewFilter === 'favorites' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}><Star size={14} className={`mr-1.5 ${hasFavorites ? 'fill-yellow-400 text-yellow-400' : ''}`} /> Favorites</button>
               </div>
           </div>
 

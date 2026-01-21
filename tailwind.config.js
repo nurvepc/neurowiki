@@ -12,18 +12,26 @@ export default {
         sans: ['Inter', 'sans-serif'],
       },
       colors: {
+        // Refined Neuro Blue (deeper, more sophisticated)
         neuro: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-        }
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          200: '#BFDBFE',
+          300: '#93C5FD',
+          400: '#60A5FA',
+          500: '#3B82F6',
+          600: '#0F5EA3',  // PRIMARY - deeper blue
+          700: '#0C4A82',
+          800: '#0A3D6B',
+          900: '#072F54',
+          950: '#041E36',
+        },
+        // Warm backgrounds instead of pure white/gray
+        surface: {
+          50: '#FAFBFC',   // Page background
+          100: '#F5F7F9',  // Card hover
+          200: '#EEF1F4',  // Borders
+        },
       }
     },
   },

@@ -12,7 +12,6 @@ import ElanPathway from '../pages/ElanPathway';
 import EvtPathway from '../pages/EvtPathway';
 import StatusEpilepticusPathway from '../pages/StatusEpilepticusPathway';
 import MigrainePathway from '../pages/MigrainePathway';
-import AspectsCalculator from '../pages/AspectsCalculator';
 import DisclaimerModal from '../components/DisclaimerModal';
 
 const App: React.FC = () => {
@@ -29,7 +28,6 @@ const App: React.FC = () => {
           <Route path="/calculators/evt-pathway" element={<EvtPathway />} />
           <Route path="/calculators/se-pathway" element={<StatusEpilepticusPathway />} />
           <Route path="/calculators/migraine-pathway" element={<MigrainePathway />} />
-          <Route path="/calculators/aspects" element={<AspectsCalculator />} />
           <Route path="/guide" element={<ResidentGuide context="guide" />} />
           <Route path="/guide/:topicId" element={<ResidentGuide context="guide" />} />
           <Route path="/trials" element={<TrialsPage />} />

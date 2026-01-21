@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, AlertTriangle, Check, RotateCcw, Copy, Info, AlertCircle, ChevronRight, Activity, Star } from 'lucide-react';
 import { useFavorites } from '../hooks/useFavorites';
 import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
+import { CollapsibleSection } from '../src/components/CollapsibleSection';
 
 // --- Types ---
 type Tri = "no" | "yes" | "unknown";
@@ -163,7 +164,7 @@ interface TriButtonProps {
 const TriButton = React.memo(({ field, label, value, onChange, registerRef }: TriButtonProps) => (
     <div 
         ref={registerRef}
-        className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm transition-all hover:border-neuro-100 scroll-mt-32"
+        className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition-colors duration-150 hover:border-neuro-100 scroll-mt-32"
     >
       <label className="block text-base font-bold text-slate-800 mb-4">{label}</label>
       <div className="flex bg-slate-100 rounded-lg p-1.5 h-16">
@@ -171,7 +172,7 @@ const TriButton = React.memo(({ field, label, value, onChange, registerRef }: Tr
           <button
             key={val}
             onClick={() => onChange(field, val)}
-            className={`flex-1 rounded-md text-sm font-bold capitalize transition-all duration-200 touch-manipulation ${
+            className={`flex-1 rounded-md text-sm font-bold capitalize transition-colors duration-200 touch-manipulation ${
               value === val
                 ? val === 'yes' 
                     ? 'bg-neuro-600 text-white shadow-md' 
@@ -189,7 +190,7 @@ const TriButton = React.memo(({ field, label, value, onChange, registerRef }: Tr
 ));
 
 const GCAPathway: React.FC = () => {
-  const [step, setStep] = useState(1);
+  const [activeSection, setActiveSection] = useState<number>(0);
   const [inputs, setInputs] = useState<Inputs>({
     age50: 'unknown',
     visual: 'unknown',
@@ -235,7 +236,7 @@ const GCAPathway: React.FC = () => {
      } else {
         window.scrollTo(0,0);
      }
-  }, [step]);
+  }, [activeSection]);
 
   const updateInput = (field: keyof Inputs, value: any) => {
     setInputs(prev => ({ ...prev, [field]: value }));
@@ -245,7 +246,7 @@ const GCAPathway: React.FC = () => {
     setInputs(prev => ({ ...prev, [field]: value }));
 
     // Auto-scroll (snap) logic
-    const currentFields = STEP_FIELDS[step];
+    const currentFields = STEP_FIELDS[activeSection + 1];
     if (currentFields) {
         const idx = currentFields.indexOf(field as string);
         
@@ -270,14 +271,14 @@ const GCAPathway: React.FC = () => {
             }, 300);
         }
     }
-  }, [step]);
+  }, [activeSection]);
 
   const handleNext = () => {
-    if (step < 4) setStep(step + 1);
+    setActiveSection((prev) => Math.min(3, prev + 1));
   };
 
   const handleBack = () => {
-    if (step > 1) setStep(step - 1);
+    setActiveSection((prev) => Math.max(0, prev - 1));
   };
 
   const handleReset = () => {
@@ -293,7 +294,7 @@ const GCAPathway: React.FC = () => {
         imagingAortic: 'unknown',
         imagingShoulderHip: 'unknown'
     });
-    setStep(1);
+    setActiveSection(0);
   };
 
   const copySummary = () => {
@@ -321,13 +322,29 @@ ${result.notes.join('\n')}
     { value: 'unknown', label: 'Unknown', desc: 'Results pending' },
   ];
 
+  const sectionCompletion = [
+    STEP_FIELDS[1].filter((f) => (inputs as any)[f] !== 'unknown').length === STEP_FIELDS[1].length,
+    STEP_FIELDS[2].filter((f) => (inputs as any)[f] !== 'unknown').length === STEP_FIELDS[2].length,
+    STEP_FIELDS[3].filter((f) => (inputs as any)[f] !== 'unknown').length === STEP_FIELDS[3].length,
+    true,
+  ];
+
+  const completedCount = sectionCompletion.slice(0, 3).filter(Boolean).length;
+
+  const getSectionSummary = (idx: number) => {
+    if (idx === 3 && result) return `Tier: ${result.tier} • Score: ${result.score}`;
+    const fields = STEP_FIELDS[idx + 1] || [];
+    const answered = fields.filter((f) => (inputs as any)[f] !== 'unknown').length;
+    return answered > 0 ? `${answered}/${fields.length} answered` : undefined;
+  };
+
   return (
     <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-32 md:pb-20">
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
             <Link to="/calculators" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-neuro-600 mb-6 group">
-                <div className="bg-white p-1.5 rounded-md border border-gray-200 mr-2 shadow-sm group-hover:shadow-md transition-all">
+                <div className="bg-white p-1.5 rounded-md border border-slate-200 mr-2 shadow-sm group-hover:shadow-md transition-colors duration-150">
                     <ArrowLeft size={16} />
                 </div>
                 Back to Calculators
@@ -348,166 +365,190 @@ ${result.notes.join('\n')}
         </button>
       </div>
 
-      {/* Progress */}
-      <div className="flex items-center space-x-2 mb-8 px-1">
-         {STEPS.map((s, idx) => (
-             <div key={s.id} className="flex-1 flex flex-col items-center relative">
-                 <div className={`w-full h-1 absolute top-1/2 -translate-y-1/2 -z-10 ${idx === 0 ? 'hidden' : ''} ${step >= s.id ? 'bg-neuro-500' : 'bg-gray-200'}`}></div>
-                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors z-10 ${
-                     step === s.id ? 'bg-white border-neuro-500 text-neuro-600' : 
-                     step > s.id ? 'bg-neuro-500 border-neuro-500 text-white' : 'bg-gray-100 border-gray-200 text-gray-400'
-                 }`}>
-                     {step > s.id ? <Check size={14} /> : s.id}
-                 </div>
-                 <span className={`text-[10px] mt-2 font-bold uppercase tracking-wider ${step === s.id ? 'text-neuro-600' : 'text-gray-300'}`}>{s.title}</span>
-             </div>
-         ))}
+      {/* Progress bar */}
+      <div className="mb-4">
+        <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-neuro-500 transition-colors duration-150"
+            style={{ width: `${(completedCount / 3) * 100}%` }}
+          />
+        </div>
+        <div className="mt-2 text-xs text-slate-500">
+          {completedCount}/3 sections completed
+        </div>
       </div>
 
-      {/* Step 1: Red Flags */}
-      {step === 1 && (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <TriButton field="age50" label="Age ≥ 50 years?" value={inputs.age50} onChange={handleFieldChange} registerRef={el => fieldRefs.current['age50'] = el} />
-            <TriButton field="visual" label="Visual symptoms or transient vision loss?" value={inputs.visual} onChange={handleFieldChange} registerRef={el => fieldRefs.current['visual'] = el} />
-            <TriButton field="jawClaudication" label="Jaw claudication?" value={inputs.jawClaudication} onChange={handleFieldChange} registerRef={el => fieldRefs.current['jawClaudication'] = el} />
-        </div>
-      )}
+      <div className="space-y-3">
+        <CollapsibleSection
+          title="Red Flags"
+          stepNumber={1}
+          totalSteps={4}
+          isCompleted={sectionCompletion[0]}
+          isActive={activeSection === 0}
+          onToggle={() => setActiveSection((prev) => (prev === 0 ? -1 : 0))}
+          summary={getSectionSummary(0)}
+        >
+          <div className="space-y-6">
+            <TriButton field="age50" label="Age ≥ 50 years?" value={inputs.age50} onChange={(f, v) => { handleFieldChange(f, v); if (activeSection === 0 && STEP_FIELDS[1].indexOf(f as any) === STEP_FIELDS[1].length - 1) setTimeout(() => setActiveSection(1), 250); }} registerRef={el => fieldRefs.current['age50'] = el} />
+            <TriButton field="visual" label="Visual symptoms or transient vision loss?" value={inputs.visual} onChange={(f, v) => { handleFieldChange(f, v); if (activeSection === 0 && f === 'jawClaudication') setTimeout(() => setActiveSection(1), 250); }} registerRef={el => fieldRefs.current['visual'] = el} />
+            <TriButton field="jawClaudication" label="Jaw claudication?" value={inputs.jawClaudication} onChange={(f, v) => { handleFieldChange(f, v); setTimeout(() => setActiveSection(1), 250); }} registerRef={el => fieldRefs.current['jawClaudication'] = el} />
+          </div>
+        </CollapsibleSection>
 
-      {/* Step 2: Phenotype */}
-      {step === 2 && (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-             <TriButton field="headacheOrScalpTenderness" label="New headache or scalp tenderness?" value={inputs.headacheOrScalpTenderness} onChange={handleFieldChange} registerRef={el => fieldRefs.current['headacheOrScalpTenderness'] = el} />
-             <TriButton field="pmrSymptoms" label="PMR features (proximal pain/stiffness, morning stiffness)?" value={inputs.pmrSymptoms} onChange={handleFieldChange} registerRef={el => fieldRefs.current['pmrSymptoms'] = el} />
-             <TriButton field="constitutional" label="Constitutional symptoms (fever/weight loss/night sweats)?" value={inputs.constitutional} onChange={handleFieldChange} registerRef={el => fieldRefs.current['constitutional'] = el} />
-        </div>
-      )}
+        <CollapsibleSection
+          title="Phenotype"
+          stepNumber={2}
+          totalSteps={4}
+          isCompleted={sectionCompletion[1]}
+          isActive={activeSection === 1}
+          onToggle={() => setActiveSection((prev) => (prev === 1 ? -1 : 1))}
+          summary={getSectionSummary(1)}
+        >
+          <div className="space-y-6">
+            <TriButton field="headacheOrScalpTenderness" label="New headache or scalp tenderness?" value={inputs.headacheOrScalpTenderness} onChange={handleFieldChange} registerRef={el => fieldRefs.current['headacheOrScalpTenderness'] = el} />
+            <TriButton field="pmrSymptoms" label="PMR features (proximal pain/stiffness, morning stiffness)?" value={inputs.pmrSymptoms} onChange={handleFieldChange} registerRef={el => fieldRefs.current['pmrSymptoms'] = el} />
+            <TriButton field="constitutional" label="Constitutional symptoms (fever/weight loss/night sweats)?" value={inputs.constitutional} onChange={(f, v) => { handleFieldChange(f, v); setTimeout(() => setActiveSection(2), 250); }} registerRef={el => fieldRefs.current['constitutional'] = el} />
+          </div>
+        </CollapsibleSection>
 
-      {/* Step 3: Objective */}
-      {step === 3 && (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div 
-                ref={el => { fieldRefs.current['crpEsr'] = el; }}
-                className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:border-neuro-100 transition-all scroll-mt-32"
+        <CollapsibleSection
+          title="Objective"
+          stepNumber={3}
+          totalSteps={4}
+          isCompleted={sectionCompletion[2]}
+          isActive={activeSection === 2}
+          onToggle={() => setActiveSection((prev) => (prev === 2 ? -1 : 2))}
+          summary={getSectionSummary(2)}
+        >
+          <div className="space-y-6">
+            <div
+              ref={el => { fieldRefs.current['crpEsr'] = el; }}
+              className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-neuro-100 transition-colors duration-150 scroll-mt-32"
             >
-                <label className="block text-base font-bold text-slate-800 mb-4">CRP/ESR Level</label>
-                <div className="flex flex-col space-y-3">
-                    {markerOptions.map((opt) => (
-                        <button
-                            key={opt.value}
-                            onClick={() => handleFieldChange('crpEsr', opt.value)}
-                            className={`flex items-center justify-between p-4 rounded-xl text-sm transition-all duration-200 border touch-manipulation active:scale-[0.98] ${
-                                inputs.crpEsr === opt.value
-                                    ? 'bg-neuro-600 text-white border-neuro-600 shadow-md ring-2 ring-neuro-100'
-                                    : 'bg-slate-50 text-slate-600 border-transparent hover:bg-white hover:border-gray-200'
-                            }`}
-                        >
-                            <span className="font-bold text-base">{opt.label}</span>
-                            <span className={`text-xs ${inputs.crpEsr === opt.value ? 'text-neuro-100' : 'text-slate-400'}`}>{opt.desc}</span>
-                        </button>
-                    ))}
-                </div>
+              <label className="block text-base font-bold text-slate-800 mb-4">CRP/ESR Level</label>
+              <div className="flex flex-col space-y-3">
+                {markerOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleFieldChange('crpEsr', opt.value)}
+                    className={`flex items-center justify-between p-4 rounded-xl text-sm transition-colors duration-200 border touch-manipulation active:scale-[0.98] ${
+                      inputs.crpEsr === opt.value
+                        ? 'bg-neuro-600 text-white border-neuro-600 shadow-md ring-2 ring-neuro-100'
+                        : 'bg-slate-50 text-slate-600 border-transparent hover:bg-white hover:border-slate-200'
+                    }`}
+                  >
+                    <span className="font-bold text-base">{opt.label}</span>
+                    <span className={`text-xs ${inputs.crpEsr === opt.value ? 'text-neuro-100' : 'text-slate-400'}`}>{opt.desc}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <h3 className="text-sm font-black uppercase text-slate-400 tracking-widest mt-8 mb-2 px-2">Imaging Findings</h3>
             <TriButton field="imagingTemporal" label="Temporal Artery (Halo sign/Biopsy)?" value={inputs.imagingTemporal} onChange={handleFieldChange} registerRef={el => fieldRefs.current['imagingTemporal'] = el} />
             <TriButton field="imagingAortic" label="Aortic/Branch Involvement (Large Vessel)?" value={inputs.imagingAortic} onChange={handleFieldChange} registerRef={el => fieldRefs.current['imagingAortic'] = el} />
-            <TriButton field="imagingShoulderHip" label="Shoulder/Hip Inflammation (PMR)?" value={inputs.imagingShoulderHip} onChange={handleFieldChange} registerRef={el => fieldRefs.current['imagingShoulderHip'] = el} />
-        </div>
-      )}
-
-      {/* Step 4: Results */}
-      {step === 4 && result && (
-          <div className="space-y-6 animate-in zoom-in-95 duration-300">
-             {/* Tier Card */}
-             <div className={`p-8 rounded-3xl text-white relative overflow-hidden shadow-xl ${
-                 result.tier === 'High' ? 'bg-red-600 shadow-red-200' :
-                 result.tier === 'Intermediate' ? 'bg-amber-500 shadow-amber-200' : 'bg-emerald-500 shadow-emerald-200'
-             }`}>
-                 <div className="relative z-10">
-                     <div className="text-xs font-black uppercase tracking-widest opacity-80 mb-1">Likelihood Tier</div>
-                     <div className="text-4xl font-black tracking-tight mb-2">{result.tier} Suspicion</div>
-                     <div className="text-lg font-medium opacity-90 border-t border-white/20 pt-4 mt-2">{result.action}</div>
-                 </div>
-                 {/* Decorative blob */}
-                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-20 rounded-full blur-3xl"></div>
-             </div>
-
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 {/* Phenotype */}
-                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Most Likely Phenotype</h4>
-                     <div className="text-xl font-bold text-slate-900">{result.phenotype}</div>
-                 </div>
-
-                 {/* Drivers */}
-                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Key Drivers (+Points)</h4>
-                     <ul className="space-y-2">
-                         {result.reasons.length > 0 ? result.reasons.map((r, i) => (
-                             <li key={i} className="text-sm font-medium text-slate-700 flex justify-between items-center border-b border-gray-50 pb-1 last:border-0 last:pb-0">
-                                 <span>{r.label}</span>
-                                 <span className="font-bold text-neuro-600 bg-neuro-50 px-2 py-0.5 rounded ml-2">+{r.points}</span>
-                             </li>
-                         )) : <span className="text-sm text-slate-400 italic">No specific positive drivers selected.</span>}
-                     </ul>
-                 </div>
-             </div>
-
-             {/* Notes */}
-             {result.notes.length > 0 && (
-                 <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100 text-blue-900 text-sm shadow-sm">
-                     <div className="flex items-center font-bold mb-2">
-                         <Info size={16} className="mr-2" /> Clinical Notes
-                     </div>
-                     <ul className="list-disc list-inside space-y-1 opacity-80">
-                         {result.notes.map((note, i) => (
-                             <li key={i}>{note}</li>
-                         ))}
-                     </ul>
-                 </div>
-             )}
-
-             {/* Disclaimer */}
-             <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-gray-100 text-xs text-slate-500 leading-relaxed">
-                 <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
-                 <div>
-                     <strong>Decision Support Only. Not Medical Advice.</strong>
-                     <p className="mt-1">Visual symptoms/vision loss are an emergency—seek urgent evaluation. This tool does not replace clinical judgment or local protocols.</p>
-                 </div>
-             </div>
+            <TriButton field="imagingShoulderHip" label="Shoulder/Hip Inflammation (PMR)?" value={inputs.imagingShoulderHip} onChange={(f, v) => { handleFieldChange(f, v); setTimeout(() => setActiveSection(3), 250); }} registerRef={el => fieldRefs.current['imagingShoulderHip'] = el} />
           </div>
-      )}
+        </CollapsibleSection>
+
+        <CollapsibleSection
+          title="Results"
+          stepNumber={4}
+          totalSteps={4}
+          isCompleted={sectionCompletion[3]}
+          isActive={activeSection === 3}
+          onToggle={() => setActiveSection((prev) => (prev === 3 ? -1 : 3))}
+          summary={getSectionSummary(3)}
+        >
+          {result && (
+            <div className="space-y-6">
+              {/* Tier Card */}
+              <div className={`p-8 rounded-3xl text-white relative overflow-hidden shadow-xl ${
+                result.tier === 'High' ? 'bg-red-600 shadow-red-200' :
+                result.tier === 'Intermediate' ? 'bg-amber-500 shadow-amber-200' : 'bg-emerald-500 shadow-emerald-200'
+              }`}>
+                <div className="relative z-10">
+                  <div className="text-xs font-black uppercase tracking-widest opacity-80 mb-1">Likelihood Tier</div>
+                  <div className="text-4xl font-black tracking-tight mb-2">{result.tier} Suspicion</div>
+                  <div className="text-lg font-medium opacity-90 border-t border-white/20 pt-4 mt-2">{result.action}</div>
+                </div>
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-20 rounded-full blur-3xl"></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Most Likely Phenotype</h4>
+                  <div className="text-xl font-bold text-slate-900">{result.phenotype}</div>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Key Drivers (+Points)</h4>
+                  <ul className="space-y-2">
+                    {result.reasons.length > 0 ? result.reasons.map((r, i) => (
+                      <li key={i} className="text-sm font-medium text-slate-700 flex justify-between items-center border-b border-slate-50 pb-1 last:border-0 last:pb-0">
+                        <span>{r.label}</span>
+                        <span className="font-bold text-neuro-600 bg-neuro-50 px-2 py-0.5 rounded ml-2">+{r.points}</span>
+                      </li>
+                    )) : <span className="text-sm text-slate-400 italic">No specific positive drivers selected.</span>}
+                  </ul>
+                </div>
+              </div>
+
+              {result.notes.length > 0 && (
+                <div className="bg-neuro-50 p-5 rounded-2xl border border-neuro-100 text-neuro-900 text-sm shadow-sm">
+                  <div className="flex items-center font-bold mb-2">
+                    <Info size={16} className="mr-2" /> Clinical Notes
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 opacity-80">
+                    {result.notes.map((note, i) => (
+                      <li key={i}>{note}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs text-slate-500 leading-relaxed">
+                <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                <div>
+                  <strong>Decision Support Only. Not Medical Advice.</strong>
+                  <p className="mt-1">Visual symptoms/vision loss are an emergency—seek urgent evaluation. This tool does not replace clinical judgment or local protocols.</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </CollapsibleSection>
+      </div>
 
       {/* Sticky Actions Bar */}
-      <div id="gca-action-bar" className="mt-8 pt-4 md:border-t border-gray-100 scroll-mt-4 fixed bottom-[4.5rem] md:static left-0 right-0 bg-white/95 backdrop-blur md:bg-transparent p-4 md:p-0 border-t md:border-0 z-30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+      <div id="gca-action-bar" className="mt-8 pt-4 md:border-t border-slate-100 scroll-mt-4 fixed bottom-[4.5rem] md:static left-0 right-0 bg-white/95 backdrop-blur md:bg-transparent p-4 md:p-0 border-t md:border-0 z-30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
          <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
              {/* Back Button */}
              <button 
                 onClick={handleBack} 
-                disabled={step === 1}
-                className={`px-6 py-3 border border-gray-200 rounded-xl font-bold transition-all ${
-                    step === 1 
+                disabled={activeSection === 0}
+                className={`px-6 py-3 border border-slate-200 rounded-xl font-bold transition-colors duration-150 ${
+                    activeSection === 0 
                     ? 'opacity-0 pointer-events-none' 
-                    : 'bg-white text-slate-600 hover:bg-slate-50 hover:border-gray-300'
+                    : 'bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300'
                 }`}
              >
                 Back
              </button>
 
              {/* Desktop Start Over for Step 4 */}
-             {step === 4 && (
-                <button onClick={handleReset} className="hidden md:flex items-center text-slate-500 hover:text-neuro-600 font-bold px-4 py-2 rounded-lg transition-colors">
+             {activeSection === 3 && (
+                <button onClick={handleReset} className="hidden md:flex items-center text-slate-500 hover:text-neuro-600 font-bold px-4 py-2 rounded-lg transition-colors min-h-[44px] touch-manipulation active:scale-95 focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none">
                     <RotateCcw size={16} className="mr-2" /> Start Over
                 </button>
              )}
 
              {/* Next / Copy Button */}
-             {step < 4 ? (
-                 <button onClick={handleNext} className="flex-1 md:flex-none px-8 py-3 bg-neuro-600 text-white rounded-xl font-bold hover:bg-neuro-700 shadow-lg shadow-neuro-200 transition-all flex items-center justify-center transform active:scale-95">
+             {activeSection < 3 ? (
+                 <button onClick={handleNext} className="flex-1 md:flex-none px-8 py-3 bg-neuro-600 text-white rounded-xl font-bold hover:bg-neuro-700 shadow-lg shadow-neuro-200 transition-colors duration-150 flex items-center justify-center active:scale-95 transform-gpu min-h-[44px] touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none">
                      Next <ChevronRight size={16} className="ml-2" />
                  </button>
              ) : (
-                 <button onClick={copySummary} className="flex-1 md:flex-none px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 shadow-lg transition-all flex items-center justify-center transform active:scale-95">
+                 <button onClick={copySummary} className="flex-1 md:flex-none px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 shadow-lg transition-colors duration-150 flex items-center justify-center active:scale-95 transform-gpu min-h-[44px] touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none">
                      <Copy size={16} className="mr-2" /> Copy
                  </button>
              )}
@@ -515,17 +556,17 @@ ${result.notes.join('\n')}
       </div>
       
       {/* Mobile Start Over Spacer & Button */}
-      {step === 4 && (
+      {activeSection === 3 && (
         <div className="md:hidden mt-20 text-center pb-8">
-            <button onClick={handleReset} className="text-sm text-slate-400 font-bold flex items-center justify-center w-full p-4 hover:bg-slate-50 rounded-lg transition-colors">
+            <button onClick={handleReset} className="text-sm text-slate-400 font-bold flex items-center justify-center w-full p-4 hover:bg-slate-50 rounded-lg transition-colors min-h-[44px] touch-manipulation active:scale-95 focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none">
                 <RotateCcw size={14} className="mr-2" /> Start Over
             </button>
         </div>
       )}
 
       {/* References */}
-      {step === 4 && (
-          <div className="mt-12 border-t border-gray-100 pt-8 pb-8">
+      {activeSection === 3 && (
+          <div className="mt-12 border-t border-slate-100 pt-8 pb-8">
               <h3 className="text-sm font-bold text-slate-900 mb-4">References</h3>
               <ul className="space-y-3 text-xs text-slate-500">
                   <li className="flex items-start">

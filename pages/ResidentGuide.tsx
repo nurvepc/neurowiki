@@ -282,7 +282,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
         </blockquote>
     ),
     a: ({href, children}: any) => {
-        const baseClass = `font-semibold underline decoration-2 underline-offset-4 transition-all ${isTrialMode ? 'text-emerald-600 hover:text-emerald-800 decoration-emerald-200' : 'text-neuro-600 hover:text-neuro-800 decoration-neuro-200'}`;
+        const baseClass = `font-semibold underline decoration-2 underline-offset-4 transition-colors duration-150 ${isTrialMode ? 'text-emerald-600 hover:text-emerald-800 decoration-emerald-200' : 'text-neuro-600 hover:text-neuro-800 decoration-neuro-200'}`;
         if (href?.startsWith('/')) return <Link to={href} className={baseClass}>{children}</Link>;
         return <a href={href} className={`inline-flex items-center ${baseClass}`}>{children} <ExternalLink size={12} className="ml-1 opacity-50" /></a>;
     }
@@ -291,8 +291,8 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
   return (
     <div className="flex flex-col md:flex-row relative items-start">
       {/* Sidebar */}
-      <div className={`w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 md:sticky md:top-0 md:h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar self-start ${topicId ? 'hidden md:block' : ''}`}>
-        <div className="p-5 border-b border-gray-100 bg-white sticky top-0 z-10 backdrop-blur-sm bg-white/95">
+      <div className={`w-full md:w-80 bg-white border-r border-slate-200 flex-shrink-0 md:sticky md:top-0 md:h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar self-start ${topicId ? 'hidden md:block' : ''}`}>
+        <div className="p-5 border-b border-slate-100 bg-white sticky top-0 z-10 backdrop-blur-sm bg-white/95">
             <h2 className="font-bold text-slate-900 flex items-center text-lg">
               {isTrialMode ? <FlaskConical className={`mr-2 ${iconColor}`} size={24} /> : <Stethoscope className={`mr-2 ${iconColor}`} size={24} />}
               {isTrialMode ? 'Neuro Trials' : 'Resident Guide'}
@@ -313,7 +313,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                            <div key={sub.title} className="mb-2">
                               <button
                                  onClick={() => toggleCategory(sub.title)}
-                                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold text-left transition-all ${isOpen ? 'bg-emerald-50 text-emerald-800' : 'text-slate-700 hover:bg-slate-50'}`}
+                                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold text-left transition-colors duration-150 ${isOpen ? 'bg-emerald-50 text-emerald-800' : 'text-slate-700 hover:bg-slate-50'}`}
                               >
                                  <span>{sub.title}</span>
                                  <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -341,7 +341,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                   <div className="mt-4">
                       <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2 px-2">Other Trials</h3>
                        {trialOrphans.map(t => (
-                          <Link key={t.id} to={`/trials/${t.id}`} className={`block px-3 py-2 rounded-lg text-sm transition-all truncate ${topicId === t.id ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'}`}>
+                          <Link key={t.id} to={`/trials/${t.id}`} className={`block px-3 py-2 rounded-lg text-sm transition-colors duration-150 truncate ${topicId === t.id ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'}`}>
                               {t.title}
                           </Link>
                        ))}
@@ -353,7 +353,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
             sidebarContent.map(cat => {
               const isOpen = openCategory === cat.name;
               return (
-              <div key={cat.name} className="border-b border-gray-50 last:border-0 pb-2 mb-2">
+              <div key={cat.name} className="border-b border-slate-50 last:border-0 pb-2 mb-2">
                 <button
                   onClick={() => toggleCategory(cat.name)}
                   className="w-full flex items-center justify-between px-3 py-3 text-left group hover:bg-slate-50 rounded-lg transition-colors"
@@ -373,8 +373,8 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                         <Link
                           key={topic.id}
                           to={`/guide/${topic.id}`}
-                          className={`group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
-                            topicId === topic.id ? activeBg + ' font-semibold shadow-sm ring-1' : 'text-slate-600 hover:bg-gray-50'
+                          className={`group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors duration-200 ${
+                            topicId === topic.id ? activeBg + ' font-semibold shadow-sm ring-1' : 'text-slate-600 hover:bg-slate-50'
                           }`}
                         >
                           <span className="truncate">{topic.title}</span>
@@ -394,15 +394,15 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
         {currentTopic ? (
           <div className="max-w-6xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
              <Link to={isTrialMode ? "/trials" : "/guide"} className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-neuro-600 mb-6 group">
-                <div className="bg-white p-1.5 rounded-md border border-gray-200 mr-2 shadow-sm group-hover:shadow-md transition-all"><ArrowLeft size={16} /></div>
+                <div className="bg-white p-1.5 rounded-md border border-slate-200 mr-2 shadow-sm group-hover:shadow-md transition-colors duration-150"><ArrowLeft size={16} /></div>
                 Back to {isTrialMode ? 'Trials' : 'Guide'} Index
              </Link>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                 <div className="col-span-1 lg:col-span-9">
-                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-12 min-h-[500px]">
+                  <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-12 min-h-[500px]">
                       {/* Topic Header */}
-                      <div className="mb-8 md:mb-10 border-b border-gray-100 pb-8 md:pb-10">
+                      <div className="mb-8 md:mb-10 border-b border-slate-100 pb-8 md:pb-10">
                          <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase border mb-4 inline-block ${isTrialMode ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-neuro-50 text-neuro-700 border-neuro-100'}`}>
                             {currentTopic.category}
                          </span>
@@ -411,7 +411,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                          <div className="flex flex-wrap gap-3 mt-6">
                             {/* Hardcoded Primary Tools */}
                             {currentTopic.id === 'thrombectomy' && (
-                                <Link to="/calculators/evt-pathway" className="inline-flex items-center px-6 py-3 bg-neuro-600 text-white font-bold rounded-xl shadow-lg shadow-neuro-200 hover:bg-neuro-700 transition-all active:scale-95 group">
+                                <Link to="/calculators/evt-pathway" className="inline-flex items-center px-6 py-3 bg-neuro-600 text-white font-bold rounded-xl shadow-lg shadow-neuro-200 hover:bg-neuro-700 transition-colors duration-150 active:scale-95 transform-gpu group">
                                     <Zap size={18} className="mr-2 fill-white" />
                                     Launch Thrombectomy Pathway
                                     <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
@@ -419,7 +419,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                             )}
 
                             {currentTopic.id === 'status-epilepticus' && (
-                                <Link to="/calculators/se-pathway" className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-all active:scale-95 group">
+                                <Link to="/calculators/se-pathway" className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-colors duration-150 active:scale-95 transform-gpu group">
                                     <Activity size={18} className="mr-2" />
                                     Launch Status Epilepticus Pathway
                                     <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
@@ -431,7 +431,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                                 <Link 
                                     key={link.id} 
                                     to={link.url}
-                                    className={`inline-flex items-center px-6 py-3 font-bold rounded-xl shadow-lg transition-all active:scale-95 group ${
+                                    className={`inline-flex items-center px-6 py-3 font-bold rounded-xl shadow-lg transition-colors duration-150 active:scale-95 transform-gpu group ${
                                         isTrialMode 
                                         ? 'bg-emerald-600 text-white shadow-emerald-200 hover:bg-emerald-700' 
                                         : 'bg-neuro-600 text-white shadow-neuro-200 hover:bg-neuro-700'
@@ -450,7 +450,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                           {sections.map((section) => {
                              const isOpen = expandedSections[section.id];
                              return (
-                               <div key={section.id} id={section.id} className="scroll-mt-24 border-b border-gray-100 md:border-0 last:border-0 pb-2 md:pb-0">
+                               <div key={section.id} id={section.id} className="scroll-mt-24 border-b border-slate-100 md:border-0 last:border-0 pb-2 md:pb-0">
                                    
                                    {/* Mobile Toggle Header */}
                                    <button 
@@ -461,13 +461,13 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                                           <span className={`w-1.5 h-1.5 rounded-full mr-3 flex-shrink-0 ${isTrialMode ? 'bg-emerald-400' : 'bg-neuro-400'}`}></span>
                                           {section.title}
                                       </span>
-                                      <div className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${isOpen ? 'bg-gray-100' : 'bg-transparent'}`}>
+                                      <div className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${isOpen ? 'bg-slate-100' : 'bg-transparent'}`}>
                                           <ChevronDown size={20} className={`text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                                       </div>
                                    </button>
 
                                    {/* Desktop Static Header */}
-                                   <h2 className="hidden md:flex items-center text-xl font-bold text-slate-900 mt-12 mb-6 pb-3 border-b border-gray-100">
+                                   <h2 className="hidden md:flex items-center text-xl font-bold text-slate-900 mt-12 mb-6 pb-3 border-b border-slate-100">
                                       <span className={`flex items-center justify-center w-8 h-8 rounded-lg ${isTrialMode ? 'bg-emerald-50 text-emerald-600 ring-emerald-100' : 'bg-neuro-50 text-neuro-600 ring-neuro-100'} mr-3 shadow-sm ring-1`}>
                                           <ChevronRight size={18} strokeWidth={3} />
                                       </span>
@@ -484,10 +484,10 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                       </div>
 
                       {/* Disclaimer Footer */}
-                      <div className="mt-12 pt-8 border-t border-gray-100 text-center">
-                        <div className="inline-flex items-center space-x-2 bg-slate-50 px-4 py-2 rounded-full border border-gray-100/50">
+                      <div className="mt-12 pt-8 border-t border-slate-100 text-center">
+                        <div className="inline-flex items-center space-x-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100/50">
                            <AlertCircle size={12} className="text-slate-400" />
-                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Decision Support Only • Not Medical Advice</span>
+                           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Decision Support Only • Not Medical Advice</span>
                         </div>
                       </div>
                   </div>
@@ -496,11 +496,11 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                 {/* Table of Contents (Desktop Only) */}
                 <div className="hidden lg:block col-span-3 sticky top-6 self-start">
                     {sections.length > 0 && (
-                        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-                            <div className="p-4 border-b border-gray-50 bg-gray-50/80"><h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center"><List size={14} className={`mr-2 ${iconColor}`} />Contents</h3></div>
+                        <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
+                            <div className="p-4 border-b border-slate-50 bg-slate-50/80"><h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center"><List size={14} className={`mr-2 ${iconColor}`} />Contents</h3></div>
                             <nav className="max-h-[70vh] overflow-y-auto p-2 custom-scrollbar">
                                 {sections.map((h, i) => (
-                                    <button key={i} onClick={() => scrollToSection(h.id)} className="text-left w-full text-sm text-slate-600 hover:text-neuro-700 hover:bg-gray-50 px-3 py-2.5 rounded-lg transition-all group flex items-start">
+                                    <button key={i} onClick={() => scrollToSection(h.id)} className="text-left w-full text-sm text-slate-600 hover:text-neuro-700 hover:bg-slate-50 px-3 py-2.5 rounded-lg transition-colors duration-150 group flex items-start">
                                         <span className={`mt-1.5 mr-2 w-1.5 h-1.5 rounded-full ${isTrialMode ? 'bg-emerald-200 group-hover:bg-emerald-500' : 'bg-neuro-200 group-hover:bg-neuro-500'} flex-shrink-0`}></span>
                                         <span className="truncate leading-tight">{h.title}</span>
                                     </button>
@@ -511,11 +511,11 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                 </div>
             </div>
             
-            <button onClick={scrollToTop} className={`fixed bottom-8 right-8 ${isTrialMode ? 'bg-emerald-600' : 'bg-neuro-600'} text-white p-3 rounded-full shadow-xl hover:scale-110 transition-all z-50 ${showScrollTop ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}><ArrowUp size={24} /></button>
+            <button onClick={scrollToTop} className={`fixed bottom-8 right-8 ${isTrialMode ? 'bg-emerald-600' : 'bg-neuro-600'} text-white p-3 rounded-full shadow-xl hover:scale-110 transition-colors duration-150 z-50 ${showScrollTop ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}><ArrowUp size={24} /></button>
           </div>
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-center p-8 min-h-[600px]">
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 mb-8 max-w-md group overflow-hidden relative">
+            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 mb-8 max-w-md group overflow-hidden relative">
                 <div className={`absolute inset-0 opacity-20 bg-gradient-to-tr ${isTrialMode ? 'from-emerald-100' : 'from-neuro-100'}`}></div>
                 <div className="relative z-10">
                     <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border ${isTrialMode ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-neuro-50 text-neuro-600 border-neuro-100'}`}>

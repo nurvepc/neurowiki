@@ -25,7 +25,7 @@ const NihssItemRow: React.FC<NihssItemRowProps> = ({ item, value, onChange, onSh
   const showHelpToggle = userMode !== 'resident';
 
   return (
-    <div className={`py-4 border-b border-gray-100 last:border-0 scroll-mt-32 ${isDetailed ? 'bg-slate-50/50 -mx-4 px-4 py-6 mb-2 border-b-2' : ''}`} id={`nihss-row-${item.id}`}>
+    <div className={`py-4 border-b border-slate-100 last:border-0 scroll-mt-32 ${isDetailed ? 'bg-slate-50/50 -mx-4 px-4 py-6 mb-2 border-b-2' : ''}`} id={`nihss-row-${item.id}`}>
       
       <div className="flex justify-between items-center mb-3">
         <label className={`${isDetailed ? 'text-lg text-slate-900' : 'text-sm text-slate-700'} font-bold flex items-center`}>
@@ -49,17 +49,17 @@ const NihssItemRow: React.FC<NihssItemRowProps> = ({ item, value, onChange, onSh
             onClick={() => onChange(opt.value)}
             className={`
               ${isDetailed ? 'flex-none px-4 py-3 text-sm' : 'flex-1 text-xs md:text-sm'}
-              rounded-lg font-bold transition-all touch-manipulation active:scale-95 border
+              rounded-lg font-bold transition-colors duration-150 touch-manipulation active:scale-95 transform-gpu border
               ${isSelected(opt.value)
                 ? 'bg-neuro-600 text-white shadow-md border-neuro-600'
-                : 'bg-white text-slate-600 border-gray-200 hover:border-neuro-300 hover:bg-neuro-50'
+                : 'bg-white text-slate-600 border-slate-200 hover:border-neuro-300 hover:bg-neuro-50'
               }
             `}
           >
             {isDetailed ? opt.label : (
               <>
                 {opt.label.split(':')[0]} 
-                <span className="hidden sm:inline text-[10px] opacity-80 font-normal ml-1">
+                <span className="hidden sm:inline text-xs opacity-80 font-normal ml-1">
                    {opt.label.split(':')[1]}
                 </span>
               </>

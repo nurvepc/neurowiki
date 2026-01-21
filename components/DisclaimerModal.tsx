@@ -96,7 +96,7 @@ const DisclaimerModal: React.FC = () => {
 
           {/* Role Selection */}
           <div className="mt-6 mb-4">
-            <p className="text-sm font-medium text-gray-700 mb-3">I am a:</p>
+            <p className="text-sm font-medium text-slate-700 mb-3">I am a:</p>
             <div className="grid grid-cols-2 gap-3">
               {roleOptions.map((role) => (
                 <button
@@ -104,10 +104,12 @@ const DisclaimerModal: React.FC = () => {
                   type="button"
                   onClick={() => setSelectedRole(role.id)}
                   className={`
-                    px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all
+                    px-4 py-3 rounded-lg border-2 text-sm font-medium transition-colors duration-150
+                    min-h-[44px] touch-manipulation active:scale-95 transform-gpu
+                    focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none
                     ${selectedRole === role.id
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                      ? 'border-neuro-500 bg-neuro-50 text-neuro-700'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }
                   `}
                 >
@@ -122,7 +124,7 @@ const DisclaimerModal: React.FC = () => {
         <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 justify-end">
           <button
             onClick={handleLeave}
-            className="px-5 py-3 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 font-medium transition-colors text-sm flex items-center justify-center"
+            className="px-5 py-3 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 font-medium transition-colors duration-150 text-sm flex items-center justify-center min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Leave Site
@@ -131,10 +133,11 @@ const DisclaimerModal: React.FC = () => {
             onClick={handleAgree}
             disabled={!selectedRole}
             className={`
-              px-6 py-3 rounded-xl font-bold shadow-lg transition-all transform active:scale-95 text-sm flex-1 sm:flex-none
+              px-6 py-3 rounded-xl font-bold shadow-lg transition-colors duration-150 active:scale-95 transform-gpu text-sm flex-1 sm:flex-none
+              min-h-[44px] touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none
               ${selectedRole
                 ? 'bg-neuro-600 hover:bg-neuro-700 text-white shadow-neuro-200 cursor-pointer'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-slate-300 text-slate-500 cursor-not-allowed'
               }
             `}
           >

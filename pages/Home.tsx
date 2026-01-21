@@ -58,7 +58,7 @@ const categories = [
   { 
     name: 'Neuroimmunology', 
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-blue-500">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-neuro-500">
         <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 2"/>
         <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
         <path d="M12 2V5M12 19V22M2 12H5M19 12H22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -112,61 +112,89 @@ const featuredCalculators = [
 const Home: React.FC = () => {
   return (
     <div className="space-y-8 md:space-y-10">
-      {/* Hero Section - Optimized for Mobile */}
-      <section className="bg-white rounded-3xl md:p-10 p-6 shadow-sm border border-gray-100 relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-32 md:w-64 h-32 md:h-64 bg-neuro-50 rounded-full opacity-30 blur-2xl md:blur-3xl"></div>
-        <div className="flex flex-col md:flex-row items-center justify-between relative z-10">
-          <div className="max-w-2xl space-y-6 md:space-y-6 text-center md:text-left w-full">
-            <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              The Digital <span className="text-neuro-600">Neurology</span> Companion
-            </h1>
-            <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto md:mx-0">
-              Protocols, calculators, and guidelines for Neurologists.
-            </p>
-            
-            {/* Pathway Tools Links - Enhanced for Touch */}
-            <div className="pt-4 md:pt-2">
-                 <span className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-4 md:mb-3 text-center md:text-left">Try Pathways & Calculators</span>
-                 <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                     <Link to="/calculators/evt-pathway" onClick={() => trackQuickToolClick('thrombectomy')} className="group flex items-center space-x-2 text-sm font-bold text-neuro-700 bg-white border border-neuro-100 px-4 py-2.5 rounded-xl hover:border-neuro-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
-                        <span className="w-2 h-2 bg-neuro-500 rounded-full group-hover:scale-125 transition-transform"></span>
-                        <span>Thrombectomy</span>
-                     </Link>
-                     <Link to="/calculators/elan-pathway" onClick={() => trackQuickToolClick('elan_protocol')} className="group flex items-center space-x-2 text-sm font-bold text-purple-700 bg-white border border-purple-100 px-4 py-2.5 rounded-xl hover:border-purple-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
-                        <span className="w-2 h-2 bg-purple-500 rounded-full group-hover:scale-125 transition-transform"></span>
-                        <span>ELAN Protocol</span>
-                     </Link>
-                     <Link to="/calculators/se-pathway" onClick={() => trackQuickToolClick('status_epilepticus')} className="group flex items-center space-x-2 text-sm font-bold text-red-700 bg-white border border-red-100 px-4 py-2.5 rounded-xl hover:border-red-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
-                        <span className="w-2 h-2 bg-red-500 rounded-full group-hover:scale-125 transition-transform"></span>
-                        <span>Status Epilepticus</span>
-                     </Link>
-                     <Link to="/calculators/migraine-pathway" onClick={() => trackQuickToolClick('migraine_pathway')} className="group flex items-center space-x-2 text-sm font-bold text-indigo-700 bg-white border border-indigo-100 px-4 py-2.5 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
-                        <span className="w-2 h-2 bg-indigo-500 rounded-full group-hover:scale-125 transition-transform"></span>
-                        <span>Migraine</span>
-                     </Link>
-                     <Link to="/calculators/gca-pathway" onClick={() => trackQuickToolClick('gca_pathway')} className="group flex items-center space-x-2 text-sm font-bold text-slate-700 bg-white border border-slate-200 px-4 py-2.5 rounded-xl hover:border-slate-300 hover:shadow-sm transition-all touch-manipulation active:scale-95">
-                        <span className="w-2 h-2 bg-slate-500 rounded-full group-hover:scale-125 transition-transform"></span>
-                        <span>GCA Helper</span>
-                     </Link>
-                </div>
-            </div>
-
-            {/* Quick Search Chips - Larger Tap Targets */}
-            <div className="pt-6 border-t border-gray-50/50">
-              <span className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-4 md:mb-3 text-center md:text-left">Quick Search Wiki</span>
-              <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                <Link to="/wiki/Stroke" className="px-5 py-2.5 bg-slate-50 text-slate-700 rounded-full text-sm font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-200 touch-manipulation active:scale-95">Stroke</Link>
-                <Link to="/wiki/Sclerosis" className="px-5 py-2.5 bg-slate-50 text-slate-700 rounded-full text-sm font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-200 touch-manipulation active:scale-95">MS</Link>
-                <Link to="/wiki/Epilepsy" className="px-5 py-2.5 bg-slate-50 text-slate-700 rounded-full text-sm font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-200 touch-manipulation active:scale-95">Epilepsy</Link>
-                <Link to="/wiki/Meningitis" className="px-5 py-2.5 bg-slate-50 text-slate-700 rounded-full text-sm font-bold hover:bg-neuro-100 hover:text-neuro-700 transition-all border border-gray-200 touch-manipulation active:scale-95">Meningitis</Link>
-              </div>
-            </div>
+      {/* Hero Section - Clinical Premium */}
+      <section className="px-4 md:px-8 py-8 md:py-12">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
+            The Digital{' '}
+            <span className="text-neuro-600">Neurology</span>
+            {' '}Companion
+          </h1>
+          <p className="mt-3 text-base md:text-lg text-slate-600 leading-relaxed">
+            Protocols, calculators, and guidelines for Neurologists.
+          </p>
+        </div>
+        
+        {/* Pathway Tools - Minimal Text Links */}
+        <div className="mt-6">
+          <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Pathways & Calculators</span>
+          <div className="flex flex-wrap gap-4">
+            <Link 
+              to="/calculators/evt-pathway" 
+              onClick={() => trackQuickToolClick('thrombectomy')} 
+              className="text-sm font-medium text-neuro-600 hover:text-neuro-700 hover:underline transition-colors duration-150"
+            >
+              Thrombectomy →
+            </Link>
+            <Link 
+              to="/calculators/elan-pathway" 
+              onClick={() => trackQuickToolClick('elan_protocol')} 
+              className="text-sm font-medium text-neuro-600 hover:text-neuro-700 hover:underline transition-colors duration-150"
+            >
+              ELAN Protocol →
+            </Link>
+            <Link 
+              to="/calculators/se-pathway" 
+              onClick={() => trackQuickToolClick('status_epilepticus')} 
+              className="text-sm font-medium text-neuro-600 hover:text-neuro-700 hover:underline transition-colors duration-150"
+            >
+              Status Epilepticus →
+            </Link>
+            <Link 
+              to="/calculators/migraine-pathway" 
+              onClick={() => trackQuickToolClick('migraine_pathway')} 
+              className="text-sm font-medium text-neuro-600 hover:text-neuro-700 hover:underline transition-colors duration-150"
+            >
+              Migraine →
+            </Link>
+            <Link 
+              to="/calculators/gca-pathway" 
+              onClick={() => trackQuickToolClick('gca_pathway')} 
+              className="text-sm font-medium text-neuro-600 hover:text-neuro-700 hover:underline transition-colors duration-150"
+            >
+              GCA Helper →
+            </Link>
           </div>
-          
-          <div className="hidden lg:block">
-              <div className="w-48 h-48 bg-white rounded-full flex items-center justify-center shadow-xl border border-neuro-50">
-                  <Brain size={80} className="text-neuro-500 animate-pulse" />
-              </div>
+        </div>
+
+        {/* Quick Search - Minimal Chips */}
+        <div className="mt-6 pt-6 border-t border-slate-100">
+          <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Quick Search</span>
+          <div className="flex flex-wrap gap-2">
+            <Link 
+              to="/wiki/Stroke" 
+              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-md border border-slate-200 transition-colors duration-150 min-h-[36px] focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
+            >
+              Stroke
+            </Link>
+            <Link 
+              to="/wiki/Sclerosis" 
+              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-md border border-slate-200 transition-colors duration-150 min-h-[36px] focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
+            >
+              MS
+            </Link>
+            <Link 
+              to="/wiki/Epilepsy" 
+              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-md border border-slate-200 transition-colors duration-150 min-h-[36px] focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
+            >
+              Epilepsy
+            </Link>
+            <Link 
+              to="/wiki/Meningitis" 
+              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-md border border-slate-200 transition-colors duration-150 min-h-[36px] focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
+            >
+              Meningitis
+            </Link>
           </div>
         </div>
       </section>
@@ -174,23 +202,21 @@ const Home: React.FC = () => {
       {/* Categories Grid */}
       <section>
         <div className="flex items-center justify-between mb-6 px-2">
-            <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Subspecialties</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Subspecialties</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {categories.map((cat) => (
             <Link 
               key={cat.name} 
               to={`/wiki/${cat.name}`} 
-              className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-neuro-200 hover:-translate-y-1 transition-all group active:scale-[0.98]"
+              className="group flex items-center gap-3 p-4 bg-white hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors duration-150"
             >
-              <div className="flex items-center space-x-5">
-                <div className="p-4 bg-gray-50 rounded-2xl group-hover:bg-neuro-50 transition-colors flex items-center justify-center w-16 h-16 shadow-inner shrink-0">
-                  {cat.icon}
-                </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 group-hover:text-neuro-600 transition-colors leading-tight">{cat.name}</h3>
-                  <p className="text-sm text-slate-500 mt-1 font-medium">{cat.desc}</p>
-                </div>
+              <div className="p-2 bg-slate-100 group-hover:bg-neuro-50 rounded-lg transition-colors duration-150">
+                {cat.icon}
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 text-sm">{cat.name}</h3>
+                <p className="text-xs text-slate-500 mt-0.5">{cat.desc}</p>
               </div>
             </Link>
           ))}
@@ -200,21 +226,26 @@ const Home: React.FC = () => {
       {/* Calculators Quick Access */}
       <section className="pb-10">
         <div className="flex items-center justify-between mb-6 px-2">
-            <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Calculators</h2>
-            <Link to="/calculators" className="text-neuro-600 text-sm font-bold hover:text-neuro-800 flex items-center bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 transition-all uppercase tracking-wider active:scale-95">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Calculators</h2>
+            <Link to="/calculators" className="text-sm font-semibold text-neuro-600 hover:text-neuro-700 flex items-center transition-colors duration-150">
                 View All <ChevronRight size={16} className="ml-1" />
             </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {featuredCalculators.map(calc => (
-                <Link key={calc.id} to={`/calculators?id=${calc.id}`} onClick={() => trackQuickToolClick(calc.id)} className="block bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg hover:border-neuro-200 transition-all group active:scale-[0.98]">
-                    <div className="flex items-center space-x-3 mb-3">
-                        <div className="p-2 bg-neuro-50 rounded-lg text-neuro-500 group-hover:bg-neuro-600 group-hover:text-white transition-all">
-                            <Calculator size={20} />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-800 group-hover:text-neuro-600 transition-colors">{calc.name}</h3>
-                    </div>
-                    <p className="text-sm text-slate-500 font-medium leading-relaxed">{calc.desc}</p>
+                <Link 
+                  key={calc.id} 
+                  to={`/calculators?id=${calc.id}`} 
+                  onClick={() => trackQuickToolClick(calc.id)} 
+                  className="group flex items-center gap-3 p-4 bg-white hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors duration-150"
+                >
+                  <div className="p-2 bg-slate-100 group-hover:bg-neuro-50 rounded-lg transition-colors duration-150">
+                    <Calculator size={20} className="text-slate-500 group-hover:text-neuro-600 transition-colors" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 text-sm">{calc.name}</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">{calc.desc}</p>
+                  </div>
                 </Link>
             ))}
         </div>

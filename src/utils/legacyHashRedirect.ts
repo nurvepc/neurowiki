@@ -4,8 +4,8 @@
  * Handles migration from HashRouter (#/path) to BrowserRouter (/path).
  * Runs once on initial page load before React mounts.
  * 
- * If a user visits an old hash URL like https://neurowiki.ai/#/calculators/aspects,
- * this will redirect to https://neurowiki.ai/calculators/aspects (preserving query strings).
+ * If a user visits an old hash URL like https://neurowiki.ai/#/calculators/evt-pathway,
+ * this will redirect to https://neurowiki.ai/calculators/evt-pathway (preserving query strings).
  */
 
 export const handleLegacyHashRedirect = (): void => {
@@ -17,7 +17,7 @@ export const handleLegacyHashRedirect = (): void => {
   // Check if there's a hash path (legacy routing)
   if (hash && hash.startsWith('#/')) {
     // Extract the path after '#'
-    const hashPath = hash.substring(1); // e.g., "/calculators/aspects" or "/calculators?id=nihss"
+    const hashPath = hash.substring(1); // e.g., "/calculators/evt-pathway" or "/calculators?id=nihss"
     
     // Parse the URL to preserve query strings from hash
     const [pathname, hashSearch] = hashPath.split('?');

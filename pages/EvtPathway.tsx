@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Check, RotateCcw, Copy, Info, AlertCircle, ChevronRight, Activity, Zap, XCircle, AlertTriangle, ShieldAlert, Brain, Star } from 'lucide-react';
 import { EVT_CONTENT } from '../data/toolContent';
@@ -7,6 +7,7 @@ import { autoLinkReactNodes } from '../internalLinks/autoLink';
 import LearningPearl from '../components/LearningPearl';
 import { useFavorites } from '../hooks/useFavorites';
 import { useCalculatorAnalytics } from '../src/hooks/useCalculatorAnalytics';
+import { CollapsibleSection } from '../src/components/CollapsibleSection';
 
 type Tri = "yes" | "no" | "unknown";
 type AgeGroup = "under_18" | "18_79" | "80_plus" | "unknown";
@@ -231,7 +232,7 @@ interface SelectionCardProps {
     variant?: 'default' | 'danger';
 }
 const SelectionCard = React.memo(({ title, description, selected, onClick, variant = 'default' }: SelectionCardProps) => (
-    <button onClick={onClick} className={`w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 relative overflow-hidden active:scale-[0.99] touch-manipulation ${selected ? variant === 'danger' ? 'bg-red-50 border-red-500 text-red-900' : 'bg-neuro-50 border-neuro-500 text-neuro-900' : 'bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50 text-slate-700'}`}>
+    <button onClick={onClick} className={`w-full text-left p-5 rounded-2xl border-2 transition-colors duration-150 relative overflow-hidden active:scale-[0.99] transform-gpu touch-manipulation min-h-[44px] focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${selected ? variant === 'danger' ? 'bg-red-50 border-red-500 text-red-900' : 'bg-neuro-50 border-neuro-500 text-neuro-900' : 'bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-slate-700'}`}>
         <div className="flex items-start justify-between relative z-10">
             <div className="pr-4">
                 <span className={`block text-lg font-bold ${selected ? 'text-current' : 'text-slate-900'}`}>{title}</span>
@@ -243,7 +244,8 @@ const SelectionCard = React.memo(({ title, description, selected, onClick, varia
 ));
 
 const EvtPathway: React.FC = () => {
-  const [step, setStep] = useState(1);
+  const [activeSection, setActiveSection] = useState<number>(0);
+  const step = activeSection + 1;
   const [inputs, setInputs] = useState<Inputs>({ 
       occlusionType: 'unknown',
       lvoLocation: 'unknown',
@@ -287,7 +289,7 @@ const EvtPathway: React.FC = () => {
       }
   }, [inputs, trackResult]);
 
-  useEffect(() => { const mainElement = document.querySelector('main'); if (mainElement) mainElement.scrollTo({ top: 0, behavior: 'instant' }); else window.scrollTo(0,0); }, [step]);
+  useEffect(() => { const mainElement = document.querySelector('main'); if (mainElement) mainElement.scrollTo({ top: 0, behavior: 'instant' }); else window.scrollTo(0,0); }, [activeSection]);
 
   const updateInput = useCallback((field: keyof Inputs, value: any) => {
     setInputs(prev => {
@@ -303,16 +305,16 @@ const EvtPathway: React.FC = () => {
         return next;
     });
 
-    const currentFields = STEP_FIELDS[step];
+    const currentFields = STEP_FIELDS[activeSection + 1];
     if (currentFields) {
         const idx = currentFields.indexOf(field);
         if (idx >= 0 && idx < currentFields.length - 1) setTimeout(() => fieldRefs.current[currentFields[idx + 1]]?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
         else if (idx === currentFields.length - 1) setTimeout(() => document.getElementById('evt-action-bar')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
     }
-  }, [step]);
+  }, [activeSection]);
 
-  const handleNext = () => { if (step < 4) setStep(step + 1); };
-  const handleBack = () => { if (step > 1) setStep(step - 1); };
+  const handleNext = () => { setActiveSection((prev) => Math.min(3, prev + 1)); };
+  const handleBack = () => { setActiveSection((prev) => Math.max(0, prev - 1)); };
   
   const handleReset = () => { 
       setInputs({ 
@@ -322,7 +324,7 @@ const EvtPathway: React.FC = () => {
           time: 'unknown', nihss: 'unknown', aspects: '', pcAspects: '', core: '', mismatchVol: '', mismatchRatio: '',
           mevoLocation: 'unknown', mevoDependent: 'unknown', nihssNumeric: '', mevoDisabling: 'unknown', mevoSalvageable: 'unknown', mevoTechnical: 'unknown'
       }); 
-      setStep(1); 
+      setActiveSection(0); 
   };
 
   const copySummary = () => { 
@@ -341,12 +343,76 @@ const EvtPathway: React.FC = () => {
   const isMevo = inputs.occlusionType === 'mevo';
   const isBasilar = inputs.lvoLocation === 'basilar';
 
+  const isSection0Complete = useMemo(() => {
+    if (inputs.occlusionType === 'unknown') return false;
+    if (inputs.occlusionType === 'lvo') {
+      return (
+        inputs.lvoLocation !== 'unknown' &&
+        inputs.lvo !== 'unknown' &&
+        (inputs.lvo === 'no' || (inputs.mrs !== 'unknown' && inputs.age !== 'unknown'))
+      );
+    }
+    return inputs.mevoLocation !== 'unknown' && inputs.mevoDependent !== 'unknown';
+  }, [inputs]);
+
+  const isSection1Complete = useMemo(() => {
+    if (inputs.occlusionType === 'unknown') return false;
+    if (inputs.time === 'unknown') return false;
+    if (inputs.occlusionType === 'lvo') return inputs.nihss !== 'unknown';
+    return inputs.nihssNumeric !== '' && inputs.mevoDisabling !== 'unknown';
+  }, [inputs]);
+
+  const isSection2Complete = useMemo(() => {
+    if (inputs.occlusionType === 'unknown') return false;
+    if (inputs.occlusionType === 'lvo') {
+      if (inputs.time === 'unknown') return false;
+      if (inputs.lvoLocation === 'basilar') return inputs.pcAspects !== '';
+      if (inputs.time === '0_6') return inputs.aspects !== '';
+      return inputs.core !== '';
+    }
+    return inputs.mevoSalvageable !== 'unknown' && inputs.mevoTechnical !== 'unknown';
+  }, [inputs]);
+
+  const isSection3Complete = !!result;
+  const completedCount = [isSection0Complete, isSection1Complete, isSection2Complete, isSection3Complete].filter(Boolean).length;
+
+  const getSummary = (idx: number) => {
+    if (idx === 0) {
+      if (inputs.occlusionType === 'unknown') return undefined;
+      if (inputs.occlusionType === 'lvo') return `LVO • ${inputs.lvoLocation === 'unknown' ? 'Location?' : inputs.lvoLocation}`;
+      return `MeVO • ${inputs.mevoLocation === 'unknown' ? 'Location?' : inputs.mevoLocation.replace('_', ' ')}`;
+    }
+    if (idx === 1) {
+      if (inputs.time === 'unknown') return undefined;
+      if (inputs.occlusionType === 'lvo') return `${inputs.time === '0_6' ? '0-6h' : '6-24h'} • NIHSS ${inputs.nihss === 'unknown' ? '?' : inputs.nihss.replace('_', '-').replace('plus', '+')}`;
+      return `${inputs.time === '0_6' ? '0-6h' : '6-24h'} • NIHSS ${inputs.nihssNumeric || '?'}`;
+    }
+    if (idx === 2) {
+      if (inputs.occlusionType === 'lvo') {
+        if (inputs.lvoLocation === 'basilar') return inputs.pcAspects ? `pc-ASPECTS ${inputs.pcAspects}` : undefined;
+        if (inputs.time === '0_6') return inputs.aspects ? `ASPECTS ${inputs.aspects}` : undefined;
+        return inputs.core ? `Core ${inputs.core} mL` : undefined;
+      }
+      const a = inputs.mevoSalvageable === 'unknown' ? '?' : inputs.mevoSalvageable.toUpperCase();
+      const t = inputs.mevoTechnical === 'unknown' ? '?' : inputs.mevoTechnical.toUpperCase();
+      return `Imaging ${a} • Technical ${t}`;
+    }
+    if (idx === 3 && result) return `${result.status} • ${result.reason}`;
+    return undefined;
+  };
+
+  useEffect(() => {
+    if (activeSection === 0 && isSection0Complete) setTimeout(() => setActiveSection(1), 250);
+    if (activeSection === 1 && isSection1Complete) setTimeout(() => setActiveSection(2), 250);
+    if (activeSection === 2 && isSection2Complete) setTimeout(() => setActiveSection(3), 250);
+  }, [activeSection, isSection0Complete, isSection1Complete, isSection2Complete]);
+
   return (
     <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-32 md:pb-20">
       <div className="mb-6 flex items-start justify-between">
         <div>
             <Link to="/calculators" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-neuro-600 mb-6 group">
-                <div className="bg-white p-1.5 rounded-md border border-gray-200 mr-2 shadow-sm group-hover:shadow-md transition-all"><ArrowLeft size={16} /></div> Back to Calculators
+                <div className="bg-white p-1.5 rounded-md border border-slate-200 mr-2 shadow-sm group-hover:shadow-md transition-colors duration-150"><ArrowLeft size={16} /></div> Back to Calculators
             </Link>
             <div className="flex items-center space-x-3 mb-2"><div className="p-2 bg-neuro-100 text-neuro-700 rounded-lg"><Zap size={24} className="fill-neuro-700" /></div><h1 className="text-2xl font-black text-slate-900 tracking-tight">Thrombectomy Pathway</h1></div>
             <p className="text-slate-500 font-medium">Eligibility screening for LVO (ICA/M1/Basilar) and MeVO (M2/M3/Distal).</p>
@@ -359,11 +425,27 @@ const EvtPathway: React.FC = () => {
         </button>
       </div>
       
-      <div className="flex items-center space-x-2 mb-8 px-1">{STEPS.map((s, idx) => (<div key={s.id} className="flex-1 flex flex-col items-center relative"><div className={`w-full h-1 absolute top-1/2 -translate-y-1/2 -z-10 ${idx === 0 ? 'hidden' : ''} ${step >= s.id ? 'bg-neuro-500' : 'bg-gray-200'}`}></div><div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors z-10 ${step === s.id ? 'bg-white border-neuro-500 text-neuro-600' : step > s.id ? 'bg-neuro-500 border-neuro-500 text-white' : 'bg-gray-100 border-gray-200 text-gray-400'}`}>{step > s.id ? <Check size={14} /> : s.id}</div><span className={`text-[10px] mt-2 font-bold uppercase tracking-wider ${step === s.id ? 'text-neuro-600' : 'text-gray-300'}`}>{s.title}</span></div>))}</div>
+      {/* Progress bar */}
+      <div className="mb-6">
+        <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-neuro-500 transition-colors duration-150"
+            style={{ width: `${(completedCount / 4) * 100}%` }}
+          />
+        </div>
+        <div className="mt-2 text-xs text-slate-500">{completedCount}/4 sections completed</div>
+      </div>
 
       <div ref={stepContainerRef} className="space-y-6 min-h-[300px]">
-        {/* Step 1: Triage */}
-        {step === 1 && (
+        <CollapsibleSection
+          title="Triage"
+          stepNumber={1}
+          totalSteps={4}
+          isCompleted={isSection0Complete}
+          isActive={activeSection === 0}
+          onToggle={() => setActiveSection((prev) => (prev === 0 ? -1 : 0))}
+          summary={getSummary(0)}
+        >
             <div className="space-y-6">
                 <div ref={el => { fieldRefs.current['occlusionType'] = el; }}>
                     <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Occlusion Type</h3>
@@ -379,7 +461,7 @@ const EvtPathway: React.FC = () => {
 
                 {isLvo && (
                     <div className="space-y-6 animate-in slide-in-from-top-2">
-                        <div ref={el => { fieldRefs.current['lvoLocation'] = el; }} className="pt-4 border-t border-gray-100">
+                        <div ref={el => { fieldRefs.current['lvoLocation'] = el; }} className="pt-4 border-t border-slate-100">
                             <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">LVO Location</h3>
                             <div className="grid grid-cols-2 gap-3">
                                 <SelectionCard title="Anterior Circulation" description="ICA or MCA (M1)" selected={inputs.lvoLocation === 'anterior'} onClick={() => updateInput('lvoLocation', 'anterior')} />
@@ -409,9 +491,9 @@ const EvtPathway: React.FC = () => {
                             <div ref={el => { fieldRefs.current['age'] = el; }}>
                                 <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Age Group</h3>
                                 <div className="grid grid-cols-3 gap-3">
-                                    <button onClick={() => updateInput('age', 'under_18')} className={`p-4 rounded-xl border-2 font-bold transition-all touch-manipulation ${inputs.age === 'under_18' ? 'border-neuro-500 bg-neuro-50 text-neuro-900' : 'bg-white border-gray-100'}`}>&lt; 18</button>
-                                    <button onClick={() => updateInput('age', '18_79')} className={`p-4 rounded-xl border-2 font-bold transition-all touch-manipulation ${inputs.age === '18_79' ? 'border-neuro-500 bg-neuro-50 text-neuro-900' : 'bg-white border-gray-100'}`}>18 - 79</button>
-                                    <button onClick={() => updateInput('age', '80_plus')} className={`p-4 rounded-xl border-2 font-bold transition-all touch-manipulation ${inputs.age === '80_plus' ? 'border-neuro-500 bg-neuro-50 text-neuro-900' : 'bg-white border-gray-100'}`}>≥ 80</button>
+                                    <button onClick={() => updateInput('age', 'under_18')} className={`p-4 rounded-xl border-2 font-bold transition-colors duration-150 touch-manipulation min-h-[44px] active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${inputs.age === 'under_18' ? 'border-neuro-500 bg-neuro-50 text-neuro-900' : 'bg-white border-slate-100'}`}>&lt; 18</button>
+                                    <button onClick={() => updateInput('age', '18_79')} className={`p-4 rounded-xl border-2 font-bold transition-colors duration-150 touch-manipulation min-h-[44px] active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${inputs.age === '18_79' ? 'border-neuro-500 bg-neuro-50 text-neuro-900' : 'bg-white border-slate-100'}`}>18 - 79</button>
+                                    <button onClick={() => updateInput('age', '80_plus')} className={`p-4 rounded-xl border-2 font-bold transition-colors duration-150 touch-manipulation min-h-[44px] active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${inputs.age === '80_plus' ? 'border-neuro-500 bg-neuro-50 text-neuro-900' : 'bg-white border-slate-100'}`}>≥ 80</button>
                                 </div>
                             </div>
                         )}
@@ -420,10 +502,10 @@ const EvtPathway: React.FC = () => {
 
                 {isMevo && (
                     <div className="space-y-6 animate-in slide-in-from-top-2">
-                        <div ref={el => { fieldRefs.current['mevoLocation'] = el; }} className="pt-4 border-t border-gray-100">
+                        <div ref={el => { fieldRefs.current['mevoLocation'] = el; }} className="pt-4 border-t border-slate-100">
                             <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Vessel Location</h3>
                             <div className="space-y-3">
-                                <select className="w-full p-4 bg-white border border-gray-200 rounded-xl font-bold text-slate-800 outline-none focus:ring-2 focus:ring-neuro-500 min-h-[56px] text-base" value={inputs.mevoLocation} onChange={(e) => updateInput('mevoLocation', e.target.value)}>
+                                <select className="w-full p-4 bg-white border border-slate-200 rounded-xl font-bold text-slate-800 outline-none focus:ring-2 focus:ring-neuro-500 min-h-[56px] text-base" value={inputs.mevoLocation} onChange={(e) => updateInput('mevoLocation', e.target.value)}>
                                     <option value="unknown">Select Location...</option>
                                     <option value="dominant_m2">Dominant / Proximal M2</option>
                                     <option value="nondominant_m2">Nondominant / Codominant M2</option>
@@ -441,10 +523,17 @@ const EvtPathway: React.FC = () => {
                     </div>
                 )}
             </div>
-        )}
+        </CollapsibleSection>
         
-        {/* Step 2: Clinical */}
-        {step === 2 && (
+        <CollapsibleSection
+          title="Clinical"
+          stepNumber={2}
+          totalSteps={4}
+          isCompleted={isSection1Complete}
+          isActive={activeSection === 1}
+          onToggle={() => setActiveSection((prev) => (prev === 1 ? -1 : 1))}
+          summary={getSummary(1)}
+        >
             <div className="space-y-6">
                 <div ref={el => { fieldRefs.current['time'] = el; }}>
                     <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Time from Last Known Well</h3>
@@ -478,11 +567,11 @@ const EvtPathway: React.FC = () => {
                     <div className="pt-4 space-y-6">
                         <div ref={el => { fieldRefs.current['nihssNumeric'] = el; }}>
                             <label className="block text-sm font-bold text-slate-900 mb-2">NIHSS Score (Numeric)</label>
-                            <input type="number" min="0" max="42" className="w-full p-4 text-lg bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-bold" placeholder="e.g. 4" value={inputs.nihssNumeric} onChange={(e) => updateInput('nihssNumeric', e.target.value)} />
+                            <input type="number" min="0" max="42" className="w-full p-4 text-lg bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-bold" placeholder="e.g. 4" value={inputs.nihssNumeric} onChange={(e) => updateInput('nihssNumeric', e.target.value)} />
                         </div>
                         <div ref={el => { fieldRefs.current['mevoDisabling'] = el; }}>
                             <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Disabling Deficit?</h3>
-                            <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-800 mb-3">
+                            <div className="bg-neuro-50 p-3 rounded-lg text-xs text-neuro-800 mb-3">
                                 Examples: Aphasia, hemianopsia, dominant hand weakness, or deficits impacting occupation/lifestyle despite low NIHSS.
                             </div>
                             <div className="grid grid-cols-2 gap-3">
@@ -493,22 +582,29 @@ const EvtPathway: React.FC = () => {
                     </div>
                 )}
             </div>
-        )}
+        </CollapsibleSection>
 
-        {/* Step 3: Imaging */}
-        {step === 3 && (
+        <CollapsibleSection
+          title="Imaging"
+          stepNumber={3}
+          totalSteps={4}
+          isCompleted={isSection2Complete}
+          isActive={activeSection === 2}
+          onToggle={() => setActiveSection((prev) => (prev === 2 ? -1 : 2))}
+          summary={getSummary(2)}
+        >
             <div className="space-y-6">
                 {isLvo && (
                     <div>
                         {/* Anterior 0-6h: ASPECTS */}
                         {inputs.time === '0_6' && !isBasilar && (
                             <div ref={el => { fieldRefs.current['aspects'] = el; }}>
-                                <div className="bg-blue-50 p-4 rounded-xl text-blue-900 text-sm mb-6 border border-blue-100">
+                                <div className="bg-neuro-50 p-4 rounded-xl text-neuro-900 text-sm mb-6 border border-neuro-100">
                                     <h4 className="font-bold flex items-center mb-2"><Info size={16} className="mr-2"/> Early Window Imaging</h4>
                                     <p>Enter ASPECTS score from non-contrast CT.</p>
                                 </div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">ASPECTS Score (0-10)</label>
-                                <input type="number" min="0" max="10" className="w-full p-4 text-lg bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-bold" placeholder="e.g. 8" value={inputs.aspects} onChange={(e) => updateInput('aspects', e.target.value)} />
+                                <input type="number" min="0" max="10" className="w-full p-4 text-lg bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-bold" placeholder="e.g. 8" value={inputs.aspects} onChange={(e) => updateInput('aspects', e.target.value)} />
                                 <LearningPearl 
                                     title="Understanding ASPECTS" 
                                     content="ASPECTS is a 10-point scoring system for MCA stroke. Start with 10 (normal) and subtract 1 point for early ischemic changes in each of 10 defined regions (Caudate, Lentiform, Internal Capsule, Insula, M1-M6). Scores < 6 typically indicate a large established infarct core." 
@@ -524,7 +620,7 @@ const EvtPathway: React.FC = () => {
                                     <p>Enter <strong>pc-ASPECTS</strong> score (from CTA source images or DWI).</p>
                                 </div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">pc-ASPECTS Score (0-10)</label>
-                                <input type="number" min="0" max="10" className="w-full p-4 text-lg bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-bold" placeholder="e.g. 8" value={inputs.pcAspects} onChange={(e) => updateInput('pcAspects', e.target.value)} />
+                                <input type="number" min="0" max="10" className="w-full p-4 text-lg bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-bold" placeholder="e.g. 8" value={inputs.pcAspects} onChange={(e) => updateInput('pcAspects', e.target.value)} />
                                 <LearningPearl 
                                     title="pc-ASPECTS Explained" 
                                     content="pc-ASPECTS scores the posterior circulation on a 10-point scale. Points are subtracted for changes in: Thalami (1 each), Occipital lobes (1 each), Midbrain (2), Pons (2), Cerebellar hemispheres (1 each). Score ≥ 6 indicates favorable imaging." 
@@ -542,16 +638,16 @@ const EvtPathway: React.FC = () => {
                                 <div className="space-y-4">
                                     <div ref={el => { fieldRefs.current['core'] = el; }}>
                                         <label className="block text-sm font-bold text-slate-700 mb-2">Ischemic Core Volume (ml)</label>
-                                        <input type="number" className="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="CBF < 30%" value={inputs.core} onChange={(e) => updateInput('core', e.target.value)} />
+                                        <input type="number" className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="CBF < 30%" value={inputs.core} onChange={(e) => updateInput('core', e.target.value)} />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div ref={el => { fieldRefs.current['mismatchVol'] = el; }}>
                                             <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Volume</label>
-                                            <input type="number" className="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="Volume" value={inputs.mismatchVol} onChange={(e) => updateInput('mismatchVol', e.target.value)} />
+                                            <input type="number" className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="Volume" value={inputs.mismatchVol} onChange={(e) => updateInput('mismatchVol', e.target.value)} />
                                         </div>
                                         <div ref={el => { fieldRefs.current['mismatchRatio'] = el; }}>
                                             <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Ratio</label>
-                                            <input type="number" step="0.1" className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-slate-600 text-lg" placeholder="Ratio" value={inputs.mismatchRatio} onChange={(e) => updateInput('mismatchRatio', e.target.value)} />
+                                            <input type="number" step="0.1" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-slate-600 text-lg" placeholder="Ratio" value={inputs.mismatchRatio} onChange={(e) => updateInput('mismatchRatio', e.target.value)} />
                                         </div>
                                     </div>
                                 </div>
@@ -566,7 +662,7 @@ const EvtPathway: React.FC = () => {
                             <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">
                                 {inputs.time === '0_6' ? "Imaging Profile (0-6h)" : "Salvageable Tissue (6-24h)"}
                             </h3>
-                            <div className="bg-slate-50 p-3 rounded-lg text-xs text-slate-600 mb-3 border border-gray-200">
+                            <div className="bg-slate-50 p-3 rounded-lg text-xs text-slate-600 mb-3 border border-slate-200">
                                 {inputs.time === '0_6' ? (
                                      <span><strong>Favorable Profile defined as ANY of:</strong><br/>• No large established infarct (NCCT/MRI)<br/>• Moderate/Good Collaterals<br/>• Perfusion Mismatch</span>
                                 ) : (
@@ -606,11 +702,18 @@ const EvtPathway: React.FC = () => {
                     </div>
                 )}
             </div>
-        )}
+        </CollapsibleSection>
 
-        {/* Step 4: Decision */}
-        {step === 4 && result && (
-             <div className="space-y-6 animate-in zoom-in-95 duration-300">
+        <CollapsibleSection
+          title="Decision"
+          stepNumber={4}
+          totalSteps={4}
+          isCompleted={isSection3Complete}
+          isActive={activeSection === 3}
+          onToggle={() => setActiveSection((prev) => (prev === 3 ? -1 : 3))}
+          summary={getSummary(3)}
+        >
+             {result && (<div className="space-y-6 animate-in zoom-in-95 duration-300">
                 <div className={`p-8 rounded-3xl relative overflow-hidden shadow-xl text-white ${
                     result.variant === 'success' ? 'bg-emerald-600' :
                     result.variant === 'warning' ? 'bg-amber-500' :
@@ -654,33 +757,33 @@ const EvtPathway: React.FC = () => {
                 )}
 
                 {/* Summary Card */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Assessment Summary</h4>
                     <ul className="space-y-3 text-sm text-slate-700 font-medium">
-                        <li className="flex justify-between border-b border-gray-50 pb-2"><span>Type</span><span className="font-bold">{isLvo ? (isBasilar ? 'LVO (Basilar)' : 'LVO (Anterior)') : 'MeVO'}</span></li>
-                        <li className="flex justify-between border-b border-gray-50 pb-2"><span>Time</span><span className="font-bold">{inputs.time === '0_6' ? '0-6h' : '6-24h'}</span></li>
-                        {isLvo && <li className="flex justify-between border-b border-gray-50 pb-2"><span>NIHSS</span><span className="font-bold">{inputs.nihss.replace('_', '-').replace('plus', '+')}</span></li>}
+                        <li className="flex justify-between border-b border-slate-50 pb-2"><span>Type</span><span className="font-bold">{isLvo ? (isBasilar ? 'LVO (Basilar)' : 'LVO (Anterior)') : 'MeVO'}</span></li>
+                        <li className="flex justify-between border-b border-slate-50 pb-2"><span>Time</span><span className="font-bold">{inputs.time === '0_6' ? '0-6h' : '6-24h'}</span></li>
+                        {isLvo && <li className="flex justify-between border-b border-slate-50 pb-2"><span>NIHSS</span><span className="font-bold">{inputs.nihss.replace('_', '-').replace('plus', '+')}</span></li>}
                         {isMevo && (
                             <>
-                                <li className="flex justify-between border-b border-gray-50 pb-2"><span>Location</span><span className="font-bold">{inputs.mevoLocation.replace('_', ' ').toUpperCase()}</span></li>
-                                <li className="flex justify-between border-b border-gray-50 pb-2"><span>NIHSS</span><span className="font-bold">{inputs.nihssNumeric}</span></li>
-                                <li className="flex justify-between border-b border-gray-50 pb-2"><span>Disabling</span><span className="font-bold capitalize">{inputs.mevoDisabling}</span></li>
+                                <li className="flex justify-between border-b border-slate-50 pb-2"><span>Location</span><span className="font-bold">{inputs.mevoLocation.replace('_', ' ').toUpperCase()}</span></li>
+                                <li className="flex justify-between border-b border-slate-50 pb-2"><span>NIHSS</span><span className="font-bold">{inputs.nihssNumeric}</span></li>
+                                <li className="flex justify-between border-b border-slate-50 pb-2"><span>Disabling</span><span className="font-bold capitalize">{inputs.mevoDisabling}</span></li>
                             </>
                         )}
                         {inputs.time === '0_6' && isLvo && !isBasilar && (<li className="flex justify-between"><span>ASPECTS</span><span className="font-bold">{inputs.aspects || '--'}</span></li>)}
-                        {inputs.time === '6_24' && isLvo && !isBasilar && (<><li className="flex justify-between border-b border-gray-50 pb-2"><span>Core Vol</span><span className="font-bold">{inputs.core || '--'} ml</span></li><li className="flex justify-between"><span>Ratio</span><span className="font-bold">{inputs.mismatchRatio || '--'}</span></li></>)}
+                        {inputs.time === '6_24' && isLvo && !isBasilar && (<><li className="flex justify-between border-b border-slate-50 pb-2"><span>Core Vol</span><span className="font-bold">{inputs.core || '--'} ml</span></li><li className="flex justify-between"><span>Ratio</span><span className="font-bold">{inputs.mismatchRatio || '--'}</span></li></>)}
                         {isBasilar && (<li className="flex justify-between"><span>pc-ASPECTS</span><span className="font-bold">{inputs.pcAspects || '--'}</span></li>)}
                     </ul>
                 </div>
 
-                <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-gray-100 text-xs text-slate-500 leading-relaxed">
+                <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs text-slate-500 leading-relaxed">
                     <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
                     <div>
                         <strong>Decision Support Only.</strong>
                         <p className="mt-1">{autoLinkReactNodes("Based on AHA/ASA Guidelines and major trials (DAWN, DEFUSE-3, SELECT2, ESCAPE-MeVO, DISTAL, ATTENTION, BAOCHE). Always verify clinical details.")}</p>
                         
                         {/* NEW DISCLAIMERS */}
-                        <p className="mt-3 pt-3 border-t border-gray-200">
+                        <p className="mt-3 pt-3 border-t border-slate-200">
                              <strong>Clinical Context:</strong> Always discuss with Vascular Neurology and the Neurointerventional/Interventional Neurology team; local protocols and anatomy-specific factors apply.
                         </p>
                     </div>
@@ -696,21 +799,21 @@ const EvtPathway: React.FC = () => {
                         </ul>
                     }
                 />
-             </div>
-        )}
+             </div>)}
+        </CollapsibleSection>
       </div>
 
-      <div id="evt-action-bar" className="mt-8 pt-4 md:border-t border-gray-100 scroll-mt-4 fixed bottom-[4.5rem] md:static left-0 right-0 bg-white/95 backdrop-blur md:bg-transparent p-4 md:p-0 border-t md:border-0 z-30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+      <div id="evt-action-bar" className="mt-8 pt-4 md:border-t border-slate-100 scroll-mt-4 fixed bottom-[4.5rem] md:static left-0 right-0 bg-white/95 backdrop-blur md:bg-transparent p-4 md:p-0 border-t md:border-0 z-30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
          <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-             <button onClick={handleBack} disabled={step === 1} className={`px-6 py-3 border border-gray-200 rounded-xl font-bold transition-all ${step === 1 ? 'opacity-0 pointer-events-none' : 'bg-white text-slate-600 hover:bg-slate-50 hover:border-gray-300'}`}>Back</button>
-             {step === 4 && (<button onClick={handleReset} className="hidden md:flex items-center text-slate-500 hover:text-neuro-600 font-bold px-4 py-2 rounded-lg transition-colors"><RotateCcw size={16} className="mr-2" /> Start Over</button>)}
-             {step < 4 ? (<button onClick={handleNext} className="flex-1 md:flex-none px-8 py-3 bg-neuro-600 text-white rounded-xl font-bold hover:bg-neuro-700 shadow-lg shadow-neuro-200 transition-all flex items-center justify-center transform active:scale-95">Next <ChevronRight size={16} className="ml-2" /></button>) : (<button onClick={copySummary} className="flex-1 md:flex-none px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 shadow-lg transition-all flex items-center justify-center transform active:scale-95"><Copy size={16} className="mr-2" /> Copy to EMR</button>)}
+             <button onClick={handleBack} disabled={activeSection === 0} className={`px-6 py-3 border border-slate-200 rounded-xl font-bold transition-colors duration-150 min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none ${activeSection === 0 ? 'opacity-0 pointer-events-none cursor-not-allowed' : 'bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300'}`}>Back</button>
+             {activeSection === 3 && (<button onClick={handleReset} className="hidden md:flex items-center text-slate-500 hover:text-neuro-600 font-bold px-4 py-2 rounded-lg transition-colors duration-150 min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><RotateCcw size={16} className="mr-2" /> Start Over</button>)}
+             {activeSection < 3 ? (<button onClick={handleNext} className="flex-1 md:flex-none px-8 py-3 bg-neuro-600 text-white rounded-xl font-bold hover:bg-neuro-700 shadow-lg shadow-neuro-200 transition-colors duration-150 flex items-center justify-center active:scale-95 transform-gpu min-h-[44px] touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none">Next <ChevronRight size={16} className="ml-2" /></button>) : (<button onClick={copySummary} className="flex-1 md:flex-none px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 shadow-lg transition-colors duration-150 flex items-center justify-center active:scale-95 transform-gpu min-h-[44px] touch-manipulation focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><Copy size={16} className="mr-2" /> Copy to EMR</button>)}
          </div>
-         {step === 4 && (<div className="md:hidden mt-4 text-center"><button onClick={handleReset} className="text-sm text-slate-400 font-bold flex items-center justify-center w-full p-2 hover:bg-slate-50 rounded-lg transition-colors"><RotateCcw size={14} className="mr-2" /> Start Over</button></div>)}
+         {activeSection === 3 && (<div className="md:hidden mt-4 text-center"><button onClick={handleReset} className="text-sm text-slate-400 font-bold flex items-center justify-center w-full p-3 hover:bg-slate-50 rounded-lg transition-colors duration-150 min-h-[44px] touch-manipulation active:scale-95 transform-gpu focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"><RotateCcw size={14} className="mr-2" /> Start Over</button></div>)}
       </div>
 
-      {step === 4 && (
-          <div className="mt-12 border-t border-gray-100 pt-8 pb-8">
+      {activeSection === 3 && (
+          <div className="mt-12 border-t border-slate-100 pt-8 pb-8">
               <h3 className="text-sm font-bold text-slate-900 mb-4">References</h3>
               <ul className="space-y-3 text-xs text-slate-500">
                   <li className="flex items-start"><span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded mr-2 font-mono">1</span>{autoLinkReactNodes("DAWN & DEFUSE 3 Trials (2018): Extended window thrombectomy.")}</li>
