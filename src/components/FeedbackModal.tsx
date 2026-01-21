@@ -44,7 +44,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
-  const apiUrl = import.meta.env.VITE_FEEDBACK_API_URL || '/.netlify/functions/feedback';
+  const apiUrl = import.meta.env.VITE_FEEDBACK_API_URL || '/api/feedback';
 
   const doRender = () => {
     if (!window.turnstile || !turnstileRef.current) return;
