@@ -273,11 +273,10 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
       <div className="flex-1 min-w-0 w-full">
         {/* Mobile Sidebar Legend (matching desktop) - Only show on landing page, not when viewing article */}
         {!currentTopic && (
-          <div className="lg:hidden p-4 md:p-8">
-            <div className="max-w-6xl mx-auto mb-6">
-              <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden">
+          <div className="lg:hidden">
+            <div className="bg-white dark:bg-slate-800 overflow-hidden">
                 {/* Panel Header */}
-                <div className="px-4 py-4 border-b border-slate-100 dark:border-slate-700">
+                <div className="px-4 pt-4 pb-4 border-b border-slate-100 dark:border-slate-700">
                   <h2 className="text-base font-semibold text-slate-900 dark:text-white">
                     Resident Guide
                   </h2>
@@ -361,7 +360,6 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                 </div>
               </div>
             </div>
-          </div>
         )}
 
         {currentTopic ? (

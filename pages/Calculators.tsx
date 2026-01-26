@@ -126,10 +126,13 @@ export default function Calculators() {
   }, [searchParams]);
 
   // When returning with ?favorites=true, show favorites only
+  // When the parameter is missing or false, show all tools
   useEffect(() => {
     const favoritesParam = searchParams.get('favorites');
     if (favoritesParam === 'true') {
       setShowFavoritesOnly(true);
+    } else {
+      setShowFavoritesOnly(false);
     }
   }, [searchParams]);
 

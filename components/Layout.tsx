@@ -58,8 +58,6 @@ const categoryColors: Record<string, string> = {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isDark, toggleDarkMode } = useDarkMode();
-  // Debug logging
-  console.log('Layout rendered. isDark:', isDark, 'toggleDarkMode:', typeof toggleDarkMode);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isToolModalOpen, setIsToolModalOpen] = useState(false);
   const location = useLocation();
@@ -740,23 +738,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Mobile Search and Dark Mode Toggle */}
+            <div className="md:hidden flex items-center space-x-1">
             <button 
               onClick={() => setIsMobileSearchOpen(true)}
-              className="md:hidden p-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors duration-150 active:scale-95 transform-gpu touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
+                className="p-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors duration-150 active:scale-95 transform-gpu touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
               aria-label="Open Search"
             >
               <Search size={24} />
             </button>
+              <button
+                onClick={() => {
+                  toggleDarkMode();
+                }}
+                className="p-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors duration-150 active:scale-95 transform-gpu touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-neuro-500 focus-visible:outline-none"
+                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {isDark ? <Sun size={24} /> : <Moon size={24} />}
+              </button>
+            </div>
             <div className="hidden md:flex items-center space-x-4">
                <Link to="/calculators" className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-neuro-500 dark:hover:text-neuro-400 transition-colors uppercase tracking-wider flex items-center">
                   Quick Calc <Calculator size={14} className="ml-1.5" />
                </Link>
                <button
-                 onClick={() => {
-                   console.log('Dark mode toggle clicked. Current isDark:', isDark);
-                   toggleDarkMode();
-                   console.log('Toggle function called. New value should be:', !isDark);
-                 }}
+                 onClick={() => toggleDarkMode()}
                  className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                  aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
                >
@@ -767,7 +773,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </header>
 
         {/* Main Content with extra padding for mobile bottom nav + sticky actions */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 p-4 md:p-8 scroll-smooth pb-20 md:pb-8">
+        <main ref={mainRef} className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 px-4 pb-20 pt-0 md:p-8 md:pt-8 scroll-smooth">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

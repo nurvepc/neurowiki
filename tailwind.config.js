@@ -1,66 +1,77 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  darkMode: 'class',
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-      },
-      colors: {
-        // Ocean Mist - Accent color for buttons, highlighted text
-        neuro: {
-          50: '#E0F7F4',
-          100: '#B3EBE3',
-          200: '#80DFD1',
-          300: '#4DD3BF',
-          400: '#26C7B0',
-          500: '#1FC7B2',  // PRIMARY - Ocean Mist
-          600: '#1AB39E',
-          700: '#149D8A',
-          800: '#0E8776',
-          900: '#076152',
-          950: '#00555A',  // Dark Teal for hover states
-        },
-        // Dark Teal - Secondary elements, hover states
-        teal: {
-          50: '#E0F2F3',
-          100: '#B3DEE0',
-          200: '#80C9CD',
-          300: '#4DB4BA',
-          400: '#269FA7',
-          500: '#00555A',  // Dark Teal
-          600: '#004A4F',
-          700: '#003F44',
-          800: '#003439',
-          900: '#00292E',
-        },
-        // Jet Black - Main background
-        jet: {
-          50: '#E5EAEB',
-          100: '#B8C5C7',
-          200: '#8AA0A3',
-          300: '#5C7B7F',
-          400: '#2E565B',
-          500: '#0C2F34',  // Jet Black
-          600: '#0A272B',
-          700: '#081F22',
-          800: '#061719',
-          900: '#040F10',
-        },
-        // Surface colors with Jet Black base
-        surface: {
-          50: '#F5F7F8',   // Light page background
-          100: '#E8ECED',  // Card hover
-          200: '#D1D9DB',  // Borders
-        },
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>NeuroWiki - Clinical Neurology Guidelines & Calculators</title>
+    <meta name="title" content="NeuroWiki - Clinical Neurology Guidelines & Calculators" />
+    <meta name="description" content="Evidence-based neurology protocols, clinical calculators, and guidelines for neurologists and residents. Quick access to stroke, seizure, and neurocritical care pathways." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://neurowiki.ai/" />
+    <meta property="og:title" content="NeuroWiki - Clinical Neurology Guidelines & Calculators" />
+    <meta property="og:description" content="Evidence-based neurology protocols, clinical calculators, and guidelines for neurologists and residents." />
+    <meta property="og:image" content="https://neurowiki.ai/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://neurowiki.ai/" />
+    <meta property="twitter:title" content="NeuroWiki - Clinical Neurology Guidelines & Calculators" />
+    <meta property="twitter:description" content="Evidence-based neurology protocols, clinical calculators, and guidelines for neurologists and residents." />
+    <meta property="twitter:image" content="https://neurowiki.ai/og-image.png" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://neurowiki.ai/" />
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0PD4HYYNTP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0PD4HYYNTP');
+    </script>
+    
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "NeuroWiki",
+      "description": "Clinical neurology guidelines, calculators, and protocols",
+      "url": "https://neurowiki.ai"
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- ESM Import Map -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
+        "react-markdown": "https://esm.sh/react-markdown@^10.1.0",
+        "react-dom": "https://esm.sh/react-dom@^19.2.3",
+        "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+        "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+        "react": "https://esm.sh/react@^19.2.3"
       }
-    },
-  },
-  plugins: [],
-}
+    }
+    </script>
+    
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

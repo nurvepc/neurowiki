@@ -84,114 +84,99 @@ const TrialsPage: React.FC = () => {
   return (
     <div className="flex flex-col relative items-start">
       {/* Main Content */}
-      <div className="flex-1 min-w-0 w-full p-4 md:p-8">
-        <div className="max-w-5xl mx-auto space-y-12">
-          
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Landmark Trials</h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium text-lg">Curated summaries of pivotal studies shaping modern neurology.</p>
-          </div>
-
-          {/* Mobile Sidebar Legend (matching desktop) */}
-          <div className="lg:hidden mb-6">
-            <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden">
-              {/* Panel Header */}
-              <div className="px-4 py-4 border-b border-slate-100 dark:border-slate-700">
-                <h2 className="text-base font-semibold text-slate-900 dark:text-white">
-                  Neuro Trials
-                </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Clinical Evidence
-                </p>
-              </div>
-
-              {/* Search */}
-              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Search trials..."
-                    value={sidebarSearchQuery}
-                    onChange={(e) => setSidebarSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-700 border-0 rounded-lg text-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-neuro-500"
-                  />
+      <div className="flex-1 min-w-0 w-full">
+        {/* Mobile Sidebar Legend (matching desktop) */}
+        <div className="lg:hidden">
+            <div className="bg-white dark:bg-slate-800 overflow-hidden">
+                {/* Panel Header */}
+                <div className="px-4 pt-4 pb-4 border-b border-slate-100 dark:border-slate-700">
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-white">
+                    Neuro Trials
+                  </h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Clinical Evidence
+                  </p>
                 </div>
-              </div>
 
-              {/* Panel Content */}
-              <div className="flex-1 overflow-y-auto px-3 py-3 max-h-[50vh]">
-                {TRIAL_STRUCTURE.map((cat) => (
-                  <div key={cat.title} className="mb-1">
-                    <h3 className="px-3 py-2 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-left">
-                      {cat.title}
-                    </h3>
-                    <div className="space-y-0.5">
-                      {cat.subcategories.map(sub => {
-                        // Filter trials based on search query
-                        const filteredTrialIds = sidebarSearchQuery.trim()
-                          ? sub.ids.filter(id => {
-                              const trial = GUIDE_CONTENT[id];
-                              if (!trial) return false;
-                              const trialTitle = trial.title.replace(/Trial:|Study:/gi, '').trim();
-                              return trialTitle.toLowerCase().includes(sidebarSearchQuery.toLowerCase());
-                            })
-                          : sub.ids;
-                        
-                        // Only show subcategory if it has matching trials or search is empty
-                        if (sidebarSearchQuery.trim() && filteredTrialIds.length === 0) {
-                          return null;
-                        }
-                        
-                        // Auto-expand subcategory if search query matches
-                        const isOpen = sidebarSearchQuery.trim()
-                          ? filteredTrialIds.length > 0
-                          : expandedTrialsSubcategories.includes(sub.title);
-                        
-                        return (
-                          <div key={sub.title}>
-                            <button
-                              onClick={() => toggleTrialsSubcategory(sub.title)}
-                              className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:text-slate-700 dark:hover:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left"
-                            >
-                              <span className="text-left">{sub.title}</span>
-                              <ChevronDown
-                                size={14}
-                                className={`transition-transform duration-200 flex-shrink-0 ${
-                                  isOpen ? 'rotate-180' : ''
-                                }`}
-                              />
-                            </button>
-
-                            {isOpen && (
-                              <div className="mt-1 space-y-0.5">
-                                {filteredTrialIds.map(id => {
-                                  const trial = GUIDE_CONTENT[id];
-                                  if (!trial) return null;
-                                  const itemActive = location.pathname === `/trials/${id}`;
-                                  return (
-                                    <Link
-                                      key={id}
-                                      to={`/trials/${id}?from=trials&category=${encodeURIComponent(sub.title)}`}
-                                      className={`block px-3 py-2 ml-2 rounded-lg text-sm transition-colors border-l-2 ${
-                                        itemActive
-                                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border-blue-500'
-                                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-transparent hover:border-slate-300'
-                                      }`}
-                                    >
-                                      {trial.title.replace(/Trial:|Study:/gi, '').trim()}
-                                    </Link>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                {/* Search */}
+                <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search trials..."
+                      value={sidebarSearchQuery}
+                      onChange={(e) => setSidebarSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-700 border-0 rounded-lg text-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-neuro-500"
+                    />
                   </div>
-                ))}
+                </div>
+
+                {/* Panel Content */}
+                <div className="flex-1 overflow-y-auto px-3 py-3 max-h-[50vh]">
+                  {TRIAL_STRUCTURE.map((cat) => (
+                    cat.subcategories.map(sub => {
+                      // Filter trials based on search query
+                      const filteredTrialIds = sidebarSearchQuery.trim()
+                        ? sub.ids.filter(id => {
+                            const trial = GUIDE_CONTENT[id];
+                            if (!trial) return false;
+                            const trialTitle = trial.title.replace(/Trial:|Study:/gi, '').trim();
+                            return trialTitle.toLowerCase().includes(sidebarSearchQuery.toLowerCase());
+                          })
+                        : sub.ids;
+                      
+                      // Only show subcategory if it has matching trials or search is empty
+                      if (sidebarSearchQuery.trim() && filteredTrialIds.length === 0) {
+                        return null;
+                      }
+                      
+                      // Auto-expand subcategory if search query matches
+                      const isOpen = sidebarSearchQuery.trim()
+                        ? filteredTrialIds.length > 0
+                        : expandedTrialsSubcategories.includes(sub.title);
+                      
+                      return (
+                        <div key={sub.title} className="mb-1">
+                          <button
+                            onClick={() => toggleTrialsSubcategory(sub.title)}
+                            className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:text-slate-700 dark:hover:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                          >
+                            <span>{sub.title}</span>
+                            <ChevronDown
+                              size={14}
+                              className={`transition-transform duration-200 ${
+                                isOpen ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </button>
+
+                          {isOpen && (
+                            <div className="mt-1 space-y-0.5">
+                              {filteredTrialIds.map(id => {
+                                const trial = GUIDE_CONTENT[id];
+                                if (!trial) return null;
+                                const itemActive = location.pathname === `/trials/${id}`;
+                                return (
+                                  <Link
+                                    key={id}
+                                    to={`/trials/${id}?from=trials&category=${encodeURIComponent(sub.title)}`}
+                                    className={`block px-3 py-2 ml-2 rounded-lg text-sm transition-colors border-l-2 ${
+                                      itemActive
+                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border-blue-500'
+                                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-transparent hover:border-slate-300'
+                                    }`}
+                                  >
+                                    {trial.title.replace(/Trial:|Study:/gi, '').trim()}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  ))}
                 
                 {/* Orphan Trials */}
                 {orphans.length > 0 && (() => {
@@ -234,10 +219,16 @@ const TrialsPage: React.FC = () => {
                 })()}
               </div>
             </div>
-          </div>
+        </div>
 
-          {/* Main Trial Cards - Hidden on mobile, shown on desktop */}
-          <div className="hidden lg:block">
+        {/* Main Trial Cards - Hidden on mobile, shown on desktop */}
+        <div className="hidden lg:block px-4 md:p-8">
+          <div className="max-w-5xl mx-auto space-y-12">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Landmark Trials</h1>
+              <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium text-lg">Curated summaries of pivotal studies shaping modern neurology.</p>
+            </div>
             {TRIAL_STRUCTURE.map((cat) => (
               <div key={cat.title} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center space-x-3 mb-6 pb-2 border-b border-slate-100 dark:border-slate-700">

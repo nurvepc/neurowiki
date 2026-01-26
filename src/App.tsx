@@ -1,36 +1,40 @@
 
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { DarkModeProvider } from './contexts/DarkModeContext';
 import Layout from '../components/Layout';
 import { PublishGate } from './components/PublishGate';
-import Home from '../pages/Home';
-import Wiki from '../pages/Wiki';
-import Calculators from '../pages/Calculators';
-import NihssCalculator from '../pages/NihssCalculator';
-import ResidentGuide from '../pages/ResidentGuide';
-import StrokeBasics from './pages/guide/StrokeBasics';
-import IvTpa from './pages/guide/IvTpa';
-import Thrombectomy from './pages/guide/Thrombectomy';
-import AcuteStrokeMgmt from './pages/guide/AcuteStrokeMgmt';
-import StatusEpilepticus from './pages/guide/StatusEpilepticus';
-import IchManagement from './pages/guide/IchManagement';
-import Meningitis from './pages/guide/Meningitis';
-import Gbs from './pages/guide/Gbs';
-import MyastheniaGravis from './pages/guide/MyastheniaGravis';
-import MultipleSclerosis from './pages/guide/MultipleSclerosis';
-import SeizureWorkup from './pages/guide/SeizureWorkup';
-import AlteredMentalStatus from './pages/guide/AlteredMentalStatus';
-import HeadacheWorkup from './pages/guide/HeadacheWorkup';
-import Vertigo from './pages/guide/Vertigo';
-import WeaknessWorkup from './pages/guide/WeaknessWorkup';
-import TrialsPage from '../pages/TrialsPage';
-import GCAPathway from '../pages/GCAPathway';
-import ElanPathway from '../pages/ElanPathway';
-import EvtPathway from '../pages/EvtPathway';
-import StatusEpilepticusPathway from '../pages/StatusEpilepticusPathway';
-import MigrainePathway from '../pages/MigrainePathway';
 import DisclaimerModal from './components/DisclaimerModal';
+
+// Lazy load all page components for code splitting
+const Home = lazy(() => import('../pages/Home'));
+const Wiki = lazy(() => import('../pages/Wiki'));
+const Calculators = lazy(() => import('../pages/Calculators'));
+const NihssCalculator = lazy(() => import('../pages/NihssCalculator'));
+const ResidentGuide = lazy(() => import('../pages/ResidentGuide'));
+const TrialsPage = lazy(() => import('../pages/TrialsPage'));
+const GCAPathway = lazy(() => import('../pages/GCAPathway'));
+const ElanPathway = lazy(() => import('../pages/ElanPathway'));
+const EvtPathway = lazy(() => import('../pages/EvtPathway'));
+const StatusEpilepticusPathway = lazy(() => import('../pages/StatusEpilepticusPathway'));
+const MigrainePathway = lazy(() => import('../pages/MigrainePathway'));
+
+// Lazy load guide articles
+const StrokeBasics = lazy(() => import('./pages/guide/StrokeBasics'));
+const IvTpa = lazy(() => import('./pages/guide/IvTpa'));
+const Thrombectomy = lazy(() => import('./pages/guide/Thrombectomy'));
+const AcuteStrokeMgmt = lazy(() => import('./pages/guide/AcuteStrokeMgmt'));
+const StatusEpilepticus = lazy(() => import('./pages/guide/StatusEpilepticus'));
+const IchManagement = lazy(() => import('./pages/guide/IchManagement'));
+const Meningitis = lazy(() => import('./pages/guide/Meningitis'));
+const Gbs = lazy(() => import('./pages/guide/Gbs'));
+const MyastheniaGravis = lazy(() => import('./pages/guide/MyastheniaGravis'));
+const MultipleSclerosis = lazy(() => import('./pages/guide/MultipleSclerosis'));
+const SeizureWorkup = lazy(() => import('./pages/guide/SeizureWorkup'));
+const AlteredMentalStatus = lazy(() => import('./pages/guide/AlteredMentalStatus'));
+const HeadacheWorkup = lazy(() => import('./pages/guide/HeadacheWorkup'));
+const Vertigo = lazy(() => import('./pages/guide/Vertigo'));
+const WeaknessWorkup = lazy(() => import('./pages/guide/WeaknessWorkup'));
 
 const App: React.FC = () => {
   return (
@@ -38,6 +42,14 @@ const App: React.FC = () => {
       <Router>
         <DisclaimerModal />
         <Layout>
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-neuro-500"></div>
+              <p className="mt-4 text-slate-600 dark:text-slate-400">Loading...</p>
+            </div>
+          </div>
+        }>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/wiki/:topic" element={<Wiki />} />
@@ -70,6 +82,7 @@ const App: React.FC = () => {
           <Route path="/trials/:topicId" element={<PublishGate><ResidentGuide context="trials" /></PublishGate>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </Suspense>
         </Layout>
       </Router>
     </DarkModeProvider>
