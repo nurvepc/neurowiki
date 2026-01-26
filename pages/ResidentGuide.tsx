@@ -3,7 +3,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useNavigationSource } from '../src/hooks/useNavigationSource';
 import ReactMarkdown from 'react-markdown';
-import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical, AlertCircle, Zap, Activity, Link as LinkIcon, Calculator } from 'lucide-react';
+import { ChevronRight, ArrowLeft, ArrowUp, List, ChevronDown, ExternalLink, Stethoscope, FlaskConical, AlertCircle, Zap, Activity, Link as LinkIcon, Calculator, Search } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { GUIDE_CONTENT } from '../data/guideContent';
 import { processNodesForLinking } from '../internalLinks/autoLink';
 import { getBacklinks } from '../internalLinks/backlinks';
@@ -21,11 +22,69 @@ interface ResidentGuideProps {
   context?: 'guide' | 'trials';
 }
 
+// Guide navigation structure (matching Layout.tsx)
+const GUIDE_NAVIGATION = [
+  {
+    name: 'Vascular Neurology',
+    items: [
+      { name: 'Stroke Code Basics', path: '/guide/stroke-basics' },
+      { name: 'IV Thrombolytic Protocol', path: '/guide/iv-tpa' },
+      { name: 'Mechanical Thrombectomy', path: '/guide/thrombectomy' },
+      { name: 'ICH Management', path: '/guide/ich-management' },
+    ],
+  },
+  {
+    name: 'Epilepsy',
+    items: [
+      { name: 'Status Epilepticus', path: '/guide/status-epilepticus' },
+      { name: 'Seizure Workup', path: '/guide/seizure-workup' },
+    ],
+  },
+  {
+    name: 'Neurocritical Care',
+    items: [
+      { name: 'Altered Mental Status', path: '/guide/altered-mental-status' },
+      { name: 'Meningitis', path: '/guide/meningitis' },
+    ],
+  },
+  {
+    name: 'General Neurology',
+    items: [
+      { name: 'Headache Workup', path: '/guide/headache-workup' },
+      { name: 'Vertigo', path: '/guide/vertigo' },
+      { name: 'Weakness Workup', path: '/guide/weakness-workup' },
+      { name: 'GBS', path: '/guide/gbs' },
+      { name: 'Myasthenia Gravis', path: '/guide/myasthenia-gravis' },
+      { name: 'Multiple Sclerosis', path: '/guide/multiple-sclerosis' },
+    ],
+  },
+];
+
 const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
   const { topicId } = useParams<{ topicId: string }>();
   const isTrialMode = context === 'trials';
+  const location = useLocation();
   
   const currentTopic = topicId ? GUIDE_CONTENT[topicId] : null;
+  
+  // Expanded categories state for mobile legend
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(['Vascular Neurology']);
+  
+  // Search state for mobile legend
+  const [sidebarSearchQuery, setSidebarSearchQuery] = useState('');
+  
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+  
+  // Clear search when navigating
+  useEffect(() => {
+    setSidebarSearchQuery('');
+  }, [location.pathname]);
 
   // --- Backlinks ---
   const backlinks = useMemo(() => {
@@ -212,16 +271,117 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
     <div className="flex flex-col relative items-start">
       {/* Main Content */}
       <div className="flex-1 min-w-0 w-full">
-        {currentTopic ? (
-          <div className="max-w-6xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-             <Link to={getBackPath()} className="inline-flex items-center text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-neuro-500 dark:hover:text-neuro-400 mb-6 group">
-                <div className="bg-white dark:bg-slate-800 p-1.5 rounded-md border border-slate-200 dark:border-slate-700 mr-2 shadow-sm dark:shadow-slate-900/50 group-hover:shadow-md transition-colors duration-150"><ArrowLeft size={16} /></div>
-                {source.category || getBackLabel()}
-             </Link>
+        {/* Mobile Sidebar Legend (matching desktop) - Only show on landing page, not when viewing article */}
+        {!currentTopic && (
+          <div className="lg:hidden p-4 md:p-8">
+            <div className="max-w-6xl mx-auto mb-6">
+              <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden">
+                {/* Panel Header */}
+                <div className="px-4 py-4 border-b border-slate-100 dark:border-slate-700">
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-white">
+                    Resident Guide
+                  </h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Clinical Protocols
+                  </p>
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                {/* Search */}
+                <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search guidelines..."
+                      value={sidebarSearchQuery}
+                      onChange={(e) => setSidebarSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-700 border-0 rounded-lg text-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-neuro-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Panel Content */}
+                <div className="flex-1 overflow-y-auto px-3 py-3 max-h-[50vh]">
+                  {GUIDE_NAVIGATION.map((category) => {
+                    // Filter items based on search query
+                    const filteredItems = sidebarSearchQuery.trim()
+                      ? category.items.filter(item =>
+                          item.name.toLowerCase().includes(sidebarSearchQuery.toLowerCase())
+                        )
+                      : category.items;
+                    
+                    // Only show category if it has matching items or search is empty
+                    if (sidebarSearchQuery.trim() && filteredItems.length === 0) {
+                      return null;
+                    }
+                    
+                    // Auto-expand category if search query matches
+                    const shouldShowExpanded = sidebarSearchQuery.trim()
+                      ? filteredItems.length > 0
+                      : expandedCategories.includes(category.name);
+                    
+                    return (
+                      <div key={category.name} className="mb-1">
+                        <button
+                          onClick={() => toggleCategory(category.name)}
+                          className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:text-slate-700 dark:hover:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                        >
+                          <span>{category.name}</span>
+                          <ChevronDown
+                            size={14}
+                            className={`transition-transform duration-200 ${
+                              shouldShowExpanded ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
+
+                        {shouldShowExpanded && (
+                          <div className="mt-1 space-y-0.5">
+                            {filteredItems.map((item) => {
+                              const itemActive = location.pathname === item.path;
+                              return (
+                                <Link
+                                  key={item.path}
+                                  to={item.path}
+                                  className={`block px-3 py-2 ml-2 rounded-lg text-sm transition-colors border-l-2 ${
+                                    itemActive
+                                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border-blue-500'
+                                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-transparent hover:border-slate-300'
+                                  }`}
+                                >
+                                  {item.name}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentTopic ? (
+          <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+             {/* Back Button - Prominent on mobile */}
+             <div className="px-4 pt-4 md:px-8 md:pt-8">
+               <Link 
+                 to={getBackPath()} 
+                 className="inline-flex items-center text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-neuro-500 dark:hover:text-neuro-400 mb-6 group lg:mb-8"
+               >
+                  <div className="bg-white dark:bg-slate-800 p-1.5 rounded-md border border-slate-200 dark:border-slate-700 mr-2 shadow-sm dark:shadow-slate-900/50 group-hover:shadow-md transition-colors duration-150">
+                    <ArrowLeft size={16} />
+                  </div>
+                  <span className="font-medium">{source.category || getBackLabel()}</span>
+               </Link>
+             </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start lg:max-w-6xl lg:mx-auto lg:px-8">
                 <div className="col-span-1 lg:col-span-9">
-                  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700 p-6 md:p-12 min-h-[500px]">
+                  <div className="bg-white dark:bg-slate-800 lg:rounded-2xl lg:shadow-sm dark:lg:shadow-slate-900/50 lg:border lg:border-slate-100 dark:lg:border-slate-700 px-4 py-6 md:px-6 md:py-8 lg:p-12 min-h-[500px]">
                       {/* Topic Header */}
                       <div className="mb-8 md:mb-10 border-b border-slate-100 dark:border-slate-700 pb-8 md:pb-10">
                          <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase border mb-4 inline-block ${isTrialMode ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-800' : 'bg-neuro-50 dark:bg-neuro-900/30 text-teal-500 dark:text-neuro-400 border-neuro-100 dark:border-neuro-800'}`}>
@@ -334,20 +494,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
             
             <button onClick={scrollToTop} className={`fixed bottom-8 right-8 ${isTrialMode ? 'bg-emerald-600' : 'bg-neuro-500'} text-white p-3 rounded-full shadow-xl hover:scale-110 transition-colors duration-150 z-50 ${showScrollTop ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}><ArrowUp size={24} /></button>
           </div>
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center text-center p-8 min-h-[600px]">
-            <div className="bg-white dark:bg-slate-800 p-10 rounded-3xl shadow-sm dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700 mb-8 max-w-md group overflow-hidden relative">
-                <div className={`absolute inset-0 opacity-20 bg-gradient-to-tr ${isTrialMode ? 'from-emerald-100 dark:from-emerald-900/30' : 'from-neuro-100 dark:from-neuro-900/30'}`}></div>
-                <div className="relative z-10">
-                    <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border ${isTrialMode ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800' : 'bg-neuro-50 dark:bg-neuro-900/30 text-neuro-500 dark:text-neuro-400 border-neuro-100 dark:border-neuro-800'}`}>
-                        {isTrialMode ? <FlaskConical size={48} /> : <Stethoscope size={48} />}
-                    </div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">{isTrialMode ? 'Landmark Trials' : 'Resident Guide'}</h1>
-                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed">Select a topic from the sidebar to view detailed clinical protocols and evidence summaries.</p>
-                </div>
-            </div>
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

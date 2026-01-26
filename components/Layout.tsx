@@ -68,6 +68,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const mainRef = useRef<HTMLElement>(null);
   
+  // Search state for sidebar filtering (separate from main search)
+  const [sidebarSearchQuery, setSidebarSearchQuery] = useState('');
+  
   // Load selected tools from localStorage
   const [selectedTools, setSelectedTools] = useState<string[]>(() => {
     try {
@@ -219,6 +222,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // Scroll main content to top on route change (e.g. Related links, nav)
   useEffect(() => {
     if (mainRef.current) mainRef.current.scrollTop = 0;
+    // Clear sidebar search when navigating
+    setSidebarSearchQuery('');
   }, [location.pathname, location.search]);
 
   // Auto-collapse navigation when content panel opens (Guide/Trials pages)
@@ -487,53 +492,74 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <input
                     type="text"
                     placeholder={isOnGuidePage ? 'Search guidelines...' : 'Search trials...'}
+                    value={sidebarSearchQuery}
+                    onChange={(e) => setSidebarSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-700 border-0 rounded-lg text-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-neuro-500"
                   />
-                </div>
-              </div>
+          </div>
+        </div>
 
               {/* Panel Content */}
               <div className="flex-1 overflow-y-auto px-3 py-3">
                 {/* Guide Categories */}
-                {isOnGuidePage && (
+                {isOnGuidePage && !isOnTrialsPage && (
                   <div>
-                    {GUIDE_NAVIGATION.map((category) => (
-                      <div key={category.name} className="mb-1">
-                        <button
-                          onClick={() => toggleCategory(category.name)}
-                          className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:text-slate-700 dark:hover:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                        >
-                          <span>{category.name}</span>
-                          <ChevronDown
-                            size={14}
-                            className={`transition-transform duration-200 ${
-                              expandedCategories.includes(category.name) ? 'rotate-180' : ''
-                            }`}
-                          />
-                        </button>
+                    {GUIDE_NAVIGATION.map((category) => {
+                      // Filter items based on search query
+                      const filteredItems = sidebarSearchQuery.trim()
+                        ? category.items.filter(item =>
+                            item.name.toLowerCase().includes(sidebarSearchQuery.toLowerCase())
+                          )
+                        : category.items;
+                      
+                      // Only show category if it has matching items or search is empty
+                      if (sidebarSearchQuery.trim() && filteredItems.length === 0) {
+                        return null;
+                      }
+                      
+                      // Auto-expand category if search query matches
+                      const shouldShowExpanded = sidebarSearchQuery.trim()
+                        ? filteredItems.length > 0
+                        : expandedCategories.includes(category.name);
+                      
+                      return (
+                        <div key={category.name} className="mb-1">
+                          <button
+                            onClick={() => toggleCategory(category.name)}
+                            className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:text-slate-700 dark:hover:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                          >
+                            <span>{category.name}</span>
+                            <ChevronDown
+                              size={14}
+                              className={`transition-transform duration-200 ${
+                                shouldShowExpanded ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </button>
 
-                        {expandedCategories.includes(category.name) && (
-                          <div className="mt-1 space-y-0.5">
-                            {category.items.map((item) => {
-                              const itemActive = location.pathname === item.path;
-                              return (
-                                <Link
-                                  key={item.path}
-                                  to={item.path}
-                                  className={`block px-3 py-2 ml-2 rounded-lg text-sm transition-colors border-l-2 ${
-                                    itemActive
-                                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border-blue-500'
-                                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-transparent hover:border-slate-300'
-                                  }`}
-                                >
-                                  {item.name}
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                          {shouldShowExpanded && (
+                            <div className="mt-1 space-y-0.5">
+                              {filteredItems.map((item) => {
+                                const itemActive = location.pathname === item.path;
+                                return (
+            <Link
+              key={item.path}
+              to={item.path}
+                                    className={`block px-3 py-2 ml-2 rounded-lg text-sm transition-colors border-l-2 ${
+                                      itemActive
+                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border-blue-500'
+                                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-transparent hover:border-slate-300'
+                                    }`}
+                                  >
+                                    {item.name}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -547,7 +573,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </h3>
                         <div className="space-y-0.5">
                           {cat.subcategories.map(sub => {
-                            const isOpen = expandedTrialsSubcategories.includes(sub.title);
+                            // Filter trials based on search query
+                            const filteredTrialIds = sidebarSearchQuery.trim()
+                              ? sub.ids.filter(id => {
+                                  const trial = GUIDE_CONTENT[id];
+                                  if (!trial) return false;
+                                  const trialTitle = trial.title.replace(/Trial:|Study:/gi, '').trim();
+                                  return trialTitle.toLowerCase().includes(sidebarSearchQuery.toLowerCase());
+                                })
+                              : sub.ids;
+                            
+                            // Only show subcategory if it has matching trials or search is empty
+                            if (sidebarSearchQuery.trim() && filteredTrialIds.length === 0) {
+                              return null;
+                            }
+                            
+                            // Auto-expand subcategory if search query matches
+                            const isOpen = sidebarSearchQuery.trim()
+                              ? filteredTrialIds.length > 0
+                              : expandedTrialsSubcategories.includes(sub.title);
+                            
                             return (
                               <div key={sub.title}>
                                 <button
@@ -565,7 +610,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                                 {isOpen && (
                                   <div className="mt-1 space-y-0.5">
-                                    {sub.ids.map(id => {
+                                    {filteredTrialIds.map(id => {
                                       const trial = GUIDE_CONTENT[id];
                                       if (!trial) return null;
                                       const itemActive = location.pathname === `/trials/${id}`;
@@ -580,7 +625,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                           }`}
                                         >
                                           {trial.title.replace(/Trial:|Study:/gi, '').trim()}
-                                        </Link>
+            </Link>
                                       );
                                     })}
                                   </div>
@@ -593,45 +638,49 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     ))}
 
                     {/* Orphan Trials */}
-                    {trialOrphans.length > 0 && (
-                      <div className="mt-4">
-                        <h3 className="px-3 py-2 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-left">
-                          Other Trials
-                        </h3>
-                        <div className="space-y-0.5">
-                          {trialOrphans.map(trial => {
-                            const itemActive = location.pathname === `/trials/${trial.id}`;
-                            return (
-                              <Link
-                                key={trial.id}
-                                to={`/trials/${trial.id}?from=trials`}
-                                className={`block px-3 py-2 ml-2 rounded-lg text-sm transition-colors border-l-2 ${
-                                  itemActive
-                                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border-blue-500'
-                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-transparent hover:border-slate-300'
-                                }`}
-                              >
-                                {trial.title}
-                              </Link>
-                            );
-                          })}
+                    {trialOrphans.length > 0 && (() => {
+                      // Filter orphan trials based on search query
+                      const filteredOrphans = sidebarSearchQuery.trim()
+                        ? trialOrphans.filter(trial =>
+                            trial.title.toLowerCase().includes(sidebarSearchQuery.toLowerCase())
+                          )
+                        : trialOrphans;
+                      
+                      if (sidebarSearchQuery.trim() && filteredOrphans.length === 0) {
+                        return null;
+                      }
+                      
+                      return (
+                        <div className="mt-4">
+                          <h3 className="px-3 py-2 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-left">
+                            Other Trials
+                          </h3>
+                          <div className="space-y-0.5">
+                            {filteredOrphans.map(trial => {
+                              const itemActive = location.pathname === `/trials/${trial.id}`;
+                              return (
+                                <Link
+                                  key={trial.id}
+                                  to={`/trials/${trial.id}?from=trials`}
+                                  className={`block px-3 py-2 ml-2 rounded-lg text-sm transition-colors border-l-2 ${
+                                    itemActive
+                                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border-blue-500'
+                                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-transparent hover:border-slate-300'
+                                  }`}
+                                >
+                                  {trial.title}
+                                </Link>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      );
+                    })()}
+            </div>
                 )}
-              </div>
+          </div>
 
-                {/* Panel Footer */}
-                <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-700">
-                  <button
-                    onClick={() => setIsToolModalOpen(true)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors border border-slate-200 dark:border-slate-600"
-                  >
-                    <span>+ Custom Tool</span>
-                  </button>
-                </div>
-              </div>
+        </div>
             )}
       </aside>
 

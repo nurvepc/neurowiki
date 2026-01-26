@@ -21,13 +21,9 @@ export function DarkModeProvider({ children }: { children: React.ReactNode }) {
       }
       return isDarkMode;
     }
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (prefersDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    return prefersDark;
+    // Default to light mode if no preference is saved
+    document.documentElement.classList.remove('dark');
+    return false;
   });
 
   // Use ref to track current value for immediate DOM updates
@@ -49,27 +45,16 @@ export function DarkModeProvider({ children }: { children: React.ReactNode }) {
   }, [isDark]);
 
   const toggleDarkMode = useCallback(() => {
-    console.log('toggleDarkMode called in context. Current isDark:', isDarkRef.current);
     setIsDark(prev => {
       const newValue = !prev;
-      console.log('Setting new value:', newValue);
       // Immediately update the DOM for instant feedback
       const root = document.documentElement;
-      const classesBefore = Array.from(root.classList).join(' ');
-      console.log('HTML element classes before:', classesBefore || '(empty)');
       if (newValue) {
         root.classList.add('dark');
-        const classesAfter = Array.from(root.classList).join(' ');
-        console.log('Added dark class. Classes after:', classesAfter || '(empty)');
-        console.log('Has dark class?', root.classList.contains('dark'));
       } else {
         root.classList.remove('dark');
-        const classesAfter = Array.from(root.classList).join(' ');
-        console.log('Removed dark class. Classes after:', classesAfter || '(empty)');
-        console.log('Has dark class?', root.classList.contains('dark'));
       }
       localStorage.setItem('neurowiki-dark-mode', String(newValue));
-      console.log('Updated localStorage to:', newValue);
       // Update ref immediately
       isDarkRef.current = newValue;
       return newValue;
