@@ -44,6 +44,26 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    
+    <!-- Material Symbols CSS -->
+    <style>
+      .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        -webkit-font-smoothing: antialiased;
+      }
+    </style>
     
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -74,28 +94,28 @@
       }
     </script>
     
-    <link rel="stylesheet" href="/index.css">
+<link rel="stylesheet" href="/index.css">
     
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "MedicalWebPage",
-      "name": "Neurowiki",
-      "description": "Evidence-based neurology protocols, calculators, and clinical guidelines for physicians",
-      "url": "https://neurowiki.ai",
-      "specialty": "Neurology",
-      "audience": {
-        "@type": "MedicalAudience",
-        "audienceType": "Physician"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Neurowiki",
-        "url": "https://neurowiki.ai"
-      }
-    }
-    </script>
-  </head>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Neurowiki",
+  "description": "Evidence-based neurology protocols, calculators, and clinical guidelines for physicians",
+  "url": "https://neurowiki.ai",
+  "specialty": "Neurology",
+  "audience": {
+    "@type": "MedicalAudience",
+    "audienceType": "Physician"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Neurowiki",
+    "url": "https://neurowiki.ai"
+  }
+}
+</script>
+</head>
   <body class="bg-slate-50 text-slate-800 antialiased selection:bg-neuro-200 selection:text-neuro-900">
     <div id="root"></div>
     
@@ -113,6 +133,6 @@
     }
     </script>
     
-    <script type="module" src="/index.tsx"></script>
-  </body>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

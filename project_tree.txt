@@ -1,0 +1,186 @@
+neurowiki/
+├── .cursor/
+│   └── rules/
+│       └── neurowiki-writing-rules.mdc
+├── .cursorrules
+├── .env.development
+├── .env.local
+├── .env.production
+├── .gitignore
+├── components/
+│   ├── DisclaimerModal.tsx
+│   ├── Layout.tsx
+│   ├── LearningPearl.tsx
+│   ├── MarkdownRenderer.tsx
+│   ├── NihssItemCard.tsx
+│   ├── NihssItemRow.tsx
+│   ├── NihssPearl.tsx
+│   └── ToolManagerModal.tsx
+├── data/
+│   ├── guideContent.ts
+│   ├── toolContent.ts
+│   └── trialData.ts
+├── docs/
+│   ├── CALCULATOR_GUIDELINES.md
+│   ├── STROKE_BASICS_DESIGN_ARTIFACT.md
+│   ├── STROKE_BASICS_MOBILE_DESIGN.md
+│   ├── STROKE_BASICS_REDESIGN_PLAN.md
+│   ├── TOOLTIP_SYSTEM.md
+│   ├── TRIAL_DATA_VERIFICATION_COMPLETE.md
+│   └── TRIAL_VERIFICATION_REPORT.md
+├── favicon.png
+├── functions/
+│   └── api/
+│       ├── feedback.ts
+│       ├── icd10/
+│       │   └── search.ts
+│       └── npi/
+│           ├── lookup.ts
+│           └── search.ts
+├── hooks/
+│   └── useFavorites.ts
+├── index.css
+├── index.html
+├── index.tsx
+├── internalLinks/
+│   ├── autoLink.tsx
+│   ├── backlinks.ts
+│   └── registry.ts
+├── metadata.json
+├── package.json
+├── package-lock.json
+├── pages/
+│   ├── Calculators.tsx
+│   ├── ElanPathway.tsx
+│   ├── EmBillingCalculator.tsx
+│   ├── EvtPathway.tsx
+│   ├── GCAPathway.tsx
+│   ├── Home.tsx
+│   ├── MigrainePathway.tsx
+│   ├── NihssCalculator.tsx
+│   ├── ResidentGuide.tsx
+│   ├── StatusEpilepticusPathway.tsx
+│   ├── TrialsPage.tsx
+│   └── Wiki.tsx
+├── public/
+│   ├── _redirects
+│   ├── og-image.png
+│   ├── robots.txt
+│   └── sitemap.xml
+├── README.md
+├── scripts/
+│   └── verifyTrials.js
+├── services/
+│   └── gemini.ts
+├── src/
+│   ├── App.tsx
+│   ├── components/
+│   │   ├── article/
+│   │   │   ├── ArticleLayout.tsx
+│   │   │   ├── Callouts.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── Paragraph.tsx
+│   │   │   ├── Section.tsx
+│   │   │   ├── stroke/
+│   │   │   │   ├── CompactVitals.tsx
+│   │   │   │   ├── DeepLearningModal.tsx
+│   │   │   │   ├── EligibilityChecker.tsx
+│   │   │   │   ├── EligibilityCheckerV2.tsx
+│   │   │   │   ├── HemorrhageProtocol.tsx
+│   │   │   │   ├── LabsAndVitalsSection.tsx
+│   │   │   │   ├── LabsSection.tsx
+│   │   │   │   ├── LKWSection.tsx
+│   │   │   │   ├── LVOScreener.tsx
+│   │   │   │   ├── LVOScreenerV2.tsx
+│   │   │   │   ├── LVOSection.tsx
+│   │   │   │   ├── MobileTimerBar.tsx
+│   │   │   │   ├── PearlDetailView.tsx
+│   │   │   │   ├── PostTPAOrders.tsx
+│   │   │   │   ├── ProgressTracker.tsx
+│   │   │   │   ├── ProtocolSection.tsx
+│   │   │   │   ├── ProtocolStepsNav.tsx
+│   │   │   │   ├── QuickToolsDrawer.tsx
+│   │   │   │   ├── QuickToolsGrid.tsx
+│   │   │   │   ├── SectionPearls.simple.tsx
+│   │   │   │   ├── SectionPearls.tsx
+│   │   │   │   ├── SidebarTimer.tsx
+│   │   │   │   ├── SmartTimer.tsx
+│   │   │   │   ├── StickyArticleHeader.tsx
+│   │   │   │   ├── StrokeTimer.tsx
+│   │   │   │   ├── ThrombectomyPathwayModal.tsx
+│   │   │   │   ├── ThrombolysisEligibilityModal.tsx
+│   │   │   │   ├── TreatmentSection.tsx
+│   │   │   │   ├── TrialEmbed.tsx
+│   │   │   │   ├── VitalsInput.tsx
+│   │   │   │   ├── VitalsInputV2.tsx
+│   │   │   │   ├── VitalsSection.tsx
+│   │   │   │   └── WorkflowStep.tsx
+│   │   │   ├── Term.tsx
+│   │   │   └── Trial.tsx
+│   │   ├── CalculatorResultButton.tsx
+│   │   ├── CollapsibleSection.tsx
+│   │   ├── ComingSoon.tsx
+│   │   ├── DisclaimerModal.tsx
+│   │   ├── ErrorBoundary.tsx
+│   │   ├── FeedbackButton.tsx
+│   │   ├── FeedbackModal.tsx
+│   │   ├── index.ts
+│   │   ├── MedicalTooltip.tsx
+│   │   ├── PublishGate.tsx
+│   │   ├── SelectionCard.tsx
+│   │   ├── Seo.tsx
+│   │   └── TrialStats.tsx
+│   ├── config/
+│   │   └── contentStatus.ts
+│   ├── contexts/
+│   │   └── DarkModeContext.tsx
+│   ├── data/
+│   │   ├── medicalGlossary.ts
+│   │   └── strokeClinicalPearls.ts
+│   ├── hooks/
+│   │   ├── useCalculatorAnalytics.ts
+│   │   ├── useNavigationSource.ts
+│   │   └── useScrollSpy.ts
+│   ├── pages/
+│   │   ├── Calculators.tsx
+│   │   ├── guide/
+│   │   │   ├── AcuteStrokeMgmt.tsx
+│   │   │   ├── AlteredMentalStatus.tsx
+│   │   │   ├── Gbs.tsx
+│   │   │   ├── HeadacheWorkup.tsx
+│   │   │   ├── IchManagement.tsx
+│   │   │   ├── IvTpa.tsx
+│   │   │   ├── Meningitis.tsx
+│   │   │   ├── MultipleSclerosis.tsx
+│   │   │   ├── MyastheniaGravis.tsx
+│   │   │   ├── SeizureWorkup.tsx
+│   │   │   ├── StatusEpilepticus.tsx
+│   │   │   ├── StrokeBasics.tsx
+│   │   │   ├── StrokeBasicsDesktop.tsx
+│   │   │   ├── StrokeBasicsLayout.tsx
+│   │   │   ├── StrokeBasicsMobile.tsx
+│   │   │   ├── StrokeBasicsWorkflow.tsx
+│   │   │   ├── StrokeBasicsWorkflowV2.tsx
+│   │   │   ├── Thrombectomy.tsx
+│   │   │   ├── Vertigo.tsx
+│   │   │   └── WeaknessWorkup.tsx
+│   │   └── trials/
+│   │       ├── TrialPageNew.tsx
+│   │       └── TrialSearch.tsx
+│   ├── seo/
+│   │   ├── legacyHashRedirect.ts
+│   │   ├── routeMeta.ts
+│   │   └── sitemapRoutes.ts
+│   └── utils/
+│       ├── addTooltips.tsx
+│       ├── analytics.ts
+│       ├── legacyHashRedirect.ts
+│       └── verifyTrialData.ts
+├── tailwind.config.js
+├── tsconfig.json
+├── types.ts
+├── utils/
+│   └── nihssShortcuts.ts
+└── vite.config.ts
+
+Excluded from tree: node_modules, .next, .git, dist, .vite, build

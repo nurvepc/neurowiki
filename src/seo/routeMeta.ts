@@ -36,8 +36,8 @@ const ROUTE_REGISTRY: Record<string, MetaData> = {
     description: 'Decision support for Endovascular Thrombectomy (EVT) based on DAWN, DEFUSE-3, and recent trials.'
   },
   '/calculators/elan-pathway': {
-    title: 'ELAN Protocol Calculator',
-    description: 'Timing of anticoagulation after acute ischemic stroke in atrial fibrillation.'
+    title: 'Post-Stroke Anticoagulation Timing Calculator',
+    description: 'Evidence-based timing of anticoagulation after acute ischemic stroke with atrial fibrillation based on ELAN trial and 2024 guidelines.'
   },
   '/calculators/se-pathway': {
     title: 'Status Epilepticus Algorithm',

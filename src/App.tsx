@@ -1,26 +1,30 @@
 
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { DarkModeProvider } from './contexts/DarkModeContext';
-import Layout from '../components/Layout';
+import Layout from './components/Layout';
 import { PublishGate } from './components/PublishGate';
 import DisclaimerModal from './components/DisclaimerModal';
+import { TrialModalProvider, useTrialModal } from './contexts/TrialModalContext';
+import { GlobalTrialModal } from './components/GlobalTrialModal';
 
 // Lazy load all page components for code splitting
-const Home = lazy(() => import('../pages/Home'));
-const Wiki = lazy(() => import('../pages/Wiki'));
-const Calculators = lazy(() => import('../pages/Calculators'));
-const NihssCalculator = lazy(() => import('../pages/NihssCalculator'));
-const ResidentGuide = lazy(() => import('../pages/ResidentGuide'));
-const TrialsPage = lazy(() => import('../pages/TrialsPage'));
-const GCAPathway = lazy(() => import('../pages/GCAPathway'));
-const ElanPathway = lazy(() => import('../pages/ElanPathway'));
-const EvtPathway = lazy(() => import('../pages/EvtPathway'));
-const StatusEpilepticusPathway = lazy(() => import('../pages/StatusEpilepticusPathway'));
-const MigrainePathway = lazy(() => import('../pages/MigrainePathway'));
+const Home = lazy(() => import('./pages/Home'));
+const Wiki = lazy(() => import('./pages/Wiki'));
+const Calculators = lazy(() => import('./pages/Calculators'));
+const NihssCalculator = lazy(() => import('./pages/NihssCalculator'));
+const ResidentGuide = lazy(() => import('./pages/ResidentGuide'));
+const TrialsPage = lazy(() => import('./pages/TrialsPage'));
+const TrialPageNew = lazy(() => import('./pages/trials/TrialPageNew'));
+const GCAPathway = lazy(() => import('./pages/GCAPathway'));
+const ElanPathway = lazy(() => import('./pages/ElanPathway'));
+const EvtPathway = lazy(() => import('./pages/EvtPathway'));
+const StatusEpilepticusPathway = lazy(() => import('./pages/StatusEpilepticusPathway'));
+const MigrainePathway = lazy(() => import('./pages/MigrainePathway'));
 
 // Lazy load guide articles
 const StrokeBasics = lazy(() => import('./pages/guide/StrokeBasics'));
+const StrokeBasicsDesktop = lazy(() => import('./pages/guide/StrokeBasicsDesktop'));
+const StrokeBasicsMobile = lazy(() => import('./pages/guide/StrokeBasicsMobile'));
 const IvTpa = lazy(() => import('./pages/guide/IvTpa'));
 const Thrombectomy = lazy(() => import('./pages/guide/Thrombectomy'));
 const AcuteStrokeMgmt = lazy(() => import('./pages/guide/AcuteStrokeMgmt'));
@@ -36,21 +40,35 @@ const HeadacheWorkup = lazy(() => import('./pages/guide/HeadacheWorkup'));
 const Vertigo = lazy(() => import('./pages/guide/Vertigo'));
 const WeaknessWorkup = lazy(() => import('./pages/guide/WeaknessWorkup'));
 
+const TrialModalWrapper: React.FC = () => {
+  const { isOpen, trialSlug, closeTrial } = useTrialModal();
+  
+  if (!trialSlug) return null;
+  
+  return (
+    <GlobalTrialModal 
+      trialSlug={trialSlug} 
+      isOpen={isOpen} 
+      onClose={closeTrial} 
+    />
+  );
+};
+
 const App: React.FC = () => {
   return (
-    <DarkModeProvider>
-      <Router>
+    <Router>
+      <TrialModalProvider>
         <DisclaimerModal />
         <Layout>
-        <Suspense fallback={
-          <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-neuro-500"></div>
-              <p className="mt-4 text-slate-600 dark:text-slate-400">Loading...</p>
+          <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-neuro-500"></div>
+                <p className="mt-4 text-slate-600">Loading...</p>
+              </div>
             </div>
-          </div>
-        }>
-        <Routes>
+          }>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/wiki/:topic" element={<Wiki />} />
           <Route path="/calculators" element={<Calculators />} />
@@ -62,6 +80,8 @@ const App: React.FC = () => {
           <Route path="/calculators/migraine-pathway" element={<PublishGate><MigrainePathway /></PublishGate>} />
           <Route path="/guide" element={<ResidentGuide context="guide" />} />
           <Route path="/guide/stroke-basics" element={<PublishGate><StrokeBasics /></PublishGate>} />
+          <Route path="/guide/stroke-basics-desktop" element={<StrokeBasicsDesktop />} />
+          <Route path="/guide/stroke-basics-mobile" element={<StrokeBasicsMobile />} />
           <Route path="/guide/iv-tpa" element={<PublishGate><IvTpa /></PublishGate>} />
           <Route path="/guide/tpa-eligibility" element={<PublishGate><IvTpa /></PublishGate>} />
           <Route path="/guide/thrombectomy" element={<PublishGate><Thrombectomy /></PublishGate>} />
@@ -79,13 +99,42 @@ const App: React.FC = () => {
           <Route path="/guide/weakness-workup" element={<PublishGate><WeaknessWorkup /></PublishGate>} />
           <Route path="/guide/:topicId" element={<PublishGate><ResidentGuide context="guide" /></PublishGate>} />
           <Route path="/trials" element={<TrialsPage />} />
+          {/* Specific routes for trials using TrialPageNew - must come BEFORE catch-all */}
+          {/* Thrombolysis Trials */}
+          <Route path="/trials/ninds-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/ecass3-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/extend-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/eagle-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/wake-up" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/wake-up-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          {/* Thrombectomy Trials */}
+          <Route path="/trials/distal-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/escape-mevo-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/defuse-3-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/dawn-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/select2-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/angel-aspect-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          {/* Basilar Artery Trials */}
+          <Route path="/trials/attention-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/baoche-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          {/* Antiplatelet & Secondary Prevention Trials */}
+          <Route path="/trials/chance-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/point-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/sammpris-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/weave-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/socrates-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/sps3-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/sparcl-trial" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          <Route path="/trials/elan-study" element={<PublishGate><TrialPageNew /></PublishGate>} />
+          {/* Catch-all route for other trials - must come AFTER specific routes */}
           <Route path="/trials/:topicId" element={<PublishGate><ResidentGuide context="trials" /></PublishGate>} />
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        </Suspense>
+          </Routes>
+          </Suspense>
         </Layout>
-      </Router>
-    </DarkModeProvider>
+        <TrialModalWrapper />
+      </TrialModalProvider>
+    </Router>
   );
 };
 
