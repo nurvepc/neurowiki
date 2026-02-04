@@ -114,15 +114,19 @@ export default function Calculators() {
   });
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-  // Redirect legacy /calculators?id=... to canonical calculator routes
+  // Redirect legacy /calculators?id=... to canonical routes (SEO: one canonical URL per page)
   useEffect(() => {
     const id = searchParams.get('id');
+    if (!id) return;
     if (id === 'nihss') navigate('/calculators/nihss', { replace: true });
     else if (id === 'ich') navigate('/calculators/ich-score', { replace: true });
     else if (id === 'abcd2') navigate('/calculators/abcd2-score', { replace: true });
     else if (id === 'has-bled') navigate('/calculators/has-bled-score', { replace: true });
     else if (id === 'rope') navigate('/calculators/rope-score', { replace: true });
     else if (id === 'gcs') navigate('/calculators/glasgow-coma-scale', { replace: true });
+    else if (id === 'heidelberg-bleeding') navigate('/calculators/heidelberg-bleeding-classification', { replace: true });
+    else if (id === 'boston-caa') navigate('/calculators/boston-criteria-caa', { replace: true });
+    else if (id === 'aspects') navigate('/guide/stroke-basics', { replace: true });
   }, [searchParams, navigate]);
 
   // When returning with ?open=, set category filter so that section is focused

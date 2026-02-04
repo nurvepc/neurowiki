@@ -15,7 +15,7 @@ interface QuickToolsDrawerProps {
 
 const TOOLS: Tool[] = [
   { name: 'NIHSS Score', description: 'Rapid assessment score', path: '/calculators/nihss' },
-  { name: 'ASPECTS Score', description: 'CT early ischemic changes', path: '/calculators?id=aspects' },
+  { name: 'ASPECTS Score', description: 'CT early ischemic changes', path: '/guide/stroke-basics' },
   { name: 'Thrombectomy Pathway', description: 'EVT eligibility', path: '/calculators/evt-pathway' },
   { name: 'ABCD2 Score', description: 'TIA risk stratification', path: '#' },
   { name: 'ICH Score', description: 'Hemorrhage prognosis', path: '#' },

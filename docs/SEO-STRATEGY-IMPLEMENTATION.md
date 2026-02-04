@@ -15,6 +15,17 @@
 - **JSON-LD schema** – Organization on homepage; MedicalWebPage + SoftwareApplication for calculator pages; injected/updated on route change.
 - **Sitemap** – `public/sitemap.xml` with clean URLs (e.g. `/calculators/nihss`), lastmod, changefreq, priority.
 - **index.html** – Default meta, OG, Twitter, canonical, MedicalWebPage schema; `robots` index,follow.
+- **Canonical URLs only in links** – All internal links to calculators use path-based URLs (e.g. `/calculators/nihss`, `/calculators/abcd2-score`) instead of `?id=...`. This avoids Google discovering duplicate `calculators?id=...` URLs and helps the “Discovered - currently not indexed” count improve as crawlers see one canonical URL per page. Legacy `?id=` visits still work via client-side redirect in `Calculators.tsx` to the canonical path.
+
+---
+
+## GSC “Why pages aren’t indexed” (and what we did)
+
+If Search Console shows:
+
+1. **Page with redirect (1)** – One URL redirects (e.g. a legacy `calculators?id=...` that the app redirects to the path-based URL). This is expected; we no longer link to `?id=` internally, so over time fewer such URLs will be discovered.
+2. **Alternate page with proper canonical tag (1)** – One URL is correctly marked as alternate (canonical points to another URL). No change needed.
+3. **Discovered - currently not indexed (50)** – Google knows these URLs but hasn’t indexed them yet. Normal for a newer site. Ensure the sitemap is submitted and request indexing for priority URLs (home, `/calculators/nihss`, `/guide/stroke-basics`, etc.). Internal links now point only to canonical paths so crawlers don’t waste discovery on `?id=` variants.
 
 ---
 

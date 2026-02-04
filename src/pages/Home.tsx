@@ -104,9 +104,9 @@ const categories = [
 ];
 
 const featuredCalculators = [
-  { id: 'gcs', name: 'Glasgow Coma Scale', desc: 'Assess level of consciousness' },
-  { id: 'abcd2', name: 'ABCD² Score', desc: 'TIA stroke risk' },
-  { id: 'ich', name: 'ICH Score', desc: 'Intracerebral hemorrhage mortality' },
+  { id: 'gcs', path: '/calculators/glasgow-coma-scale', name: 'Glasgow Coma Scale', desc: 'Assess level of consciousness' },
+  { id: 'abcd2', path: '/calculators/abcd2-score', name: 'ABCD² Score', desc: 'TIA stroke risk' },
+  { id: 'ich', path: '/calculators/ich-score', name: 'ICH Score', desc: 'Intracerebral hemorrhage mortality' },
 ];
 
 const Home: React.FC = () => {
@@ -242,7 +242,7 @@ const Home: React.FC = () => {
             {featuredCalculators.map(calc => (
                 <Link 
                   key={calc.id} 
-                  to={`/calculators?id=${calc.id}`} 
+                  to={calc.path} 
                   onClick={() => trackQuickToolClick(calc.id)} 
                   className="group flex items-center gap-3 p-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors duration-150"
                 >

@@ -127,14 +127,14 @@ Approximately 14-27% of acute ischemic strokes occur with an unknown time of ons
 **Exclusion Criteria:**
 *   Intracranial hemorrhage on MRI
 *   Lesion >1/3 of MCA territory
-*   [NIHSS](/calculators?id=nihss) score >25 (severe stroke)
+*   [NIHSS](/calculators/nihss) score >25 (severe stroke)
 *   Planned thrombectomy
 *   Standard alteplase contraindications
 
 **Baseline Characteristics:**
 *   Median age: 65 years (both groups)
 *   Male: 65% (alteplase), 64% (placebo)
-*   Median baseline [NIHSS](/calculators?id=nihss): 6 (both groups)
+*   Median baseline [NIHSS](/calculators/nihss): 6 (both groups)
 *   89% presented as wake-up strokes
 *   Median time last known well to treatment: 10.3 hours (alteplase), 10.4 hours (placebo)
 *   Median time from symptom recognition to treatment: 3.1 hours (alteplase), 3.2 hours (placebo)
@@ -185,7 +185,7 @@ Approximately 14-27% of acute ischemic strokes occur with an unknown time of ons
 
 **Efficacy Considerations:**
 *   Number needed to treat (NNT) = 9 for excellent outcome (mRS 0-1)
-*   Benefit consistent across age groups and baseline [NIHSS](/calculators?id=nihss) scores
+*   Benefit consistent across age groups and baseline [NIHSS](/calculators/nihss) scores
 *   No reduction in infarct volume at 22-36 hours despite clinical benefit
 *   Treatment effect (OR 1.61) comparable to early window thrombolysis
 
@@ -422,9 +422,9 @@ The DAWN trial investigated whether thrombectomy is effective in patients with a
 *   **Design:** Multicenter, prospective, randomized, open-label, adaptive trial.
 *   **Population:** LVO (ICA or M1) at 6–24 hours from last known well.
 *   **Selection Criteria (Clinical-Core Mismatch):**
-    *   **Group A:** Age ≥ 80, [NIHSS](/calculators?id=nihss) ≥ 10, Core < 21 ml.
-    *   **Group B:** Age < 80, [NIHSS](/calculators?id=nihss) ≥ 10, Core < 31 ml.
-    *   **Group C:** Age < 80, [NIHSS](/calculators?id=nihss) ≥ 20, Core 31–50 ml.
+    *   **Group A:** Age ≥ 80, [NIHSS](/calculators/nihss) ≥ 10, Core < 21 ml.
+    *   **Group B:** Age < 80, [NIHSS](/calculators/nihss) ≥ 10, Core < 31 ml.
+    *   **Group C:** Age < 80, [NIHSS](/calculators/nihss) ≥ 20, Core 31–50 ml.
 *   **Primary Outcome:** Mean score for utility-weighted modified Rankin scale (mRS) at 90 days.
 *   **Results:**
     *   **Functional Independence (mRS 0-2):** 49% in EVT group vs 13% in Control group.
@@ -432,7 +432,7 @@ The DAWN trial investigated whether thrombectomy is effective in patients with a
 
 ## Clinical PEARLS
 *   **Massive Benefit:** The absolute difference in functional independence was **36%**, yielding a Number Needed to Treat (**NNT**) of **2.8**. This is one of the most potent effect sizes in stroke history.
-*   **Patient Selection:** Relies heavily on **age** and **[NIHSS](/calculators?id=nihss)** relative to core volume, unlike DEFUSE-3 which uses a flat core/penumbra cutoff.
+*   **Patient Selection:** Relies heavily on **age** and **[NIHSS](/calculators/nihss)** relative to core volume, unlike DEFUSE-3 which uses a flat core/penumbra cutoff.
 *   **Wake-Up Strokes:** Provided the first robust evidence for treating patients with unknown onset time (e.g., waking up with symptoms) if physiology was favorable.
 
 ## Conclusion
@@ -600,7 +600,7 @@ For years, Aspirin monotherapy was standard for acute ischemic stroke. The CHANC
 
 ## Trial Summary
 *   **Design:** Randomized, double-blind, placebo-controlled trial in China.
-*   **Population:** 5,170 patients with minor ischemic stroke ([NIHSS](/calculators?id=nihss) ≤ 3) or high-risk TIA ([ABCD²](/calculators?id=abcd2) ≥ 4) within 24 hours of onset.
+*   **Population:** 5,170 patients with minor ischemic stroke ([NIHSS](/calculators/nihss) ≤ 3) or high-risk TIA ([ABCD²](/calculators/abcd2-score) ≥ 4) within 24 hours of onset.
 *   **Intervention:**
     *   **DAPT:** Clopidogrel (300mg load, then 75mg/d) + Aspirin (75mg/d) for 21 days, followed by Clopidogrel monotherapy.
     *   **Control:** Aspirin (75mg/d) monotherapy.
@@ -630,7 +630,7 @@ Following the CHANCE trial in China, the POINT trial sought to confirm the benef
 
 ## Trial Summary
 *   **Design:** Randomized, double-blind, international trial.
-*   **Population:** 4,881 patients with minor ischemic stroke ([NIHSS](/calculators?id=nihss) ≤ 3) or high-risk TIA ([ABCD²](/calculators?id=abcd2) ≥ 4) within 12 hours.
+*   **Population:** 4,881 patients with minor ischemic stroke ([NIHSS](/calculators/nihss) ≤ 3) or high-risk TIA ([ABCD²](/calculators/abcd2-score) ≥ 4) within 12 hours.
 *   **Intervention:**
     *   **DAPT:** Clopidogrel (600mg load, then 75mg/d) + Aspirin (50-325mg/d) for 90 days.
     *   **Control:** Aspirin alone.
@@ -722,7 +722,7 @@ Ticagrelor is a potent antiplatelet agent used in cardiology. SOCRATES aimed to 
 
 ## Trial Summary
 *   **Design:** Randomized, double-blind trial.
-*   **Population:** 13,199 patients with acute mild-to-moderate ischemic stroke ([NIHSS](/calculators?id=nihss) ≤ 5) or high-risk TIA.
+*   **Population:** 13,199 patients with acute mild-to-moderate ischemic stroke ([NIHSS](/calculators/nihss) ≤ 5) or high-risk TIA.
 *   **Intervention:**
     *   **Ticagrelor:** 180mg load, then 90mg BID.
     *   **Aspirin:** 300mg load, then 100mg daily.
@@ -849,7 +849,7 @@ Early initiation of DOAC treatment was non-inferior and appeared safe compared t
 *   **Establish Last Known Well (LKW):** Critical for eligibility. If wake-up stroke, LKW is time last seen normal before sleep.
 *   **Vitals:** BP, HR, O2 Sat, Temp.
 *   **POC Glucose:** Rule out hypoglycemia (< 50 mg/dL), which is a common mimic.
-*   **[NIHSS](/calculators?id=nihss):** Perform baseline assessment by certified examiner.
+*   **[NIHSS](/calculators/nihss):** Perform baseline assessment by certified examiner.
     *   *Pearls:* Specifically assess for disabling deficits (e.g., isolated aphasia, visual field cut, hand weakness) even if total score is low.
     *   *History:* Screen for trauma, recent surgery (<14 days), active bleeding, anticoagulant use (time of last dose).
 
@@ -981,7 +981,7 @@ After admission to the Neuro-ICU, the primary goal is preventing secondary injur
 ## 3. Post-Thrombectomy Complications
 *   **Access Site:** Monitor for groin hematoma, retroperitoneal bleed, or distal limb ischemia (especially with femoral access).
 *   **Cerebral Edema:** "Malignant cerebral edema" carries 80% mortality if untreated. 
-    *   *Risk Factors:* [NIHSS](/calculators?id=nihss) > 20, carotid T occlusion, early CT hypodensity.
+    *   *Risk Factors:* [NIHSS](/calculators/nihss) > 20, carotid T occlusion, early CT hypodensity.
     *   *Management:* HOB > 30°, hyperosmolar therapy (Mannitol/Hypertonic Saline), and early consideration for **Hemicraniectomy** within 24-48h for patients < 60 years.
 *   **Hemorrhagic Transformation:** Classified by the Heidelberg scale (HI1/2, PH1/2). PH2 (mass effect) carries the worst 90-day prognosis.
 

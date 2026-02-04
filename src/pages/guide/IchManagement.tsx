@@ -23,7 +23,7 @@ export default function IchManagement() {
         </>
       }
       relatedLinks={[
-        { title: 'ICH Score', href: '/calculators?id=ich' },
+        { title: 'ICH Score', href: '/calculators/ich-score' },
         { title: 'Anticoagulation Reversal', href: '/guide/anticoagulation-reversal' },
         { title: 'Stroke Basics', href: '/guide/stroke-basics' },
       ]}

@@ -108,7 +108,7 @@ const TOOLS: LinkItem[] = [
     id: 'nihss-calc',
     title: 'NIHSS Calculator',
     type: 'tool',
-    url: '/calculators?id=nihss',
+    url: '/calculators/nihss',
     aliases: ['NIHSS', 'NIH Stroke Scale']
   }
 ];

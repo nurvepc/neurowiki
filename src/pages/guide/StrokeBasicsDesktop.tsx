@@ -11,7 +11,7 @@ import { HemorrhageProtocol } from '../../components/article/stroke/HemorrhagePr
 export default function StrokeBasicsDesktop() {
   const relatedCalculators = [
     { name: 'NIHSS Score', path: '/calculators/nihss', description: 'Rapid assessment score', icon: Calculator },
-    { name: 'ASPECTS Score', path: '/calculators?id=aspects', description: 'CT early ischemic changes', icon: Calculator },
+    { name: 'ASPECTS Score', path: '/guide/stroke-basics', description: 'CT early ischemic changes', icon: Calculator },
     { name: 'Thrombectomy Pathway', path: '/calculators/evt-pathway', description: 'EVT eligibility', icon: Calculator },
     { name: 'ABCD2 Score', path: '#', description: 'TIA risk stratification', icon: Calculator },
     { name: 'ICH Score', path: '#', description: 'Hemorrhage prognosis', icon: Calculator },
