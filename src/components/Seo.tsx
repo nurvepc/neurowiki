@@ -1,7 +1,9 @@
-
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getRouteMeta } from '../seo/routeMeta';
+import { getSchemaForRoute } from '../seo/schema';
+
+const JSON_LD_SCRIPT_ID = 'neurowiki-json-ld';
 
 const Seo: React.FC = () => {
   const location = useLocation();
@@ -53,6 +55,21 @@ const Seo: React.FC = () => {
     setMeta('twitter:description', meta.description);
     if (meta.image) setMeta('twitter:image', meta.image);
 
+    // JSON-LD structured data (MedicalWebPage, SoftwareApplication, Organization)
+    let scriptJsonLd = document.getElementById(JSON_LD_SCRIPT_ID) as HTMLScriptElement | null;
+    const schema = getSchemaForRoute(location.pathname, meta);
+    if (schema) {
+      if (!scriptJsonLd) {
+        scriptJsonLd = document.createElement('script');
+        scriptJsonLd.id = JSON_LD_SCRIPT_ID;
+        scriptJsonLd.type = 'application/ld+json';
+        document.head.appendChild(scriptJsonLd);
+      }
+      scriptJsonLd.textContent = JSON.stringify(schema);
+    } else if (scriptJsonLd) {
+      scriptJsonLd.remove();
+    }
+
     // Prevent Indexing on pages.dev
     if (isStaging) {
       setMeta('robots', 'noindex, nofollow');
@@ -63,7 +80,6 @@ const Seo: React.FC = () => {
         document.head.removeChild(robotsMeta);
       }
     }
-
   }, [location]);
 
   return null;

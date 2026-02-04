@@ -7,10 +7,10 @@ interface MetaData {
 }
 
 const DEFAULT_META: MetaData = {
-  title: 'NeuroWiki | The Digital Neurology Companion',
-  description: 'Comprehensive neurological encyclopedia, clinical calculators, and decision support tools for medical professionals.',
-  keywords: 'neurology, stroke, calc, nihss, medical tools',
-  image: 'https://neurowiki.ai/og-default.png' // Ensure this asset exists or remove
+  title: 'NeuroWiki | Neurology Calculators & Stroke Protocols',
+  description: 'Free neurology calculators (NIHSS, ASPECTS, ICH Score, ABCD2) and evidence-based stroke protocols. For residents and neurologists. AHA/ASA 2026 aligned.',
+  keywords: 'neurology calculators, NIHSS calculator, stroke protocol, stroke calculator, neurology resources, clinical decision support',
+  image: 'https://neurowiki.ai/og-image.png',
 };
 
 const ROUTE_REGISTRY: Record<string, MetaData> = {
@@ -24,12 +24,16 @@ const ROUTE_REGISTRY: Record<string, MetaData> = {
     description: 'Summaries of pivotal clinical trials in vascular neurology, epilepsy, and more.'
   },
   '/calculators': {
-    title: 'Clinical Calculators | NeuroWiki',
-    description: 'Interactive scoring tools including NIHSS, ABCD2, ICH Score, and more.'
+    title: 'Neurology Calculators | NIHSS, ICH Score, GCS | NeuroWiki',
+    description: 'Free online neurology calculators: NIHSS, ICH Score, ABCD2, GCS, HAS-BLED, RoPE. Stroke and neurocritical care tools for physicians. Evidence-based.',
+    keywords: 'neurology calculators, NIHSS calculator, stroke calculator, ICH score, GCS calculator, medical calculators',
+    image: 'https://neurowiki.ai/og-image.png',
   },
   '/calculators/nihss': {
-    title: 'NIH Stroke Scale (NIHSS) Calculator',
-    description: 'Interactive NIHSS calculator with built-in pearls and resident/attending modes.'
+    title: 'NIHSS Calculator - Free Online Stroke Assessment | NeuroWiki',
+    description: 'Free NIHSS calculator for stroke severity. Calculate NIH Stroke Scale score with step-by-step guidance and interpretation. Used by residents and neurologists.',
+    keywords: 'NIHSS calculator, NIH stroke scale, stroke assessment, stroke severity, neurology calculator',
+    image: 'https://neurowiki.ai/og-image.png',
   },
   '/calculators/evt-pathway': {
     title: 'Thrombectomy Eligibility Pathway',
@@ -87,9 +91,10 @@ const ROUTE_REGISTRY: Record<string, MetaData> = {
     keywords: 'Boston criteria CAA, cerebral amyloid angiopathy, CAA diagnosis, Boston criteria 2.0'
   },
   '/guide/stroke-basics': {
-    title: 'Stroke Code Basics | Acute Stroke Protocol | NeuroWiki',
-    description: 'Step-by-step acute stroke code workflow: LKW, imaging, tPA/thrombectomy, GWTG metrics. For residents and attendings. Aligned with AHA/ASA 2026.',
-    keywords: 'stroke protocol, acute stroke management, stroke code, door to needle, LKW, tPA eligibility'
+    title: 'Stroke Basics - Acute Stroke Protocol & Code Workflow | NeuroWiki',
+    description: 'Step-by-step acute stroke protocol: LKW, imaging, tPA eligibility, thrombectomy, GWTG metrics. Stroke code workflow for residents. AHA/ASA 2026.',
+    keywords: 'stroke protocol, acute stroke management, stroke code, door to needle, LKW, tPA eligibility, stroke workflow',
+    image: 'https://neurowiki.ai/og-image.png',
   },
   '/guide/ich-management': {
     title: 'ICH Management | Acute Intracerebral Hemorrhage | NeuroWiki',
