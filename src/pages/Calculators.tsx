@@ -283,7 +283,7 @@ export default function Calculators() {
               {categoryTools.map((tool) => (
                 <Link
                   key={tool.id}
-                  to={`${tool.path}${tool.path.includes('?') ? '&' : '?'}from=calculators&category=${encodeURIComponent(tool.category)}`}
+                  to={tool.path}
                   className={`group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl border-l-4 ${categoryStyles[category].border} border border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:shadow-sm dark:hover:shadow-slate-900/50 transition-all`}
                 >
                   <div className="flex-1 min-w-0">

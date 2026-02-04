@@ -401,7 +401,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                          <div className="flex flex-wrap gap-3 mt-6">
                             {/* Hardcoded Primary Tools */}
                             {currentTopic.id === 'thrombectomy' && (
-                                <Link to={`/calculators/evt-pathway?from=guide&category=${encodeURIComponent(currentTopic.category)}`} className="inline-flex items-center px-6 py-3 bg-neuro-500 text-white font-bold rounded-xl shadow-lg shadow-neuro-200 hover:bg-teal-500 transition-colors duration-150 active:scale-95 transform-gpu group">
+                                <Link to="/calculators/evt-pathway" className="inline-flex items-center px-6 py-3 bg-neuro-500 text-white font-bold rounded-xl shadow-lg shadow-neuro-200 hover:bg-teal-500 transition-colors duration-150 active:scale-95 transform-gpu group">
                                     <Zap size={18} className="mr-2 fill-white" />
                                     Launch Thrombectomy Pathway
                                     <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
@@ -409,7 +409,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                             )}
 
                             {currentTopic.id === 'status-epilepticus' && (
-                                <Link to={`/calculators/se-pathway?from=guide&category=${encodeURIComponent(currentTopic.category)}`} className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-colors duration-150 active:scale-95 transform-gpu group">
+                                <Link to="/calculators/se-pathway" className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-colors duration-150 active:scale-95 transform-gpu group">
                                     <Activity size={18} className="mr-2" />
                                     Launch Status Epilepticus Pathway
                                     <ChevronRight size={16} className="ml-2 opacity-60 group-hover:translate-x-1 transition-transform" />
@@ -420,7 +420,7 @@ const ResidentGuide: React.FC<ResidentGuideProps> = ({ context = 'guide' }) => {
                             {backlinks.map(link => (
                                 <Link 
                                     key={link.id} 
-                                    to={`${link.url}${link.url.includes('?') ? '&' : '?'}from=guide&category=${encodeURIComponent(currentTopic.category)}`}
+                                    to={link.url}
                                     className={`inline-flex items-center px-6 py-3 font-bold rounded-xl shadow-lg transition-colors duration-150 active:scale-95 transform-gpu group ${
                                         isTrialMode 
                                         ? 'bg-emerald-600 text-white shadow-emerald-200 hover:bg-emerald-700' 

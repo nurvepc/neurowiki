@@ -138,7 +138,7 @@ export default function TrialsPage() {
               {categoryTrials.map((trial: TrialItem) => (
                 <Link
                   key={trial.id}
-                  to={`${trial.path}${trial.path.includes('?') ? '&' : '?'}from=trials&category=${encodeURIComponent(categoryNames[trial.category])}`}
+                  to={trial.path}
                   className={`group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl border-l-4 ${categoryStyles[trial.category].border} border border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:shadow-sm dark:hover:shadow-slate-900/50 transition-all min-h-[44px] touch-manipulation`}
                 >
                   <div className="flex-1 min-w-0">

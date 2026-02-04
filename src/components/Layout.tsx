@@ -438,7 +438,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       {selectedToolsData.map((tool) => (
                         <Link
                           key={tool.id}
-                          to={`${tool.path}?from=calculators&category=${encodeURIComponent(tool.category)}`}
+                          to={tool.path}
                           className="group flex items-center justify-between px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors duration-150 min-h-[32px]"
                         >
                           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -639,7 +639,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                       return (
                                         <Link
                                           key={id}
-                                          to={`/trials/${id}?from=trials&category=${encodeURIComponent(sub.title)}`}
+                                          to={`/trials/${id}`}
                                           className={`block px-4 py-2.5 pl-8 rounded-md text-[14px] transition-all duration-200 ${
                                             itemActive
                                               ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/20 font-medium'
@@ -683,7 +683,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                               return (
                                 <Link
                                   key={trial.id}
-                                  to={`/trials/${trial.id}?from=trials`}
+                                  to={`/trials/${trial.id}`}
                                   className={`block px-4 py-2.5 pl-8 rounded-md text-[14px] transition-all duration-200 ${
                                     itemActive
                                       ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/20 font-medium'
