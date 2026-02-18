@@ -64,10 +64,58 @@ const STEPS = [
   { id: 4, title: "Decision" }
 ];
 
-const STEP_FIELDS: Record<number, string[]> = {
-  1: ['occlusionType', 'lvoLocation', 'lvo', 'mrs', 'age', 'mevoLocation', 'mevoDependent'],
-  2: ['time', 'nihss', 'nihssNumeric', 'mevoDisabling'],
-  3: ['aspects', 'pcAspects', 'massEffect', 'core', 'mismatchVol', 'mismatchRatio', 'mevoSalvageable', 'mevoTechnical']
+/**
+ * Returns the name of the next *rendered* field after `field` in the given section,
+ * based on the current inputs state.  Only fields that are actually visible in the UI
+ * for the current path (LVO/MeVO, Basilar/Anterior, 0-6h/6-24h) are included so that
+ * scroll-to-next never lands on an unmounted DOM node.
+ */
+const getNextRenderedField = (
+  field: keyof Inputs,
+  section: number,
+  inputs: Inputs
+): { next: string | null; isLast: boolean } => {
+  const isLvo   = inputs.occlusionType === 'lvo';
+  const isMevo  = inputs.occlusionType === 'mevo';
+  const isBasilar = inputs.lvoLocation === 'basilar';
+  const isLate  = inputs.time === '6_24';
+  const isEarly = inputs.time === '0_6';
+
+  let ordered: string[] = [];
+
+  if (section === 1) {
+    // Triage section — ordered field list depends on occlusion type
+    if (isLvo) {
+      ordered = ['occlusionType', 'lvoLocation', 'lvo'];
+      if (inputs.lvo === 'yes') ordered.push('mrs');
+      if (inputs.lvo === 'yes' && inputs.mrs !== 'unknown' && inputs.mrs !== 'no') ordered.push('age');
+    } else if (isMevo) {
+      ordered = ['occlusionType', 'mevoLocation', 'mevoDependent'];
+    } else {
+      ordered = ['occlusionType'];
+    }
+  } else if (section === 2) {
+    // Clinical section
+    ordered = ['time'];
+    if (isLvo)  ordered.push('nihss');
+    if (isMevo) ordered.push('nihssNumeric', 'mevoDisabling');
+  } else if (section === 3) {
+    // Imaging section
+    if (isLvo && isBasilar) {
+      ordered = ['pcAspects'];
+    } else if (isLvo && isEarly) {
+      ordered = ['aspects', 'massEffect'];
+    } else if (isLvo && isLate) {
+      ordered = ['aspects', 'massEffect', 'core', 'mismatchVol', 'mismatchRatio'];
+    } else if (isMevo) {
+      ordered = ['mevoSalvageable', 'mevoTechnical'];
+    }
+  }
+
+  const idx = ordered.indexOf(field);
+  if (idx < 0) return { next: null, isLast: false };
+  if (idx < ordered.length - 1) return { next: ordered[idx + 1], isLast: false };
+  return { next: null, isLast: true };
 };
 
 const getNihssNumeric = (nihss: NIHSSGroup): number => {
@@ -467,25 +515,23 @@ const EvtPathway: React.FC<EvtPathwayProps> = ({ onResultChange, hideHeader = fa
         return next;
     });
 
-    const currentFields = STEP_FIELDS[activeSection + 1];
-    if (currentFields) {
-        const idx = currentFields.indexOf(field);
-        if (idx >= 0 && idx < currentFields.length - 1) setTimeout(() => fieldRefs.current[currentFields[idx + 1]]?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
-        else if (idx === currentFields.length - 1) setTimeout(() => document.getElementById('evt-action-bar')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
-    }
+    // Use the dynamic resolver so we only scroll to fields that are actually rendered
+    // for the current path (LVO/MeVO, Basilar/Anterior, time window).
+    setInputs(latest => {
+      const { next, isLast } = getNextRenderedField(field, activeSection + 1, latest);
+      setTimeout(() => {
+        if (next && fieldRefs.current[next]) {
+          fieldRefs.current[next]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (isLast) {
+          document.getElementById('evt-action-bar')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 150);
+      return latest; // no state change — we're just reading the latest value
+    });
   }, [activeSection]);
 
   const handleNext = () => {
-    setActiveSection((prev) => {
-      if (prev === -1) {
-        // Fallback if ever collapsed: open first incomplete section or Decision
-        if (isSection0Complete && isSection1Complete && isSection2Complete) return 3;
-        if (isSection0Complete && isSection1Complete) return 2;
-        if (isSection0Complete) return 1;
-        return 0;
-      }
-      return Math.min(3, prev + 1);
-    });
+    setActiveSection((prev) => Math.min(3, prev + 1));
   };
   const handleBack = () => { setActiveSection((prev) => Math.max(0, prev - 1)); };
 
