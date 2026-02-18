@@ -49,7 +49,7 @@ type Inputs = {
 
 type Result = {
   eligible: boolean; // loosely used for "Green/Yellow" status vs "Red"
-  status: "Eligible" | "Not Eligible" | "Consult" | "Clinical Judgment" | "EVT Reasonable" | "BMT Preferred" | "High Uncertainty" | "Avoid EVT";
+  status: "Eligible" | "Not Eligible" | "Consult" | "Clinical Judgment" | "EVT Reasonable" | "BMT Preferred" | "High Uncertainty" | "Avoid EVT" | "Incomplete";
   criteriaName?: string;
   reason: string;
   details: string;
@@ -106,7 +106,15 @@ const getNextRenderedField = (
     } else if (isLvo && isEarly) {
       ordered = ['aspects', 'massEffect'];
     } else if (isLvo && isLate) {
-      ordered = ['aspects', 'massEffect', 'core', 'mismatchVol', 'mismatchRatio'];
+      const lateAspects = parseInt(inputs.aspects, 10);
+      const aspectsHighEnough = !isNaN(lateAspects) && lateAspects >= 6;
+      if (aspectsHighEnough) {
+        // ASPECTS ≥6 → Class I (Rec #2): no mass effect question, no CTP needed
+        ordered = ['aspects'];
+      } else {
+        // ASPECTS <6 or blank → show mass effect (for Rec #3) + CTP (for DAWN/DEFUSE-3)
+        ordered = ['aspects', 'massEffect', 'core', 'mismatchVol', 'mismatchRatio'];
+      }
     } else if (isMevo) {
       ordered = ['mevoSalvageable', 'mevoTechnical'];
     }
@@ -132,6 +140,10 @@ const calculateLvoProtocol = (inputs: Inputs): Result => {
   if (inputs.lvo === 'no') return { eligible: false, status: "Not Eligible", reason: "No Large Vessel Occlusion (LVO)", details: "Thrombectomy is indicated for occlusions of the ICA, MCA (M1), or Basilar Artery.", exclusionReason: "Absence of LVO target.", variant: 'danger' };
   if (inputs.mrs === 'no') return { eligible: false, status: "Not Eligible", reason: "Pre-stroke Disability (mRS > 4)", details: "EVT is not recommended for prestroke mRS > 4. Standard criteria require mRS 0–1, selected mRS 2, or mRS 3–4 (Class IIb in 0–6h with ASPECTS ≥6).", exclusionReason: "Poor baseline functional status.", variant: 'danger' };
   if (inputs.age === 'under_18') return { eligible: false, status: "Consult", reason: "Pediatric Patient", details: "Standard guidelines apply to age ≥ 18. Pediatric thrombectomy requires specialized consultation.", exclusionReason: "Age < 18.", variant: 'warning' };
+  // Guard: clinical data incomplete — return neutral placeholder rather than misleading result
+  if (inputs.mrs === 'unknown' || inputs.nihss === 'unknown' || inputs.time === 'unknown') {
+      return { eligible: false, status: "Incomplete", reason: "Complete clinical data first", details: "", variant: 'neutral' };
+  }
 
   // --- BASILAR ARTERY PROTOCOL (2026 AHA/ASA Guidelines — pc-ASPECTS ≥6) ---
   if (inputs.lvoLocation === 'basilar') {
@@ -258,8 +270,32 @@ const calculateLvoProtocol = (inputs: Inputs): Result => {
 
       const nihssNumLate = getNihssNumeric(inputs.nihss);
 
+      // mRS 2 in late window — no guideline-supported Class I/IIa pathway; refer for specialist consultation
+      if (inputs.mrs === 'mrs2') {
+          return {
+              eligible: false,
+              status: "Consult",
+              criteriaName: "Late Window mRS 2",
+              reason: "Prestroke mRS 2 — Specialist Consultation",
+              details: "The 2026 AHA/ASA late-window recommendations (Recs #2 and #3) specify mRS 0–1. EVT in mRS 2 within the 6–24h window is not guideline-supported; individualized decision with Vascular Neurology and Neurointerventional is required.",
+              variant: 'warning'
+          };
+      }
+
+      // mRS 3–4 in late window — no guideline-supported pathway; requires specialist
+      if (inputs.mrs === 'mrs34') {
+          return {
+              eligible: false,
+              status: "Consult",
+              criteriaName: "Late Window mRS 3-4",
+              reason: "Prestroke mRS 3–4 — Specialist Consultation",
+              details: "The 2026 AHA/ASA late-window recommendations apply to mRS 0–1 only. EVT in mRS 3–4 in the 6–24h window has no guideline evidence base. Individualized decision with Vascular Neurology and Neurointerventional is required.",
+              variant: 'danger'
+          };
+      }
+
       // COR 1 (2026 Rec #2 — LOE A): mRS 0–1, NIHSS ≥6, ASPECTS ≥6 in 6–24h — EVT recommended
-      if (inputs.mrs === 'yes' && nihssNumLate >= 6 && !isNaN(aspectsLate) && aspectsLate >= 6) {
+      if (nihssNumLate >= 6 && !isNaN(aspectsLate) && aspectsLate >= 6) {
           return {
               eligible: true,
               status: "Eligible",
@@ -271,7 +307,7 @@ const calculateLvoProtocol = (inputs: Inputs): Result => {
       }
 
       // COR 1 (2026 Rec #3 — LOE A): Selected patients, mRS 0–1, age <80, NIHSS ≥6, ASPECTS 3–5, no significant mass effect
-      if (inputs.mrs === 'yes' && inputs.age === '18_79' && nihssNumLate >= 6 && !isNaN(aspectsLate) && aspectsLate >= 3 && aspectsLate <= 5 && inputs.massEffect === 'no') {
+      if (inputs.age === '18_79' && nihssNumLate >= 6 && !isNaN(aspectsLate) && aspectsLate >= 3 && aspectsLate <= 5 && inputs.massEffect === 'no') {
           return {
               eligible: true,
               status: "Eligible",
@@ -618,7 +654,8 @@ const EvtPathway: React.FC<EvtPathwayProps> = ({ onResultChange, hideHeader = fa
     return inputs.mevoSalvageable !== 'unknown' && inputs.mevoTechnical !== 'unknown';
   }, [inputs]);
 
-  const isSection3Complete = !!result;
+  // Section 3 is only "complete" when we have a real decision — not a placeholder pending/incomplete result
+  const isSection3Complete = !!result && result.status !== 'Incomplete' && result.reason !== 'Pending Imaging' && result.reason !== 'Complete clinical data first';
   const completedCount = [isSection0Complete, isSection1Complete, isSection2Complete, isSection3Complete].filter(Boolean).length;
 
   const getSummary = (idx: number) => {
@@ -916,45 +953,66 @@ const EvtPathway: React.FC<EvtPathwayProps> = ({ onResultChange, hideHeader = fa
                             </div>
                         )}
 
-                        {/* Anterior 6-24h: Optional ASPECTS + Perfusion */}
-                        {inputs.time === '6_24' && !isBasilar && (
+                        {/* Anterior 6-24h: ASPECTS + conditional mass effect + CTP */}
+                        {inputs.time === '6_24' && !isBasilar && (() => {
+                            const lateAspectsNum = parseInt(inputs.aspects, 10);
+                            const aspectsHighEnough = !isNaN(lateAspectsNum) && lateAspectsNum >= 6;
+                            const showMassEffect = !aspectsHighEnough; // not needed for ASPECTS ≥6 (Rec #2)
+                            const showCtp = !aspectsHighEnough;        // CTP not required for ASPECTS ≥6
+
+                            return (
                             <div>
                                 <div className="bg-purple-50 p-4 rounded-xl text-purple-900 text-sm mb-6 border border-purple-100">
                                     <h4 className="font-bold flex items-center mb-2"><Info size={16} className="mr-2"/> Late Window Imaging (6–24h)</h4>
-                                    <p><strong>ASPECTS ≥6 → Class I</strong> (Rec #2, LOE A) — no perfusion required. <strong>ASPECTS 3–5, age &lt;80, no mass effect → Class I</strong> (Rec #3, LOE A). For borderline cases, enter perfusion values (DAWN/DEFUSE-3 criteria below).</p>
+                                    {aspectsHighEnough ? (
+                                        <p><strong>ASPECTS {lateAspectsNum} ≥ 6 — Class I criteria met.</strong> No perfusion imaging required per 2026 AHA/ASA guidelines (Rec #2, LOE A). Tap <strong>Next</strong> to see your result.</p>
+                                    ) : (
+                                        <p><strong>ASPECTS ≥6 → Class I</strong> (Rec #2, LOE A) — no perfusion required. <strong>ASPECTS 3–5, age &lt;80, no mass effect → Class I</strong> (Rec #3, LOE A). For borderline/ASPECTS &lt;3, enter perfusion values (DAWN/DEFUSE-3 criteria below).</p>
+                                    )}
                                 </div>
                                 {/* ASPECTS — primary criterion for Class I in 6-24h (Recs #2 and #3) */}
                                 <div ref={el => { fieldRefs.current['aspects'] = el; }} className="mb-6">
                                     <h4 className="text-sm font-bold text-slate-900 mb-2">ASPECTS from NCCT</h4>
                                     <p className="text-xs text-slate-500 mb-2">ASPECTS ≥6 → Class I (no other criteria needed). ASPECTS 3–5 → Class I if age &lt;80 + no mass effect. Enter 0–10 or leave blank to use perfusion criteria instead.</p>
                                     <input type="number" min="0" max="10" className="w-full p-4 text-lg bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-bold" placeholder="e.g. 7" value={inputs.aspects} onChange={(e) => updateInput('aspects', e.target.value)} />
-                                    <div ref={el => { fieldRefs.current['massEffect'] = el; }} className="mt-4">
-                                        <h4 className="text-sm font-bold text-slate-900 mb-2">Significant mass effect on imaging?</h4>
-                                        <div className="grid grid-cols-3 gap-3">
-                                            <SelectionCard title="No" description="No significant mass effect" selected={inputs.massEffect === 'no'} onClick={() => updateInput('massEffect', 'no')} />
-                                            <SelectionCard title="Yes" description="Significant mass effect" selected={inputs.massEffect === 'yes'} onClick={() => updateInput('massEffect', 'yes')} />
-                                            <SelectionCard title="Unknown" description="Not assessed" selected={inputs.massEffect === 'unknown'} onClick={() => updateInput('massEffect', 'unknown')} />
+
+                                    {/* Mass effect — only relevant for ASPECTS 3–5 (Rec #3) and ASPECTS 0–2 */}
+                                    {showMassEffect && (
+                                        <div ref={el => { fieldRefs.current['massEffect'] = el; }} className="mt-4">
+                                            <h4 className="text-sm font-bold text-slate-900 mb-2">Significant mass effect on imaging?</h4>
+                                            <p className="text-xs text-slate-500 mb-2">Required for ASPECTS 3–5 Class I pathway (Rec #3).</p>
+                                            <div className="grid grid-cols-3 gap-3">
+                                                <SelectionCard title="No" description="No significant mass effect" selected={inputs.massEffect === 'no'} onClick={() => updateInput('massEffect', 'no')} />
+                                                <SelectionCard title="Yes" description="Significant mass effect" selected={inputs.massEffect === 'yes'} onClick={() => updateInput('massEffect', 'yes')} />
+                                                <SelectionCard title="Unknown" description="Not assessed" selected={inputs.massEffect === 'unknown'} onClick={() => updateInput('massEffect', 'unknown')} />
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
-                                <div className="space-y-4">
-                                    <div ref={el => { fieldRefs.current['core'] = el; }}>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">Ischemic Core Volume (ml)</label>
-                                        <input type="number" className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="CBF < 30%" value={inputs.core} onChange={(e) => updateInput('core', e.target.value)} />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div ref={el => { fieldRefs.current['mismatchVol'] = el; }}>
-                                            <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Volume</label>
-                                            <input type="number" className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="Volume" value={inputs.mismatchVol} onChange={(e) => updateInput('mismatchVol', e.target.value)} />
+
+                                {/* CTP perfusion fields — only needed when ASPECTS <6 or not entered (DAWN/DEFUSE-3 path) */}
+                                {showCtp && (
+                                    <div className="space-y-4">
+                                        <div ref={el => { fieldRefs.current['core'] = el; }}>
+                                            <label className="block text-sm font-bold text-slate-700 mb-2">Ischemic Core Volume (ml)</label>
+                                            <p className="text-xs text-slate-500 mb-2">For DAWN/DEFUSE-3 eligibility. Leave blank if using ASPECTS-based pathway.</p>
+                                            <input type="number" className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="CBF < 30%" value={inputs.core} onChange={(e) => updateInput('core', e.target.value)} />
                                         </div>
-                                        <div ref={el => { fieldRefs.current['mismatchRatio'] = el; }}>
-                                            <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Ratio</label>
-                                            <input type="number" step="0.1" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-slate-600 text-lg" placeholder="Ratio" value={inputs.mismatchRatio} onChange={(e) => updateInput('mismatchRatio', e.target.value)} />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div ref={el => { fieldRefs.current['mismatchVol'] = el; }}>
+                                                <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Volume</label>
+                                                <input type="number" className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-lg" placeholder="Volume" value={inputs.mismatchVol} onChange={(e) => updateInput('mismatchVol', e.target.value)} />
+                                            </div>
+                                            <div ref={el => { fieldRefs.current['mismatchRatio'] = el; }}>
+                                                <label className="block text-sm font-bold text-slate-700 mb-2">Mismatch Ratio</label>
+                                                <input type="number" step="0.1" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-neuro-500 outline-none font-medium text-slate-600 text-lg" placeholder="Ratio" value={inputs.mismatchRatio} onChange={(e) => updateInput('mismatchRatio', e.target.value)} />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
-                        )}
+                            );
+                        })()}
                     </div>
                 )}
 
