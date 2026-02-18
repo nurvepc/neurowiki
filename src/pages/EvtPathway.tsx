@@ -208,15 +208,28 @@ const calculateLvoProtocol = (inputs: Inputs): Result => {
       const ratio = parseFloat(inputs.mismatchRatio);
       const aspectsLate = parseInt(inputs.aspects);
 
-      // COR 1 (2026): Selected patients, mRS 0–1, age <80, NIHSS ≥6, ASPECTS 3-5, no significant mass effect — EVT recommended in 6-24h (infographic: mRS ≥2 → IDD)
       const nihssNumLate = getNihssNumeric(inputs.nihss);
+
+      // COR 1 (2026 Rec #2 — LOE A): mRS 0–1, NIHSS ≥6, ASPECTS ≥6 in 6–24h — EVT recommended
+      if (inputs.mrs === 'yes' && nihssNumLate >= 6 && !isNaN(aspectsLate) && aspectsLate >= 6) {
+          return {
+              eligible: true,
+              status: "Eligible",
+              criteriaName: "Late Window ASPECTS ≥6 - Class I",
+              reason: `ASPECTS ${aspectsLate}, NIHSS ≥6, mRS 0–1`,
+              details: "Class I (LOE A): In patients with anterior circulation LVO presenting 6–24h from onset with NIHSS ≥6, prestroke mRS 0–1, and ASPECTS ≥6, EVT is recommended to improve functional outcomes and reduce mortality. (AHA/ASA 2026, Section 4.7.2, Rec #2)",
+              variant: 'success'
+          };
+      }
+
+      // COR 1 (2026 Rec #3 — LOE A): Selected patients, mRS 0–1, age <80, NIHSS ≥6, ASPECTS 3–5, no significant mass effect
       if (inputs.mrs === 'yes' && inputs.age === '18_79' && nihssNumLate >= 6 && !isNaN(aspectsLate) && aspectsLate >= 3 && aspectsLate <= 5 && inputs.massEffect === 'no') {
           return {
               eligible: true,
               status: "Eligible",
-              criteriaName: "Late Window ASPECTS 3-5 - Class I",
-              reason: "ASPECTS 3-5, age <80, NIHSS ≥6, no significant mass effect",
-              details: "Class I: In selected patients with anterior LVO 6-24h from onset, age <80 years, NIHSS ≥6, mRS 0-1, ASPECTS 3-5, and without significant mass effect, EVT is recommended. (AHA/ASA 2026, Section 4.7.2)",
+              criteriaName: "Late Window ASPECTS 3–5 - Class I",
+              reason: "ASPECTS 3–5, age <80, NIHSS ≥6, no significant mass effect",
+              details: "Class I (LOE A): In selected patients with anterior LVO 6–24h from onset, age <80 years, NIHSS ≥6, mRS 0–1, ASPECTS 3–5, and without significant mass effect, EVT is recommended. (AHA/ASA 2026, Section 4.7.2, Rec #3)",
               variant: 'success'
           };
       }
@@ -538,10 +551,11 @@ const EvtPathway: React.FC<EvtPathwayProps> = ({ onResultChange, hideHeader = fa
       if (inputs.time === 'unknown') return false;
       if (inputs.lvoLocation === 'basilar') return inputs.pcAspects !== '';
       if (inputs.time === '0_6') return inputs.aspects !== '';
-      // 6-24h: complete if core entered OR ASPECTS 3-5 + mass effect set (Class I path)
+      // 6-24h: complete if core entered, OR ASPECTS ≥6 entered (Class I Rec #2), OR ASPECTS 3-5 + mass effect set (Class I Rec #3)
       const aspectsNum = parseInt(inputs.aspects, 10);
-      const hasAspectsClassI = !isNaN(aspectsNum) && aspectsNum >= 3 && aspectsNum <= 5 && inputs.massEffect !== 'unknown';
-      return inputs.core !== '' || hasAspectsClassI;
+      const hasAspectsClassI_HighScore = !isNaN(aspectsNum) && aspectsNum >= 6; // Rec #2: ASPECTS ≥6, no mass effect needed
+      const hasAspectsClassI_LowScore = !isNaN(aspectsNum) && aspectsNum >= 3 && aspectsNum <= 5 && inputs.massEffect !== 'unknown'; // Rec #3: ASPECTS 3-5
+      return inputs.core !== '' || hasAspectsClassI_HighScore || hasAspectsClassI_LowScore;
     }
     return inputs.mevoSalvageable !== 'unknown' && inputs.mevoTechnical !== 'unknown';
   }, [inputs]);
@@ -566,7 +580,8 @@ const EvtPathway: React.FC<EvtPathwayProps> = ({ onResultChange, hideHeader = fa
         if (inputs.time === '0_6') return inputs.aspects ? `ASPECTS ${inputs.aspects}` : undefined;
         if (inputs.time === '6_24') {
           const a = parseInt(inputs.aspects, 10);
-          if (!isNaN(a) && a >= 3 && a <= 5 && inputs.massEffect !== 'unknown') return inputs.aspects ? `ASPECTS ${inputs.aspects}` : undefined;
+          if (!isNaN(a) && a >= 6) return `ASPECTS ${inputs.aspects}`; // Rec #2 Class I path
+          if (!isNaN(a) && a >= 3 && a <= 5 && inputs.massEffect !== 'unknown') return `ASPECTS ${inputs.aspects}`;
           return inputs.core ? `Core ${inputs.core} mL` : undefined;
         }
       }
