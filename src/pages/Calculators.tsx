@@ -80,6 +80,7 @@ const tools: Tool[] = [
   { id: 'gcs', name: 'Glasgow Coma Scale', description: 'Consciousness level assessment', category: 'general', type: 'calculator', path: '/calculators/glasgow-coma-scale' },
   { id: 'heidelberg-bleeding', name: 'Heidelberg Bleeding Classification', description: 'Hemorrhagic transformation after reperfusion (tPA/thrombectomy)', category: 'vascular', type: 'calculator', path: '/calculators/heidelberg-bleeding-classification' },
   { id: 'boston-caa', name: 'Boston Criteria 2.0 for CAA', description: 'Diagnose cerebral amyloid angiopathy from MRI findings', category: 'vascular', type: 'calculator', path: '/calculators/boston-criteria-caa' },
+  { id: 'em-billing', name: 'E/M Billing Calculator', description: 'CPT code selection via MDM and time-based billing (2021 AMA)', category: 'general', type: 'calculator', path: '/calculators/em-billing' },
 ];
 
 const groupByCategory = (toolsList: Tool[]) => {

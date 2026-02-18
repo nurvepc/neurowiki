@@ -44,6 +44,7 @@ const ALL_TOOLS: Tool[] = [
   { id: 'migraine-pathway', name: 'Migraine & Headache', description: 'ED and inpatient management', category: 'headache', type: 'pathway', path: '/calculators/migraine-pathway' },
   { id: 'gca-pathway', name: 'GCA / PMR Pathway', description: 'Suspected giant cell arteritis workup', category: 'headache', type: 'pathway', path: '/calculators/gca-pathway' },
   { id: 'ich', name: 'ICH Score', description: '30-day mortality for ICH', category: 'vascular', type: 'calculator', path: '/calculators/ich-score' },
+  { id: 'em-billing', name: 'E/M Billing Calculator', description: 'CPT code selection via MDM and time-based billing (2021 AMA)', category: 'general', type: 'calculator', path: '/calculators/em-billing' },
 ];
 
 // Category color mapping

@@ -29,6 +29,7 @@ const ElanPathway = lazy(() => import('./pages/ElanPathway'));
 const EvtPathway = lazy(() => import('./pages/EvtPathway'));
 const StatusEpilepticusPathway = lazy(() => import('./pages/StatusEpilepticusPathway'));
 const MigrainePathway = lazy(() => import('./pages/MigrainePathway'));
+const EmBillingCalculator = lazy(() => import('./pages/EmBillingCalculator'));
 
 // Lazy load guide articles
 const StrokeBasics = lazy(() => import('./pages/guide/StrokeBasics'));
@@ -98,6 +99,7 @@ const App: React.FC = () => {
           <Route path="/calculators/evt-pathway" element={<PublishGate><EvtPathway /></PublishGate>} />
           <Route path="/calculators/se-pathway" element={<PublishGate><StatusEpilepticusPathway /></PublishGate>} />
           <Route path="/calculators/migraine-pathway" element={<PublishGate><MigrainePathway /></PublishGate>} />
+          <Route path="/calculators/em-billing" element={<PublishGate><EmBillingCalculator /></PublishGate>} />
           <Route path="/guide" element={<ResidentGuide context="guide" />} />
           <Route path="/guide/stroke-basics" element={<PublishGate><StrokeBasics /></PublishGate>} />
           <Route path="/guide/stroke-basics-desktop" element={<StrokeBasicsDesktop />} />
