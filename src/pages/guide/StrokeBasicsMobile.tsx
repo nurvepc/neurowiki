@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calculator, Home, FileText, TestTube, Star } from 'lucide-react';
-import { SmartTimer } from '../../components/article/stroke/SmartTimer';
+import { TimestampBubble } from '../../components/article/stroke/TimestampBubble';
 import { EligibilityCheckerV2 } from '../../components/article/stroke/EligibilityCheckerV2';
 import { LVOScreenerV2 } from '../../components/article/stroke/LVOScreenerV2';
 import { VitalsInputV2 } from '../../components/article/stroke/VitalsInputV2';
@@ -15,11 +15,11 @@ export default function StrokeBasicsMobile() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
-      {/* Sticky Timer */}
-      <SmartTimer />
+      {/* Timestamp Bubble */}
+      <TimestampBubble />
 
       {/* Tab Navigation */}
-      <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-[73px] z-30">
+      <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30">
         <div className="flex">
           {[
             { id: 'workflow', label: 'Workflow' },

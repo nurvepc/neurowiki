@@ -19,18 +19,6 @@ const categories = [
     name: 'Epilepsy', 
     icon: (
       <div className="w-8 h-6 overflow-hidden flex items-center">
-        <style>
-          {`
-            @keyframes eeg-scroll {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-            .eeg-wave {
-              display: flex;
-              animation: eeg-scroll 2.5s linear infinite;
-            }
-          `}
-        </style>
         <div className="eeg-wave text-yellow-500">
           <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 12L4 12L6 4L10 20L12 12L16 12L18 8L20 16L22 12L26 12L28 2L32 22L34 12L40 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -70,20 +58,6 @@ const categories = [
     name: 'Movement Disorders', 
     icon: (
       <div className="flex items-center justify-center">
-        <style>
-          {`
-            @keyframes shaking-body {
-              0% { transform: translateX(0); }
-              25% { transform: translateX(-0.5px) rotate(-0.5deg); }
-              50% { transform: translateX(0.5px) rotate(0.5deg); }
-              75% { transform: translateX(-0.5px) rotate(-0.5deg); }
-              100% { transform: translateX(0); }
-            }
-            .shaking-icon {
-              animation: shaking-body 0.15s infinite ease-in-out;
-            }
-          `}
-        </style>
         <div className="shaking-icon text-amber-500">
           <User size={24} strokeWidth={2.5} />
         </div>

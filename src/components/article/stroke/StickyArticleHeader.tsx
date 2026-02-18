@@ -107,7 +107,7 @@ export const StickyArticleHeader: React.FC<StickyArticleHeaderProps> = ({
           {/* Current Step Indicator */}
           <div className="flex items-center gap-2 flex-1 justify-center">
             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-              Step {activeStepNumber || 1} of 6
+              Step {activeStepNumber || 1} of {steps.length}
             </div>
             {steps.find(s => s.id === activeStepNumber) && (
               <div className="text-sm font-bold text-gray-900 dark:text-white">

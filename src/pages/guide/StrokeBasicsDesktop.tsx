@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calculator, FileText, MessageCircle } from 'lucide-react';
-import { SmartTimer } from '../../components/article/stroke/SmartTimer';
+import { TimestampBubble } from '../../components/article/stroke/TimestampBubble';
 import { EligibilityCheckerV2 } from '../../components/article/stroke/EligibilityCheckerV2';
 import { LVOScreenerV2 } from '../../components/article/stroke/LVOScreenerV2';
 import { VitalsInputV2 } from '../../components/article/stroke/VitalsInputV2';
@@ -19,10 +19,8 @@ export default function StrokeBasicsDesktop() {
 
   return (
     <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
-      {/* Sticky Timer */}
-      <div className="sticky top-0 z-50">
-        <SmartTimer />
-      </div>
+      {/* Timestamp Bubble */}
+      <TimestampBubble />
 
       <main className="max-w-[1400px] mx-auto px-6 py-6">
         {/* Page Header */}
@@ -55,7 +53,7 @@ export default function StrokeBasicsDesktop() {
           </div>
 
           {/* Sidebar */}
-          <aside className="w-80 sticky top-[73px] space-y-4">
+          <aside className="w-80 sticky top-6 space-y-4">
             {/* Related Calculators */}
             <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4">
               <div className="flex items-center gap-2 mb-4">

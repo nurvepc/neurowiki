@@ -1,9 +1,9 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, Copy, Brain, Info, AlertTriangle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Copy, Brain, Info, AlertTriangle, AlertCircle, InfoIcon, FlaskConical, Eye, FileText as FileTextIcon, Zap, BookOpen } from 'lucide-react';
 import { StrokeBasicsLayout } from './StrokeBasicsLayout';
 import { ProtocolSection } from '../../components/article/stroke/ProtocolSection';
-import { SidebarTimer } from '../../components/article/stroke/SidebarTimer';
+import { TimestampBubble } from '../../components/article/stroke/TimestampBubble';
 import { ProtocolStepsNav, Step as ProtocolStep } from '../../components/article/stroke/ProtocolStepsNav';
 import { QuickToolsGrid } from '../../components/article/stroke/QuickToolsGrid';
 import type { ClinicalPearlsData } from '../../data/strokeClinicalPearls';
@@ -184,88 +184,8 @@ const MainContent: React.FC<{
       return (
         <Suspense fallback={null}>
         <>
-          {/* Timer Display - CODE MODE only */}
-          {workflowMode === 'code' && (
-            <div className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-slate-200 pt-[env(safe-area-inset-top)]">
-              <div className="max-w-4xl mx-auto px-3 sm:px-6 py-2 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex items-center gap-2 sm:space-x-3 min-w-0 flex-wrap">
-                  <span className="material-icons-outlined text-red-600 text-lg sm:scale-110 flex-shrink-0" aria-hidden>timer</span>
-                  <div className="flex flex-col min-w-0">
-                    <span className="hidden sm:block text-xs uppercase tracking-widest font-bold text-slate-500">
-                      Elapsed Time
-                    </span>
-                    <TimerDisplay startTime={timerStartTime} running={timerRunning} />
-                  </div>
-                  {(() => {
-                    const doorTime = milestones.doorTime ?? timerStartTime;
-                    return (
-                      <div className="flex items-center gap-1.5 text-xs text-slate-600 flex-shrink-0">
-                        <span className="hidden sm:inline">Door:</span>
-                        <span className="font-mono font-medium text-slate-800">
-                          {doorTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setDoorTimePickerOpen(true)}
-                          className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-1.5 rounded-md hover:bg-slate-100 text-slate-500 hover:text-slate-700"
-                          title="Set door time (analogue clock)"
-                          aria-label="Set door time with analogue clock"
-                        >
-                          <span className="material-icons-outlined text-lg">schedule</span>
-                        </button>
-                      </div>
-                    );
-                  })()}
-                  {milestones.neurologistEvaluationTime == null && (
-                    <button
-                      type="button"
-                      onClick={() => setMilestones(prev => ({ ...prev, neurologistEvaluationTime: new Date() }))}
-                      className="min-h-[44px] px-2 sm:px-3 py-1.5 text-xs font-medium rounded-lg bg-sky-100 text-sky-700 hover:bg-sky-200 border border-sky-200"
-                      title="Record neurologist evaluation time (GWTG)"
-                    >
-                      Record Neuro Eval
-                    </button>
-                  )}
-                  {milestones.neurologistEvaluationTime != null && (
-                    <span className="text-xs text-slate-500 flex-shrink-0">
-                      Neuro: {milestones.neurologistEvaluationTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  )}
-                  {milestones.doorToNeedle && (
-                    <div className="text-xs sm:text-sm font-bold bg-red-50 text-red-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border border-red-200 flex-shrink-0">
-                      🎯 D2N: {Math.round((milestones.doorToNeedle.getTime() - (milestones.doorTime ?? timerStartTime).getTime()) / 60000)}m
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={() => {
-                    if (confirm('Reset will clear all step data and restart the timer. Continue?')) {
-                      const now = new Date();
-                      setTimerStartTime(now);
-                      setTimerRunning(true);
-                      setMilestones({ doorTime: now });
-                      setStep1Data(null);
-                      setStep2Data(null);
-                      setSteps(prev => prev.slice(0, 4).map((s, idx) => ({
-                        ...s,
-                        status: idx === 0 ? 'active' : 'locked',
-                        isExpanded: idx === 0,
-                        completionSummary: undefined,
-                        startedAt: idx === 0 ? new Date() : undefined,
-                        completedAt: undefined
-                      })));
-                      setToastMessage('Workflow reset');
-                      setTimeout(() => setToastMessage(null), 2500);
-                    }
-                  }}
-                  className="flex-shrink-0 min-h-[44px] min-w-[44px] inline-flex items-center justify-center px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium border border-slate-200 rounded-full hover:bg-slate-50 transition-colors"
-                >
-                  <span className="sm:inline">Reset</span>
-                  <span className="hidden sm:inline sm:ml-0.5">Timer</span>
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Timestamp Bubble */}
+          <TimestampBubble />
 
           {/* Back + Header: compact on mobile */}
           <div className="mb-3 sm:mb-6 px-3 sm:px-6 pt-2 sm:pt-6">
@@ -307,12 +227,12 @@ const MainContent: React.FC<{
             <h1 className="text-xl sm:text-3xl font-black text-gray-900 mb-0 sm:mb-1">
               Stroke Code Basics
             </h1>
-            <p className="text-xs sm:text-sm text-gray-500 mt-0 sm:mt-0">
-              <span className="sm:hidden">{workflowMode === 'code' ? '5 steps' : '5 steps'}</span>
-              <span className="hidden sm:inline">
+            <p className="text-xs sm:text-sm text-gray-500 mt-0 sm:mt-0 flex items-center gap-1.5">
+              <span className="sm:hidden">{steps.length} steps</span>
+              <span className="hidden sm:inline items-center gap-1.5 flex">
                 {workflowMode === 'code'
-                  ? '⚡ Fast-track clinical decisions during active stroke code • 5 essential steps'
-                  : '📚 Evidence-based learning with trials and clinical pearls • 5 comprehensive steps'}
+                  ? <><Zap className="w-3.5 h-3.5 inline-block" /> Fast-track clinical decisions during active stroke code &bull; {steps.length} essential steps</>
+                  : <><BookOpen className="w-3.5 h-3.5 inline-block" /> Evidence-based learning with trials and clinical pearls &bull; {steps.length} comprehensive steps</>}
               </span>
             </p>
           </div>
@@ -334,7 +254,7 @@ const MainContent: React.FC<{
             {workflowMode === 'study' && (
               <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex gap-3">
-                  <span className="material-icons-outlined text-blue-600 text-xl">info</span>
+                  <InfoIcon className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div className="flex-1 space-y-3">
                     <div>
                       <h4 className="font-semibold text-blue-900 mb-2">Last Known Well & Treatment Windows</h4>
@@ -404,7 +324,7 @@ const MainContent: React.FC<{
             {workflowMode === 'study' && (
               <div className="mb-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
                 <div className="flex gap-3">
-                  <span className="material-icons-outlined text-purple-600 text-xl">visibility</span>
+                  <Eye className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                   <div className="flex-1 space-y-3">
                     <div>
                       <h4 className="font-semibold text-purple-900 mb-2">Large Vessel Occlusion Detection</h4>

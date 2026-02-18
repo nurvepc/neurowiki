@@ -15,7 +15,8 @@
 - **JSON-LD schema** – Organization on homepage; MedicalWebPage + SoftwareApplication for calculator pages; injected/updated on route change.
 - **Sitemap** – `public/sitemap.xml` with clean URLs (e.g. `/calculators/nihss`), lastmod, changefreq, priority.
 - **index.html** – Default meta, OG, Twitter, canonical, MedicalWebPage schema; `robots` index,follow.
-- **Canonical URLs only in links** – All internal links to calculators use path-based URLs (e.g. `/calculators/nihss`, `/calculators/abcd2-score`) instead of `?id=...`. This avoids Google discovering duplicate `calculators?id=...` URLs and helps the “Discovered - currently not indexed” count improve as crawlers see one canonical URL per page. Legacy `?id=` visits still work via client-side redirect in `Calculators.tsx` to the canonical path.
+- **Canonical URLs only in links** – All internal links to calculators use path-based URLs (e.g. `/calculators/nihss`, `/calculators/abcd2-score`) instead of `?id=...`. Legacy `?id=` visits still work via client-side redirect in `Calculators.tsx` to the canonical path.
+- **Pathway and trial links** – Links to pathways and trials use path-only URLs (no `?from=calculators&category=...`), so the address bar stays clean and Google doesn’t see duplicate parameterized URLs.
 
 ---
 
@@ -108,10 +109,24 @@ Meta titles and descriptions in `src/seo/routeMeta.ts` are written with these in
 
 ---
 
-## Quick checklist (Week 1)
+## What’s next (priority order)
 
+### 1. Manual GSC (if not done) – Week 1
 - [ ] Add and verify property in Google Search Console for `https://neurowiki.ai`.
 - [ ] Submit sitemap: `https://neurowiki.ai/sitemap.xml`.
-- [ ] Request indexing for homepage and top 5–10 URLs.
+- [ ] Request indexing for homepage and top 5–10 URLs (e.g. `/`, `/calculators/nihss`, `/guide/stroke-basics`, `/calculators`).
 - [ ] Confirm no `noindex` on production (only on staging).
 - [ ] Check Coverage after a few days and fix any reported errors.
+
+### 2. Content and E-E-A-T – Weeks 2–4 (biggest impact on ranking)
+- [ ] **Expand key pages to 1,500–2,500 words** – Start with NIHSS calculator and Stroke Basics guide. Add: intro, how to use, scoring/interpretation, evidence, FAQs, related tools. See the main SEO strategy doc for the NIHSS page structure.
+- [ ] **E-E-A-T signals** – Add a small “Medical review” block (reviewer name, credentials, last updated, next review) on calculator and guide pages. Add citations (e.g. Brott et al., AHA/ASA guidelines) for medical claims.
+- [ ] **Internal linking** – Use descriptive anchor text (“NIHSS calculator”, “stroke protocol”) and link between related calculators and protocols.
+
+### 3. Off-page and monitoring – Ongoing
+- [ ] **Backlinks** – Outreach to residency programs, medical schools (.edu), CME pages; guest posts; medical calculator directories. See main strategy doc for tiers and email template.
+- [ ] **Tracking** – Use Search Console (impressions, clicks, position, Coverage) and GA4. Optionally Ahrefs/SEMrush for keyword and backlink tracking.
+
+---
+
+## Quick checklist (Week 1)

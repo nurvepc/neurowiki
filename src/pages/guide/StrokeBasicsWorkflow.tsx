@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calculator, BookOpen, FileText, MessageCircle } from 'lucide-react';
-import { SmartTimer } from '../../components/article/stroke/SmartTimer';
+import { TimestampBubble } from '../../components/article/stroke/TimestampBubble';
 import { ProgressTracker } from '../../components/article/stroke/ProgressTracker';
 import { WorkflowStep } from '../../components/article/stroke/WorkflowStep';
 import { QuickToolsDrawer } from '../../components/article/stroke/QuickToolsDrawer';
@@ -69,8 +69,8 @@ export default function StrokeBasicsWorkflow() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
-      {/* Compact Timer */}
-      <SmartTimer />
+      {/* Timestamp Bubble */}
+      <TimestampBubble />
 
       {/* Progress Bar */}
       <ProgressTracker
