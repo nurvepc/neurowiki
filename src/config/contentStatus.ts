@@ -106,6 +106,10 @@ export const contentStatus: ContentStatus = {
     published: true,
     comingSoonMessage: 'Migraine pathway',
   },
+  '/calculators/em-billing': {
+    published: true,
+    comingSoonMessage: 'E/M Billing calculator',
+  },
   '/calculators/nihss': {
     published: true,
     comingSoonMessage: 'NIHSS calculator',
