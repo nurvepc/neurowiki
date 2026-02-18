@@ -335,15 +335,21 @@ async function fetchNpiProviders(query: string): Promise<NpiProvider[]> {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
-  let url: string;
+  // Route through /api/npi (Vite proxy in dev, Cloudflare Pages function in prod)
+  // This avoids CORS issues since the NPPES API returns no CORS headers.
+  const params = new URLSearchParams({ version: '2.1' });
   if (isNpiNumber(trimmed)) {
-    url = `https://npiregistry.cms.hhs.gov/api/?version=2.1&search_type=NPI&number=${trimmed}`;
+    params.set('search_type', 'NPI');
+    params.set('number', trimmed);
   } else {
     const parts = trimmed.split(/\s+/);
-    const first = encodeURIComponent(parts[0] ?? '');
-    const last = encodeURIComponent(parts[1] ?? '');
-    url = `https://npiregistry.cms.hhs.gov/api/?version=2.1&first_name=${first}&last_name=${last}&limit=10&enumeration_type=NPI-1`;
+    // Single word: search as last_name wildcard; two words: first + last
+    params.set('first_name', parts.length >= 2 ? parts[0] : '');
+    params.set('last_name', parts.length >= 2 ? parts[1] : parts[0]);
+    params.set('limit', '10');
+    params.set('enumeration_type', 'NPI-1');
   }
+  const url = `/api/npi?${params.toString()}`;
 
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
