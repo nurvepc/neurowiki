@@ -172,24 +172,36 @@ const calculateLvoProtocol = (inputs: Inputs): Result => {
       
       // Class IIb: pc-ASPECTS ≥6 + NIHSS 6–9 — EVT may be considered (AHA 2026 infographic)
       if (pcScore >= 6 && nihssNum >= 6) {
-          return { 
-              eligible: true, 
-              status: "Clinical Judgment", 
+          return {
+              eligible: true,
+              status: "Clinical Judgment",
               criteriaName: "Basilar EVT - Class IIb",
-              reason: `Moderate Severity (pc-ASPECTS ${pcScore}, NIHSS 6–9)`, 
-              details: "Class IIb recommendation: EVT may be considered for Basilar occlusion with pc-ASPECTS ≥6 and NIHSS 6–9. Individualized decision based on clinical context. (2026 AHA/ASA Guidelines)", 
-              variant: 'warning' 
+              reason: `Moderate Severity (pc-ASPECTS ${pcScore}, NIHSS 6–9)`,
+              details: "Class IIb recommendation: EVT may be considered for Basilar occlusion with pc-ASPECTS ≥6 and NIHSS 6–9. Individualized decision based on clinical context. (2026 AHA/ASA Guidelines)",
+              variant: 'warning'
           };
       }
-      
-      // Avoid EVT — pc-ASPECTS < 6
-      return { 
-          eligible: false, 
-          status: "Avoid EVT", 
-          reason: `Extensive Infarct (pc-ASPECTS ${pcScore})`, 
-          details: "pc-ASPECTS < 6 indicates large established brainstem/cerebellar infarction. EVT is associated with high rates of futile reperfusion and mortality. (2026 Guidelines)", 
+
+      // pc-ASPECTS ≥6 but NIHSS < 6 — no explicit guideline recommendation; specialist consultation warranted
+      if (pcScore >= 6) {
+          return {
+              eligible: false,
+              status: "Consult",
+              criteriaName: "Basilar EVT - Low NIHSS",
+              reason: `Low NIHSS (< 6) — Specialist Consultation`,
+              details: "The 2026 AHA/ASA guidelines for Basilar EVT specify NIHSS ≥6 for Class I/IIb recommendations. For Basilar occlusion with low NIHSS (<6) and favorable imaging (pc-ASPECTS ≥6), individualized decision with Vascular Neurology and Neurointerventional is required. (AHA/ASA 2026, Section 4.7.2)",
+              variant: 'warning'
+          };
+      }
+
+      // Avoid EVT — pc-ASPECTS < 6 (regardless of NIHSS)
+      return {
+          eligible: false,
+          status: "Avoid EVT",
+          reason: `Extensive Infarct (pc-ASPECTS ${pcScore} < 6)`,
+          details: "pc-ASPECTS < 6 indicates large established brainstem/cerebellar infarction. EVT is associated with high rates of futile reperfusion and mortality. (2026 Guidelines)",
           exclusionReason: "pc-ASPECTS < 6",
-          variant: 'danger' 
+          variant: 'danger'
       };
   }
 
@@ -322,7 +334,7 @@ const calculateLvoProtocol = (inputs: Inputs): Result => {
 
       let dawnEligible = false;
       const isAge80Plus = inputs.age === '80_plus';
-      const nihssNum = inputs.nihss === '20_plus' ? 25 : (inputs.nihss === '10_19' ? 15 : (inputs.nihss === '6_9' ? 8 : 2));
+      const nihssNum = getNihssNumeric(inputs.nihss);
       
       if (nihssNum >= 10) {
           if (isAge80Plus) { if (core < 21) dawnEligible = true; } 
