@@ -1,6 +1,6 @@
 // Content publication status
 // Change published: false → true when ready to go live
-// Last updated: 2026-02-17
+// Last updated: 2026-02-17 (v2)
 
 export type ContentItem = {
   published: boolean;
